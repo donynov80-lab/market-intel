@@ -1,0 +1,10 @@
+LANGKAH REBUILD:
+1. Ctrl+S di VS Code (save semua)
+2. Ctrl+` (buka terminal)
+3. git status
+4. git add .
+5. git commit -m "pesan"
+6. git push
+7. Tunggu share.streamlit.io rebuild (2-3 menit)
+8. Ctrl+Shift+R di browser
+9. Test
