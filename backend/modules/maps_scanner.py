@@ -11,9 +11,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 
-# =========================================================
-# KOORDINAT FALLBACK (kalau DB tidak ada)
-# =========================================================
 KOORDINAT_KOTA = {
     "bandung": (-6.9175, 107.6191, "Kota Bandung, Jawa Barat"),
     "jakarta": (-6.2088, 106.8456, "DKI Jakarta"),
@@ -49,9 +46,6 @@ KOORDINAT_KOTA = {
 }
 
 
-# =========================================================
-# Mapping keyword → tag OSM
-# =========================================================
 KEYWORD_TO_OSM = {
     "kue": ["shop=bakery", "shop=confectionery", "shop=pastry"],
     "toko kue": ["shop=bakery", "shop=confectionery"],
@@ -78,14 +72,9 @@ KEYWORD_TO_OSM = {
     "bank": ["amenity=bank"],
     "spbu": ["amenity=fuel"],
     "pasar": ["amenity=marketplace"],
-    "toko": ["shop=*"],
-    "toserba": ["shop=department_store"],
 }
 
 
-# =========================================================
-# Cache kota (dari API EMSIFA)
-# =========================================================
 _KOTA_CACHE = None
 
 
@@ -93,44 +82,29 @@ def _load_semua_kota_online():
     global _KOTA_CACHE
     if _KOTA_CACHE is not None:
         return _KOTA_CACHE
-
-    print("🌐 Loading kota dari EMSIFA...")
     try:
-        r = requests.get(
-            "https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json",
-            timeout=10
-        )
+        r = requests.get("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json", timeout=10)
         provinsi_list = r.json()
-
         semua_kota = []
         for prov in provinsi_list:
             try:
-                r2 = requests.get(
-                    f"https://www.emsifa.com/api-wilayah-indonesia/api/regencies/{prov['id']}.json",
-                    timeout=5
-                )
+                r2 = requests.get(f"https://www.emsifa.com/api-wilayah-indonesia/api/regencies/{prov['id']}.json", timeout=5)
                 for kota in r2.json():
                     semua_kota.append({
-                        'id': kota['id'],
-                        'provinsi': prov['name'],
+                        'id': kota['id'], 'provinsi': prov['name'],
                         'kota': kota['name'],
                         'display': f"{kota['name']}, {prov['name']}",
                         'lat': None, 'lon': None,
                     })
             except Exception:
                 continue
-
         _KOTA_CACHE = semua_kota
         return semua_kota
-    except Exception as e:
-        print(f"⚠️ Gagal load API: {e}")
+    except Exception:
         _KOTA_CACHE = []
         return []
 
 
-# =========================================================
-# Cari kota — PRIORITAS: tabel wilayah_lengkap → KOORDINAT_KOTA → API
-# =========================================================
 def cari_kota_lengkap(keyword, limit=50):
     import sqlite3
     from pathlib import Path
@@ -139,12 +113,10 @@ def cari_kota_lengkap(keyword, limit=50):
     hasil_raw = []
     db_path = Path(__file__).parent.parent.parent / "market_intel.db"
 
-    # ===== PRIORITAS 1: tabel wilayah_lengkap =====
     if db_path.exists():
         try:
             conn = sqlite3.connect(str(db_path))
             c = conn.cursor()
-
             c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='wilayah_lengkap'")
             if c.fetchone():
                 c.execute("""
@@ -154,47 +126,36 @@ def cari_kota_lengkap(keyword, limit=50):
                     ORDER BY level DESC, penduduk DESC, nama ASC
                     LIMIT ?
                 """, (f"%{keyword_lower}%", f"%{keyword_lower}%", limit))
-
                 for row in c.fetchall():
                     kode, nama, prov, lat, lng, luas, penduduk, level = row
                     hasil_raw.append({
                         'id': kode, 'kota': nama, 'kota_nama': nama,
                         'provinsi': prov or '', 'provinsi_nama': prov or '',
-                        'lat': lat, 'lon': lng,
-                        'luas': luas, 'penduduk': penduduk,
+                        'lat': lat, 'lon': lng, 'luas': luas, 'penduduk': penduduk,
                         'level': level,
                         'geocoded': lat is not None and lng is not None,
                         'display': f"{nama}, {prov}" if prov else nama,
                         'name': f"{nama}, {prov}" if prov else nama,
                     })
-
             conn.close()
             if hasil_raw:
-                print(f"✅ {len(hasil_raw)} kota dari DB wilayah_lengkap")
                 return hasil_raw[:limit]
-        except Exception as e:
-            print(f"⚠️ DB error: {e}")
+        except Exception:
+            pass
 
-    # ===== PRIORITAS 2: KOORDINAT_KOTA manual =====
     for kunci, (lat, lon, display) in KOORDINAT_KOTA.items():
         if keyword_lower in kunci or kunci in keyword_lower:
             hasil_raw.append({
-                'id': kunci,
-                'kota': display.split(',')[0].strip(),
+                'id': kunci, 'kota': display.split(',')[0].strip(),
                 'kota_nama': display.split(',')[0].strip(),
                 'provinsi': display.split(',')[-1].strip() if ',' in display else '',
                 'provinsi_nama': display.split(',')[-1].strip() if ',' in display else '',
-                'lat': lat, 'lon': lon,
-                'luas': None, 'penduduk': None, 'level': 2,
-                'geocoded': True,
-                'display': display, 'name': display,
+                'lat': lat, 'lon': lon, 'luas': None, 'penduduk': None, 'level': 2,
+                'geocoded': True, 'display': display, 'name': display,
             })
-
     if hasil_raw:
-        print(f"✅ {len(hasil_raw)} kota dari KOORDINAT_KOTA manual")
         return hasil_raw[:limit]
 
-    # ===== PRIORITAS 3: API EMSIFA =====
     try:
         all_kota = _load_semua_kota_online()
         for k in all_kota:
@@ -212,9 +173,6 @@ def cari_kota_lengkap(keyword, limit=50):
     return hasil_raw[:limit]
 
 
-# =========================================================
-# Parse hasil Overpass
-# =========================================================
 def _parse_overpass_result(data, lat, lon, maks):
     hasil = []
     for el in data.get('elements', []):
@@ -224,7 +182,6 @@ def _parse_overpass_result(data, lat, lon, maks):
         else:
             center = el.get('center', {})
             plat, plon = center.get('lat'), center.get('lon')
-
         if not plat or not plon:
             continue
 
@@ -234,10 +191,7 @@ def _parse_overpass_result(data, lat, lon, maks):
             if t.get(key):
                 kategori_list.append(f"{key}={t[key]}")
 
-        alamat_parts = [
-            t.get('addr:street', ''),
-            t.get('addr:city', ''),
-        ]
+        alamat_parts = [t.get('addr:street', ''), t.get('addr:city', '')]
         alamat = ", ".join([p for p in alamat_parts if p])
 
         R = 6371
@@ -255,44 +209,25 @@ def _parse_overpass_result(data, lat, lon, maks):
             'kontak': t.get('phone', t.get('contact:phone', '-')),
             'jam_buka': t.get('opening_hours', '-'),
         })
-
     hasil.sort(key=lambda x: x['jarak_km'])
     return hasil[:maks]
 
 
-# =========================================================
-# SCAN — Multi-query fallback
-# =========================================================
 def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart=True):
-    """Scan POI + SMART FALLBACK (coba multi query)."""
+    """Scan POI + SMART FILTER pada SEMUA query."""
     keyword_lower = keyword.lower()
     radius_km = radius_m / 1000
 
-    # === 1. CACHE ===
     from backend.db.cache_db import get_cached, save_cache
     cached = get_cached(lat, lon, radius_km, keyword_lower)
     if cached:
-        print(f"♻️ Cache hit: {cached['jumlah']} toko")
         return {'success': True, 'data': cached['data'][:maks],
                 'error': '', 'from_cache': True, 'query_used': 'cache'}
 
-    # === 2. BUILD QUERIES (dari simpel ke kompleks) ===
+    # === BUILD QUERIES (prioritas: tag spesifik → name → raw) ===
     queries = []
 
-    # Query 1: SANGAT SIMPLE — semua shop/amenity di radius
-    queries.append({
-        'name': 'raw-all',
-        'query': f"""[out:json][timeout:25];
-(
-  node["shop"](around:{radius_m},{lat},{lon});
-  way["shop"](around:{radius_m},{lat},{lon});
-  node["amenity"](around:{radius_m},{lat},{lon});
-  way["amenity"](around:{radius_m},{lat},{lon});
-);
-out center {maks};"""
-    })
-
-    # Query 2: MEDIUM — pakai tag dari keyword
+    # Query 1: TAG SPESIFIK (paling presisi)
     if smart:
         try:
             from backend.modules.business_classifier import cari_konfigurasi_keyword
@@ -320,7 +255,7 @@ out center {maks};"""
 out center {maks};"""
             })
 
-    # Query 3: BY NAME
+    # Query 2: BY NAME
     queries.append({
         'name': f'name-{keyword}',
         'query': f"""[out:json][timeout:25];
@@ -331,9 +266,22 @@ out center {maks};"""
 out center {maks};"""
     })
 
+    # Query 3: RAW-ALL (fallback terakhir)
+    queries.append({
+        'name': 'raw-all',
+        'query': f"""[out:json][timeout:25];
+(
+  node["shop"](around:{radius_m},{lat},{lon});
+  way["shop"](around:{radius_m},{lat},{lon});
+  node["amenity"](around:{radius_m},{lat},{lon});
+  way["amenity"](around:{radius_m},{lat},{lon});
+);
+out center {maks};"""
+    })
+
     endpoints = [
-        "https://overpass-api.de/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass-api.de/api/interpreter",
         "https://overpass.private.coffee/api/interpreter",
         "https://overpass.osm.ch/api/interpreter",
     ]
@@ -344,43 +292,43 @@ out center {maks};"""
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    # === 3. LOOP ===
     for q in queries:
         print(f"🔍 Query: {q['name']}")
         for attempt in range(retry):
             for endpoint in endpoints:
                 try:
-                    print(f"   → {endpoint.split('/')[2]}")
                     r = requests.post(endpoint, data={"data": q['query']},
                                        headers=headers, timeout=60)
 
                     if r.status_code == 200:
                         data = r.json()
                         raw = _parse_overpass_result(data, lat, lon, maks)
-                        print(f"   ✅ {len(raw)} hasil")
 
-                        # Smart filter
-                        if smart and raw and q['name'] != 'raw-all':
+                        # === FILTER SMART UNTUK SEMUA QUERY ===
+                        if smart and raw:
                             try:
                                 from backend.modules.business_classifier import filter_bisnis_smart
-                                filtered = filter_bisnis_smart(raw, keyword, threshold=8)
-                                final = filtered if filtered else raw
-                            except Exception:
-                                final = raw
+                                # Threshold lebih rendah untuk fallback raw-all
+                                threshold = 6 if q['name'] == 'raw-all' else 8
+                                filtered = filter_bisnis_smart(raw, keyword, threshold=threshold)
+                                final = filtered
+                            except Exception as e:
+                                print(f"⚠️ Filter error: {e}")
+                                final = []  # jangan return raw, biar coba query berikutnya
                         else:
                             final = raw
+
+                        print(f"   ✅ {len(raw)} mentah → {len(final)} setelah filter")
 
                         if final:
                             save_cache(lat, lon, radius_km, keyword_lower, final)
                             return {'success': True, 'data': final,
                                     'error': '', 'from_cache': False,
-                                    'query_used': q['name']}
+                                    'query_used': q['name'],
+                                    'total_raw': len(raw)}
                         break
                     elif r.status_code in [429, 504]:
                         sleep(3)
-                        continue
-                    else:
-                        print(f"   ⚠️ Status {r.status_code}")
                         continue
                 except Exception as e:
                     print(f"   ⚠️ {str(e)[:60]}")
@@ -389,21 +337,18 @@ out center {maks};"""
             if attempt < retry - 1:
                 sleep(2)
 
-    # === 4. FALLBACK KE CACHE LAMA ===
+    # Fallback: cache lama
     old = get_cached(lat, lon, radius_km, keyword_lower, max_age_hours=8760)
     if old:
-        return {'success': True, 'data': old['data'][:maks], 'error': '',
-                'from_cache': True, 'query_used': 'old-cache'}
+        return {'success': True, 'data': old['data'][:maks],
+                'error': '', 'from_cache': True, 'query_used': 'old-cache'}
 
     return {
         'success': False, 'data': [],
-        'error': 'Semua server Overpass tidak merespons atau tidak ada hasil.',
+        'error': f'Tidak ada "{keyword}" di area ini. Coba keyword lain atau kota lain.',
     }
 
 
-# =========================================================
-# ANALISIS PELUANG
-# =========================================================
 def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=None):
     hasil = {
         'lat': lat, 'lon': lon, 'keyword': keyword, 'radius_km': radius_km,
@@ -418,15 +363,8 @@ def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=Non
         scan_result = scan_sekitar(lat, lon, radius_m=radius_km * 1000,
                                     keyword=keyword, maks=100)
         if not scan_result['success']:
-            hasil['status_data'] = f'❌ GAGAL SCAN'
-            hasil['skor_peluang'] = None
-            hasil['rekomendasi'] = (
-                '⚠️ **Data tidak tersedia** — Server Overpass API sedang rate limit.\n\n'
-                '**Coba:**\n'
-                '1. Tunggu 30-60 detik, klik lagi\n'
-                '2. Ganti kota: pilih **KOTA** bukan **KABUPATEN**\n'
-                '3. Ganti keyword ke: `restoran`, `cafe`, `toko`'
-            )
+            hasil['status_data'] = '❌ GAGAL SCAN'
+            hasil['rekomendasi'] = f'⚠️ {scan_result["error"]}'
             hasil['kategori'] = 'DATA TIDAK TERSEDIA'
             hasil['opportunity_score'] = None
             hasil['total_pesaing'] = 0
@@ -442,12 +380,7 @@ def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=Non
     n = hasil['jumlah_kompetitor']
     if n == 0:
         hasil['skor_peluang'] = None
-        hasil['rekomendasi'] = (
-            '⚠️ **0 pesaing terdeteksi** — mungkin:\n'
-            '- Data OpenStreetMap kurang lengkap\n'
-            '- Rate limit server\n\n'
-            '**Coba:** Klik "Scan Sekarang" dulu untuk verifikasi.'
-        )
+        hasil['rekomendasi'] = '⚠️ 0 pesaing terdeteksi. Coba "Scan Sekarang" dulu.'
         hasil['kategori'] = 'PERLU VERIFIKASI'
     elif n <= 2:
         hasil['skor_peluang'] = 9
@@ -455,7 +388,7 @@ def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=Non
         hasil['kategori'] = 'PELUANG BESAR'
     elif n <= 5:
         hasil['skor_peluang'] = 7
-        hasil['rekomendasi'] = '🟡 CUKUP — masih bisa bersaing.'
+        hasil['rekomendasi'] = '🟡 CUKUP.'
         hasil['kategori'] = 'PELUANG SEDANG'
     elif n <= 10:
         hasil['skor_peluang'] = 5
@@ -467,29 +400,22 @@ def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=Non
         hasil['kategori'] = 'PELUANG KECIL'
     else:
         hasil['skor_peluang'] = 1
-        hasil['rekomendasi'] = '🔴 JENUH — pasar padat.'
+        hasil['rekomendasi'] = '🔴 JENUH.'
         hasil['kategori'] = 'PELUANG KECIL'
 
-    # Alias
     hasil['opportunity_score'] = hasil['skor_peluang']
     hasil['total_kompetitor'] = hasil['jumlah_kompetitor']
     hasil['total_pesaing'] = hasil['jumlah_kompetitor']
-    hasil['total_competitors'] = hasil['jumlah_kompetitor']
     hasil['competitors'] = hasil['kompetitor']
-    hasil['daftar_kompetitor'] = hasil['kompetitor']
     hasil['recommendation'] = hasil['rekomendasi']
-
     return hasil
 
 
 def analisis_peluang(*args, **kwargs):
-    """Analisis peluang — support 2 format."""
     if len(args) >= 3 and isinstance(args[0], (int, float)):
         return _analisis_peluang_single(
             float(args[0]), float(args[1]), str(args[2]),
-            kwargs.get('radius_km', 5),
-            kwargs.get('kompetitor_list', None)
-        )
+            kwargs.get('radius_km', 5), kwargs.get('kompetitor_list', None))
     elif len(args) >= 3 and isinstance(args[0], str):
         keyword = args[0]
         daftar_kota = args[1] if len(args) > 1 else []
@@ -498,39 +424,16 @@ def analisis_peluang(*args, **kwargs):
             lat, lon = kota.get('lat'), kota.get('lon')
             if not lat or not lon:
                 continue
-            single = _analisis_peluang_single(lat, lon, keyword,
-                                               kwargs.get('radius_km', 5))
+            single = _analisis_peluang_single(lat, lon, keyword, kwargs.get('radius_km', 5))
             single['kota'] = kota.get('kota', '-')
             single['provinsi'] = kota.get('provinsi', '-')
-            single['display'] = kota.get('display', '-')
             hasil.append(single)
         hasil.sort(key=lambda x: (-(x['skor_peluang'] or 0), x['jumlah_kompetitor']))
         return hasil
     else:
-        lat = kwargs.get('lat')
-        lon = kwargs.get('lon')
+        lat = kwargs.get('lat'); lon = kwargs.get('lon')
         if lat and lon:
-            return _analisis_peluang_single(
-                float(lat), float(lon), kwargs.get('keyword', 'kue'),
-                kwargs.get('radius_km', 5),
-                kwargs.get('kompetitor_list', None)
-            )
+            return _analisis_peluang_single(float(lat), float(lon),
+                kwargs.get('keyword', 'kue'), kwargs.get('radius_km', 5),
+                kwargs.get('kompetitor_list', None))
         return []
-
-
-# =========================================================
-# MAIN — Test
-# =========================================================
-if __name__ == "__main__":
-    print("=" * 60)
-    print("🗺️ TEST SCAN KOTA BANDUNG")
-    print("=" * 60)
-
-    lok = KOORDINAT_KOTA.get("bandung")
-    if lok:
-        print(f"📍 {lok[2]} — {lok[0]}, {lok[1]}")
-        result = scan_sekitar(lok[0], lok[1], radius_m=5000, keyword="kue")
-        print(f"\nSuccess: {result['success']}")
-        print(f"Jumlah: {len(result.get('data', []))}")
-        for i, t in enumerate(result.get('data', [])[:10], 1):
-            print(f"{i}. {t['nama']} ({t['kategori']}) — {t['jarak_km']} km")
