@@ -1,0 +1,49 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ===== Virtual Environment =====
+venv/
+env/
+ENV/
+
+# ===== Environment & Secrets =====
+.env
+*.env
+!.env.example
+
+# ===== Database =====
+# *.db        # DB di-include untuk demo
+*.sqlite
+*.sqlite3
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Streamlit =====
+.streamlit/secrets.toml
+
+# ===== Logs =====
+*.log
+
+# ===== AI Tools =====
+.agents/
+.claude/
+
+# ===== File Besar (TIDAK di-push) =====
+*.zip
+*.tar.gz
+*.rar
+data_eksternal/
+db_eksternal/
+data_wilayah/
+*.psd
+*.mp4

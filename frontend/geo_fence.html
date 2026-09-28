@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Promo di Area Kamu</title>
+
+    <!-- Leaflet CSS untuk peta -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+
+        .content { padding: 24px; }
+
+        /* Peta */
+        #map {
+            height: 300px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            z-index: 1;
+        }
+
+        /* Tombol */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 12px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-wa {
+            background: #25D366;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        /* Hasil */
+        .hasil {
+            display: none;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+        .hasil.sukses {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            display: block;
+        }
+        .hasil.gagal {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            display: block;
+        }
+        .hasil.loading {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            display: block;
+            text-align: center;
+        }
+        .hasil h2 { margin-bottom: 8px; font-size: 18px; }
+        .hasil p { font-size: 14px; line-height: 1.6; }
+
+        .jarak-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .promo-box {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .status-bar {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Cek Promo di Area Kamu</h1>
+            <p>Aktifkan GPS untuk lihat promo khusus wilayahmu</p>
+        </div>
+
+        <div class="content">
+            <!-- Peta -->
+            <div id="map"></div>
+
+            <!-- Tombol utama -->
+            <button class="btn" id="btnCek" onclick="cekLokasi()">
+                📍 Cek Promo Sekarang
+            </button>
+
+            <!-- Hasil -->
+            <div class="hasil" id="hasil"></div>
+        </div>
+
+        <div class="status-bar" id="status">
+            Siap. Klik tombol di atas untuk mulai.
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // ============================================
+        // 1. Inisialisasi Peta
+        // ============================================
+        const map = L.map('map').setView([-6.9147, 107.6098], 11);  // default Bandung
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Marker untuk toko-toko (akan diisi oleh server)
+        let markers = [];
+
+        // ============================================
+        // 2. Fungsi Cek Lokasi
+        // ============================================
+        function cekLokasi() {
+            const btn = document.getElementById('btnCek');
+            const hasil = document.getElementById('hasil');
+            const status = document.getElementById('status');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Mengambil lokasi...';
+
+            hasil.className = 'hasil loading';
+            hasil.innerHTML = '<h2>📍 Menunggu izin GPS...</h2><p>Klik "Izinkan" saat browser bertanya.</p>';
+            status.textContent = 'Menunggu izin GPS dari browser...';
+
+            // Cek apakah browser support GPS
+            if (!navigator.geolocation) {
+                tampilkanError('Browser kamu tidak mendukung GPS. Coba pakai Chrome atau Firefox terbaru.');
+                return;
+            }
+
+            // Minta lokasi
+            navigator.geolocation.getCurrentPosition(
+                kirimKeServer,   // sukses
+                gagalGPS,        // error
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        // ============================================
+        // 3. Kirim koordinat ke server
+        // ============================================
+        async function kirimKeServer(posisi) {
+            const lat = posisi.coords.latitude;
+            const lon = posisi.coords.longitude;
+            const akurasi = posisi.coords.accuracy;
+
+            document.getElementById('status').textContent =
+                `📍 Lokasi terdeteksi: ${lat.toFixed(4)}, ${lon.toFixed(4)} (±${Math.round(akurasi)}m)`;
+
+            // Tandai posisi user di peta
+            L.marker([lat, lon], {
+                icon: L.divIcon({
+                    className: 'user-marker',
+                    html: '<div style="background:#667eea; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [22, 22]
+                })
+            }).addTo(map).bindPopup('📍 Kamu di sini').openPopup();
+
+            map.setView([lat, lon], 13);
+
+            // Kirim ke server
+            try {
+                const response = await fetch('/cek-lokasi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: lat, lon: lon })
+                });
+
+                const data = await response.json();
+                tampilkanHasil(data);
+
+            } catch (err) {
+                tampilkanError('Gagal menghubungi server: ' + err.message);
+            }
+        }
+
+        // ============================================
+        // 4. Tampilkan hasil dari server
+        // ============================================
+        function tampilkanHasil(data) {
+            const btn = document.getElementById('btnCek');
+            const hasil = document.getElementById('hasil');
+            const status = document.getElementById('status');
+
+            btn.disabled = false;
+            btn.textContent = '📍 Cek Ulang';
+
+            // Gambar semua campaign di peta
+            gambarkanCampaign(data.semua_campaign || []);
+
+            if (data.status === 'in') {
+                // ✅ Dalam radius
+                hasil.className = 'hasil sukses';
+                hasil.innerHTML = `
+                    <h2>🎉 Promo Tersedia!</h2>
+                    <p>Kamu berada di <strong>${data.campaign.nama}</strong></p>
+                    <div class="promo-box">${data.campaign.konten}</div>
+                    ${data.campaign.wa_link ?
+                        `<a href="${data.campaign.wa_link}" target="_blank" class="btn btn-wa">
+                            💬 Pesan via WhatsApp
+                        </a>` : ''}
+                    <p class="jarak-info">📍 Jarak kamu: ${data.jarak_km} km dari toko</p>
+                `;
+                status.textContent = '✅ Promo aktif untuk wilayahmu!';
+
+            } else if (data.status === 'out') {
+                // ❌ Di luar radius
+                hasil.className = 'hasil gagal';
+                hasil.innerHTML = `
+                    <h2>😔 Maaf, di Luar Area</h2>
+                    <p>${data.pesan}</p>
+                    <p class="jarak-info">📍 Jarak terdekat: ${data.jarak_terdekat_km} km</p>
+                    <p class="jarak-info">Radius promo: ${data.radius_km} km dari ${data.nama_campaign_terdekat}</p>
+                `;
+                status.textContent = '❌ Belum ada promo di areamu.';
+
+            } else {
+                tampilkanError(data.pesan || 'Terjadi kesalahan.');
+            }
+        }
+
+        // ============================================
+        // 5. Gambarkan semua campaign di peta
+        // ============================================
+        function gambarkanCampaign(daftar) {
+            // Hapus marker lama
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            daftar.forEach(c => {
+                // Circle untuk radius
+                const circle = L.circle([c.lat, c.lon], {
+                    color: '#667eea',
+                    fillColor: '#667eea',
+                    fillOpacity: 0.15,
+                    radius: c.radius_km * 1000  // km → meter
+                }).addTo(map);
+
+                // Marker toko
+                const marker = L.marker([c.lat, c.lon])
+                    .addTo(map)
+                    .bindPopup(`<strong>${c.nama}</strong><br>Radius ${c.radius_km} km`);
+
+                markers.push(circle, marker);
+            });
+        }
+
+        // ============================================
+        // 6. Error handling
+        // ============================================
+        function gagalGPS(err) {
+            let pesan = 'Gagal mengambil lokasi. ';
+            switch(err.code) {
+                case 1: pesan += 'Kamu menolak izin GPS. Coba refresh & izinkan.'; break;
+                case 2: pesan += 'Lokasi tidak tersedia. Cek sinyal GPS.'; break;
+                case 3: pesan += 'Timeout. Coba lagi.'; break;
+                default: pesan += err.message;
+            }
+            tampilkanError(pesan);
+        }
+
+        function tampilkanError(pesan) {
+            const hasil = document.getElementById('hasil');
+            const btn = document.getElementById('btnCek');
+
+            hasil.className = 'hasil gagal';
+            hasil.innerHTML = `<h2>⚠️ Error</h2><p>${pesan}</p>`;
+
+            btn.disabled = false;
+            btn.textContent = '📍 Coba Lagi';
+            document.getElementById('status').textContent = '❌ ' + pesan;
+        }
+
+        // ============================================
+        // 7. Load campaign awal untuk tampil di peta
+        // ============================================
+        window.addEventListener('load', async () => {
+            try {
+                const r = await fetch('/api/campaign');
+                const data = await r.json();
+                gambarkanCampaign(data.campaign || []);
+
+                // Zoom ke semua campaign
+                if (data.campaign && data.campaign.length > 0) {
+                    const bounds = data.campaign.map(c => [c.lat, c.lon]);
+                    map.fitBounds(bounds, { padding: [30, 30] });
+                }
+            } catch (e) {
+                console.error('Gagal load campaign:', e);
+            }
+        });
+    </script>
+</body>
+</html>

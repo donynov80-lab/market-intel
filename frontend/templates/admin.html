@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Kelola Campaign</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border 0.2s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover { transform: translateY(-1px); }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .btn-danger:hover { background: #c82333; }
+
+        /* List campaign */
+        .campaign-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .campaign-item h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .campaign-meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .campaign-konten {
+            font-size: 13px;
+            color: #888;
+            font-style: italic;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+        .badge-aktif { background: #d4edda; color: #155724; }
+        .badge-nonaktif { background: #f8d7da; color: #721c24; }
+
+        /* Notifikasi */
+        .notif {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+        .notif.sukses {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+            display: block;
+        }
+        .notif.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+            display: block;
+        }
+
+        /* Nav */
+        .nav {
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .nav a:hover { text-decoration: underline; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/">← Kembali ke Halaman Promo</a>
+        </div>
+
+        <h1>📢 Admin — Kelola Campaign</h1>
+        <p class="subtitle">Tambah, edit, atau hapus kampanye promo geo-fence</p>
+
+        <div id="notif" class="notif"></div>
+
+        <!-- FORM TAMBAH -->
+        <div class="card">
+            <h2>➕ Tambah Campaign Baru</h2>
+            <form id="formTambah" onsubmit="simpanCampaign(event)">
+                <div class="form-group">
+                    <label>Nama Campaign *</label>
+                    <input type="text" name="nama" required placeholder="Contoh: Promo Kue Surabaya">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Latitude *</label>
+                        <input type="number" step="0.0001" name="lat" required
+                               placeholder="-6.9147">
+                    </div>
+                    <div class="form-group">
+                        <label>Longitude *</label>
+                        <input type="number" step="0.0001" name="lon" required
+                               placeholder="107.6098">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Radius (km) *</label>
+                    <input type="number" step="0.1" name="radius_km" required
+                           placeholder="5" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label>Konten Promo *</label>
+                    <textarea name="konten" required
+                              placeholder="Contoh: 🎉 Diskon 20% untuk kue ulang tahun! Khusus warga Bandung!"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>WhatsApp Link (opsional)</label>
+                    <input type="url" name="wa_link"
+                           placeholder="https://wa.me/6281234567890?text=Halo">
+                </div>
+
+                <button type="submit" class="btn btn-primary">💾 Simpan Campaign</button>
+            </form>
+        </div>
+
+        <!-- LIST CAMPAIGN -->
+        <div class="card">
+            <h2>📋 Daftar Campaign</h2>
+            <div id="listCampaign">
+                <div class="empty-state">Memuat data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Load & render campaign
+        // ============================================
+        async function loadCampaign() {
+            const list = document.getElementById('listCampaign');
+            try {
+                const r = await fetch('/api/admin/campaign');
+                const data = await r.json();
+                renderList(data.campaign);
+            } catch (e) {
+                list.innerHTML = `<div class="empty-state">❌ Gagal memuat: ${e.message}</div>`;
+            }
+        }
+
+        function renderList(daftar) {
+            const list = document.getElementById('listCampaign');
+
+            if (!daftar || daftar.length === 0) {
+                list.innerHTML = '<div class="empty-state">Belum ada campaign. Tambahkan yang pertama!</div>';
+                return;
+            }
+
+            list.innerHTML = daftar.map(c => `
+                <div class="campaign-item">
+                    <div style="flex:1">
+                        <h3>
+                            ${c.nama}
+                            <span class="badge ${c.aktif ? 'badge-aktif' : 'badge-nonaktif'}">
+                                ${c.aktif ? 'Aktif' : 'Nonaktif'}
+                            </span>
+                        </h3>
+                        <div class="campaign-meta">
+                            📍 ${c.lat_toko}, ${c.lon_toko} &nbsp;|&nbsp; 📏 ${c.radius_km} km
+                        </div>
+                        <div class="campaign-konten">${c.konten}</div>
+                    </div>
+                    <div style="margin-left:12px">
+                        <button class="btn btn-danger" onclick="hapusCampaign(${c.id}, '${c.nama.replace(/'/g, "\\'")}')">
+                            🗑️ Hapus
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // Simpan campaign baru
+        // ============================================
+        async function simpanCampaign(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const payload = {
+                nama: formData.get('nama'),
+                lat_toko: parseFloat(formData.get('lat')),
+                lon_toko: parseFloat(formData.get('lon')),
+                radius_km: parseFloat(formData.get('radius_km')),
+                konten: formData.get('konten'),
+                wa_link: formData.get('wa_link') || ''
+            };
+
+            try {
+                const r = await fetch('/api/admin/campaign', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await r.json();
+
+                if (data.status === 'ok') {
+                    notif('✅ Campaign berhasil disimpan!', 'sukses');
+                    form.reset();
+                    form.querySelector('[name=radius_km]').value = '5';
+                    loadCampaign();
+                } else {
+                    notif('❌ Gagal: ' + data.pesan, 'error');
+                }
+            } catch (e) {
+                notif('❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================
+        // Hapus campaign
+        // ============================================
+        async function hapusCampaign(id, nama) {
+            if (!confirm(`Hapus campaign "${nama}"?`)) return;
+
+            try {
+                const r = await fetch(`/api/admin/campaign/${id}`, { method: 'DELETE' });
+                const data = await r.json();
+
+                if (data.status === 'ok') {
+                    notif('✅ Campaign dihapus.', 'sukses');
+                    loadCampaign();
+                } else {
+                    notif('❌ Gagal: ' + data.pesan, 'error');
+                }
+            } catch (e) {
+                notif('❌ Error: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================
+        // Notifikasi
+        // ============================================
+        function notif(pesan, tipe) {
+            const el = document.getElementById('notif');
+            el.textContent = pesan;
+            el.className = 'notif ' + tipe;
+            setTimeout(() => { el.className = 'notif'; }, 4000);
+        }
+
+        // Load awal
+        loadCampaign();
+    </script>
+</body>
+</html>

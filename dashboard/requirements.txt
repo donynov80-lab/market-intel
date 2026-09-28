@@ -1,0 +1,9 @@
+streamlit
+pandas
+plotly
+folium
+streamlit-folium
+pytrends
+requests
+python-dotenv
+rapidfuzz

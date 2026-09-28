@@ -1,0 +1,10 @@
+requests
+flask
+pytrends
+pandas
+python-dotenv
+streamlit
+folium
+streamlit-folium
+plotly
+gunicorn

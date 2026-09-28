@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Promo di Area Kamu</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Market Intel">
+          
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .content { padding: 24px; }
+        #map {
+            height: 260px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            z-index: 1;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 12px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-wa {
+            background: #25D366;
+            text-decoration: none;
+            text-align: center;
+        }
+        .hasil {
+            display: none;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+        .hasil.sukses {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            display: block;
+        }
+        .hasil.gagal {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            display: block;
+        }
+        .hasil.loading {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            display: block;
+            text-align: center;
+        }
+        .hasil h2 { margin-bottom: 8px; font-size: 18px; }
+        .hasil p { font-size: 14px; line-height: 1.6; }
+        .jarak-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .promo-box {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .status-bar {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+        }
+
+        /* Form Lead */
+        .lead-form {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fff8e1;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        .lead-form h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #8a6d00;
+        }
+        .lead-form input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .lead-form input:focus {
+            outline: none;
+            border-color: #ffc107;
+        }
+        .lead-form button {
+            width: 100%;
+            padding: 12px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .lead-form button:hover {
+            background: #1da851;
+        }
+        .lead-form .success-msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .btn-wa-manual {
+            display: block;
+            margin-top: 12px;
+            padding: 14px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .btn-wa-manual:hover {
+            background: #1da851;
+        }
+
+        /* Dropdown Lokasi Manual */
+        .manual-lokasi {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px dashed #ccc;
+        }
+        .manual-lokasi h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #555;
+            text-align: center;
+        }
+        .manual-lokasi select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 8px;
+            background: white;
+            cursor: pointer;
+        }
+        .manual-lokasi select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .manual-lokasi select:disabled {
+            background: #eee;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .manual-lokasi .btn-cek-manual {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .manual-lokasi .btn-cek-manual:hover {
+            background: #5568d3;
+        }
+        .manual-lokasi .btn-cek-manual:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .manual-lokasi small {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Cek Promo di Area Kamu</h1>
+            <p>Aktifkan GPS atau pilih lokasi manual</p>
+        </div>
+        <div class="content">
+            <div id="map"></div>
+
+            <button class="btn" id="btnCek" onclick="cekLokasi()">
+                📍 Cek Promo via GPS
+            </button>
+
+            <div class="manual-lokasi">
+                <h3>🗺️ Atau pilih lokasi manual</h3>
+                <select id="selProvinsi">
+                    <option value="">-- Pilih Provinsi --</option>
+                </select>
+                <select id="selKota" disabled>
+                    <option value="">-- Pilih Kota/Kabupaten --</option>
+                </select>
+                <select id="selKecamatan" disabled>
+                    <option value="">-- Pilih Kecamatan --</option>
+                </select>
+                <select id="selKelurahan" disabled>
+                    <option value="">-- Pilih Kelurahan --</option>
+                </select>
+                <button class="btn-cek-manual" id="btnCekManual" onclick="cekLokasiManual()" disabled>
+                    🔍 Cek Promo di Lokasi Ini
+                </button>
+                <small>Data wilayah dari EMSIFA • Geocoding dari OpenStreetMap</small>
+            </div>
+
+            <div class="hasil" id="hasil"></div>
+        </div>
+        <div class="status-bar" id="status">
+            Siap. Klik tombol di atas untuk mulai.
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ============================================
+        // 1. Inisialisasi Peta
+        // ============================================
+        const map = L.map('map').setView([-6.9147, 107.6098], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 19
+        }).addTo(map);
+
+        let markers = [];
+        let userMarker = null;  // ← untuk hapus marker user sebelumnya
+
+        // ============================================
+        // 2. Fungsi bantu — Tampilkan marker user
+        // ============================================
+        function setUserMarker(lat, lon, label) {
+            // Hapus marker user sebelumnya
+            if (userMarker) {
+                map.removeLayer(userMarker);
+            }
+
+            userMarker = L.marker([lat, lon], {
+                icon: L.divIcon({
+                    className: 'user-marker',
+                    html: '<div style="background:#667eea; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [22, 22]
+                })
+            }).addTo(map).bindPopup('📍 ' + label).openPopup();
+
+            map.setView([lat, lon], 13);
+        }
+
+        // ============================================
+        // 3. Cek Lokasi via GPS
+        // ============================================
+        function cekLokasi() {
+            const btn = document.getElementById('btnCek');
+            const hasil = document.getElementById('hasil');
+            const status = document.getElementById('status');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Mengambil lokasi...';
+
+            hasil.className = 'hasil loading';
+            hasil.innerHTML = '<h2>📍 Menunggu izin GPS...</h2><p>Klik "Izinkan" saat browser bertanya.</p>';
+            status.textContent = 'Menunggu izin GPS...';
+
+            if (!navigator.geolocation) {
+                tampilkanError('Browser tidak mendukung GPS. Pakai lokasi manual.');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                kirimKeServer,
+                gagalGPS,
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+            );
+        }
+
+        async function kirimKeServer(posisi) {
+            const lat = posisi.coords.latitude;
+            const lon = posisi.coords.longitude;
+            const akurasi = posisi.coords.accuracy;
+
+            document.getElementById('status').textContent =
+                `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)} (±${Math.round(akurasi)}m)`;
+
+            setUserMarker(lat, lon, 'Kamu di sini (GPS)');
+
+            await fetchCekLokasi(lat, lon);
+        }
+
+        // ============================================
+        // 4. Cek Lokasi Manual (Dropdown) — DIPERBAIKI
+        // ============================================
+        async function cekLokasiManual() {
+            const btn = document.getElementById('btnCekManual');
+            const hasil = document.getElementById('hasil');
+            const status = document.getElementById('status');
+
+            const prov = document.getElementById('selProvinsi').selectedOptions[0]?.textContent || '';
+            const kota = document.getElementById('selKota').selectedOptions[0]?.textContent || '';
+            const kec = document.getElementById('selKecamatan').selectedOptions[0]?.textContent || '';
+            const kel = document.getElementById('selKelurahan').selectedOptions[0]?.textContent || '';
+
+            if (!prov || !kota || !kec || !kel) {
+                alert('⚠️ Pilih Provinsi, Kota, Kecamatan, dan Kelurahan dulu.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Mencari koordinat...';
+
+            hasil.className = 'hasil loading';
+            hasil.innerHTML = `<h2>🗺️ Mencari koordinat ${kel}...</h2><p>Mohon tunggu 2-5 detik</p>`;
+            status.textContent = `🔍 Geocoding: ${kel}...`;
+
+            // Daftar query fallback: dari paling spesifik ke umum
+            const queries = [
+                `${kel}, ${kec}, ${kota}, ${prov}, Indonesia`,
+                `${kec}, ${kota}, ${prov}, Indonesia`,
+                `${kota}, ${prov}, Indonesia`,
+                `${prov}, Indonesia`
+            ];
+
+            let found = null;
+            let usedQuery = '';
+
+            for (const query of queries) {
+                try {
+                    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=id`;
+
+                    status.textContent = `🔍 Mencoba: ${query.substring(0, 50)}...`;
+
+                    const r = await fetch(url, {
+                        headers: {
+                            'Accept-Language': 'id-ID,id;q=0.9',
+                            'User-Agent': 'MarketIntelApp/1.0'
+                        }
+                    });
+
+                    if (!r.ok) {
+                        console.warn('HTTP error:', r.status);
+                        continue;
+                    }
+
+                    const data = await r.json();
+
+                    if (data && data.length > 0) {
+                        found = {
+                            lat: parseFloat(data[0].lat),
+                            lon: parseFloat(data[0].lon),
+                            display: data[0].display_name
+                        };
+                        usedQuery = query;
+                        break;
+                    }
+
+                    // Jeda 1 detik sebelum coba query berikutnya (hindari rate limit)
+                    await new Promise(res => setTimeout(res, 1000));
+
+                } catch (e) {
+                    console.warn('Query error:', e);
+                    continue;
+                }
+            }
+
+            btn.disabled = false;
+            btn.textContent = '🔍 Cek Promo di Lokasi Ini';
+
+            if (!found) {
+                tampilkanError(
+                    '❌ Lokasi tidak ditemukan di peta. Coba pilih kecamatan/kota lain, ' +
+                    'atau gunakan GPS.'
+                );
+                return;
+            }
+
+            // Tampilkan marker
+            setUserMarker(found.lat, found.lon, `${kel}, ${kec}`);
+
+            status.textContent =
+                `📍 Manual: ${found.lat.toFixed(4)}, ${found.lon.toFixed(4)}`;
+
+            // Kirim ke server
+            await fetchCekLokasi(found.lat, found.lon);
+        }
+
+        // ============================================
+        // 5. Fetch ke API server
+        // ============================================
+        async function fetchCekLokasi(lat, lon) {
+            try {
+                const response = await fetch('/cek-lokasi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: lat, lon: lon })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error ${response.status}`);
+                }
+
+                const data = await response.json();
+                tampilkanHasil(data);
+            } catch (err) {
+                tampilkanError('Gagal hubungi server: ' + err.message);
+            }
+        }
+
+        // ============================================
+        // 6. Tampilkan hasil
+        // ============================================
+        function tampilkanHasil(data) {
+            const btn = document.getElementById('btnCek');
+            const hasil = document.getElementById('hasil');
+            const status = document.getElementById('status');
+
+            btn.disabled = false;
+            btn.textContent = '📍 Cek Promo via GPS';
+
+            gambarkanCampaign(data.semua_campaign || []);
+
+            if (data.status === 'in') {
+                hasil.className = 'hasil sukses';
+                hasil.innerHTML = `
+                    <h2>🎉 Promo Tersedia!</h2>
+                    <p>Kamu berada di <strong>${data.campaign.nama}</strong></p>
+                    <div class="promo-box">${data.campaign.konten}</div>
+
+                    <div class="lead-form" id="leadForm">
+                        <h3>🎁 Isi data untuk klaim promo:</h3>
+                        <input type="text" id="leadNama" placeholder="Nama kamu" required>
+                        <input type="tel" id="leadWa" placeholder="No WhatsApp (contoh: 081234567890)" required>
+                        <button onclick="kirimLead(${data.campaign.id})">
+                            📤 Klaim Promo via WhatsApp
+                        </button>
+                    </div>
+
+                    <p class="jarak-info">📍 Jarak kamu: ${data.jarak_km} km dari toko</p>
+                `;
+                status.textContent = '✅ Promo aktif untuk wilayahmu!';
+
+            } else if (data.status === 'out') {
+                hasil.className = 'hasil gagal';
+                hasil.innerHTML = `
+                    <h2>😔 Maaf, di Luar Area</h2>
+                    <p>${data.pesan}</p>
+                    <p class="jarak-info">📍 Jarak terdekat: ${data.jarak_terdekat_km} km</p>
+                    <p class="jarak-info">Radius promo: ${data.radius_km} km dari ${data.nama_campaign_terdekat}</p>
+                `;
+                status.textContent = '❌ Belum ada promo di areamu.';
+
+            } else {
+                tampilkanError(data.pesan || 'Terjadi kesalahan.');
+            }
+        }
+
+        // ============================================
+        // 7. Gambar campaign di peta
+        // ============================================
+        function gambarkanCampaign(daftar) {
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            daftar.forEach(c => {
+                const circle = L.circle([c.lat, c.lon], {
+                    color: '#667eea',
+                    fillColor: '#667eea',
+                    fillOpacity: 0.15,
+                    radius: c.radius_km * 1000
+                }).addTo(map);
+
+                const marker = L.marker([c.lat, c.lon])
+                    .addTo(map)
+                    .bindPopup(`<strong>${c.nama}</strong><br>Radius ${c.radius_km} km`);
+
+                markers.push(circle, marker);
+            });
+        }
+
+        // ============================================
+        // 8. Error
+        // ============================================
+        function gagalGPS(err) {
+            let pesan = 'Gagal ambil GPS: ';
+            switch(err.code) {
+                case 1: pesan += 'izin ditolak. Pakai lokasi manual.'; break;
+                case 2: pesan += 'lokasi tidak tersedia.'; break;
+                case 3: pesan += 'timeout. Pakai lokasi manual.'; break;
+                default: pesan += err.message;
+            }
+            tampilkanError(pesan);
+        }
+
+        function tampilkanError(pesan) {
+            const hasil = document.getElementById('hasil');
+            const btn = document.getElementById('btnCek');
+
+            hasil.className = 'hasil gagal';
+            hasil.innerHTML = `<h2>⚠️ Error</h2><p>${pesan}</p>`;
+
+            btn.disabled = false;
+            btn.textContent = '📍 Cek Promo via GPS';
+            document.getElementById('status').textContent = '❌ ' + pesan;
+        }
+
+        // ============================================
+        // 9. Kirim Lead
+        // ============================================
+        async function kirimLead(campaignId) {
+            const nama = document.getElementById('leadNama').value.trim();
+            const no_wa = document.getElementById('leadWa').value.trim();
+
+            if (!nama || nama.length < 2) {
+                alert('⚠️ Nama minimal 2 karakter');
+                return;
+            }
+            if (!no_wa || no_wa.replace(/\D/g, '').length < 9) {
+                alert('⚠️ Nomor WA tidak valid');
+                return;
+            }
+
+            try {
+                let lat = null, lon = null;
+                if (navigator.geolocation) {
+                    try {
+                        const pos = await new Promise((res, rej) => {
+                            navigator.geolocation.getCurrentPosition(res, rej, { timeout: 5000 });
+                        });
+                        lat = pos.coords.latitude;
+                        lon = pos.coords.longitude;
+                    } catch(e) { /* skip */ }
+                }
+
+                const r = await fetch('/api/lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nama: nama,
+                        no_wa: no_wa,
+                        campaign_id: campaignId,
+                        lat: lat,
+                        lon: lon
+                    })
+                });
+
+                const data = await r.json();
+
+                if (data.status === 'ok') {
+                    let tombolWa = '';
+                    if (data.wa_link) {
+                        tombolWa = `<a href="${data.wa_link}" target="_blank" class="btn-wa-manual">💬 Lanjut ke WhatsApp</a>`;
+                    }
+
+                    document.getElementById('leadForm').innerHTML = `
+                        <div class="success-msg">
+                            ✅ <strong>Terima kasih, ${nama}!</strong><br>
+                            Data kamu tersimpan.
+                        </div>
+                        ${tombolWa}
+                    `;
+                } else {
+                    alert('❌ Gagal: ' + data.pesan);
+                }
+            } catch (e) {
+                alert('❌ Error: ' + e.message);
+            }
+        }
+
+        // ============================================
+        // 10. Load data wilayah Indonesia
+        // ============================================
+        const API_WILAYAH = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+
+        async function loadProvinsi() {
+            try {
+                const r = await fetch(`${API_WILAYAH}/provinces.json`);
+                const data = await r.json();
+                const sel = document.getElementById('selProvinsi');
+                data.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.name;
+                    sel.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Gagal load provinsi:', e);
+            }
+        }
+
+        document.getElementById('selProvinsi').addEventListener('change', async function() {
+            const provId = this.value;
+            const selKota = document.getElementById('selKota');
+            const selKec = document.getElementById('selKecamatan');
+            const selKel = document.getElementById('selKelurahan');
+
+            selKota.innerHTML = '<option value="">-- Pilih Kota/Kabupaten --</option>';
+            selKec.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            selKel.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            selKota.disabled = true;
+            selKec.disabled = true;
+            selKel.disabled = true;
+            document.getElementById('btnCekManual').disabled = true;
+
+            if (!provId) return;
+
+            selKota.innerHTML = '<option>Loading...</option>';
+            try {
+                const r = await fetch(`${API_WILAYAH}/regencies/${provId}.json`);
+                const data = await r.json();
+                selKota.innerHTML = '<option value="">-- Pilih Kota/Kabupaten --</option>';
+                data.forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k.id;
+                    opt.textContent = k.name;
+                    selKota.appendChild(opt);
+                });
+                selKota.disabled = false;
+            } catch (e) {
+                console.error('Gagal load kota:', e);
+            }
+        });
+
+        document.getElementById('selKota').addEventListener('change', async function() {
+            const kotaId = this.value;
+            const selKec = document.getElementById('selKecamatan');
+            const selKel = document.getElementById('selKelurahan');
+
+            selKec.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            selKel.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            selKec.disabled = true;
+            selKel.disabled = true;
+            document.getElementById('btnCekManual').disabled = true;
+
+            if (!kotaId) return;
+
+            selKec.innerHTML = '<option>Loading...</option>';
+            try {
+                const r = await fetch(`${API_WILAYAH}/districts/${kotaId}.json`);
+                const data = await r.json();
+                selKec.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+                data.forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k.id;
+                    opt.textContent = k.name;
+                    selKec.appendChild(opt);
+                });
+                selKec.disabled = false;
+            } catch (e) {
+                console.error('Gagal load kecamatan:', e);
+            }
+        });
+
+        document.getElementById('selKecamatan').addEventListener('change', async function() {
+            const kecId = this.value;
+            const selKel = document.getElementById('selKelurahan');
+
+            selKel.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            selKel.disabled = true;
+            document.getElementById('btnCekManual').disabled = true;
+
+            if (!kecId) return;
+
+            selKel.innerHTML = '<option>Loading...</option>';
+            try {
+                const r = await fetch(`${API_WILAYAH}/villages/${kecId}.json`);
+                const data = await r.json();
+                selKel.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+                data.forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k.id;
+                    opt.textContent = k.name;
+                    selKel.appendChild(opt);
+                });
+                selKel.disabled = false;
+            } catch (e) {
+                console.error('Gagal load kelurahan:', e);
+            }
+        });
+
+        document.getElementById('selKelurahan').addEventListener('change', function() {
+            document.getElementById('btnCekManual').disabled = !this.value;
+        });
+
+        // ============================================
+        // 11. Load awal
+        // ============================================
+        window.addEventListener('load', async () => {
+            try {
+                const r = await fetch('/api/campaign');
+                const data = await r.json();
+                gambarkanCampaign(data.campaign || []);
+
+                if (data.campaign && data.campaign.length > 0) {
+                    const bounds = data.campaign.map(c => [c.lat, c.lon]);
+                    map.fitBounds(bounds, { padding: [30, 30] });
+                }
+            } catch (e) {
+                console.error('Gagal load campaign:', e);
+            }
+
+            loadProvinsi();
+        });
+    </script>
+</body>
+</html>
