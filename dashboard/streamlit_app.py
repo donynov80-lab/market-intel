@@ -43,7 +43,6 @@ KOTA_PER_PROVINSI = {
 st.set_page_config(page_title="Market Intel Dashboard", page_icon="🧠",
                     layout="wide", initial_sidebar_state="expanded")
 
-# === Session state ===
 for key in ['hasil_scan', 'hasil_analisis', 'info_scan', 'info_analisis', 'hasil_trending']:
     if key not in st.session_state:
         st.session_state[key] = None
@@ -108,39 +107,23 @@ with tab_lokasi:
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         prov_list = load_provinsi()
-        prov = st.selectbox(
-            "🏙️ Provinsi (WAJIB)",
-            prov_list, format_func=lambda x: x['name'],
-            index=9, key="lp",
-            help="Pilih provinsi dulu. Kota/Kecamatan/Kelurahan opsional."
-        )
+        prov = st.selectbox("🏙️ Provinsi (WAJIB)", prov_list,
+                            format_func=lambda x: x['name'], index=9, key="lp")
     with c2:
         kota_list = load_kota(prov['id']) if prov else []
         opsi_kota = [{'id': '', 'name': '-- Semua Kota (opsional) --'}] + kota_list
-        kota = st.selectbox(
-            "🏘️ Kota (opsional)",
-            opsi_kota, format_func=lambda x: x['name'],
-            key="lk",
-            help="Kosongkan untuk cek level provinsi saja"
-        )
+        kota = st.selectbox("🏘️ Kota (opsional)", opsi_kota,
+                            format_func=lambda x: x['name'], key="lk")
     with c3:
         kec_list = load_kecamatan(kota['id']) if kota and kota.get('id') else []
         opsi_kec = [{'id': '', 'name': '-- Semua Kecamatan (opsional) --'}] + kec_list
-        kec = st.selectbox(
-            "🏡 Kecamatan (opsional)",
-            opsi_kec, format_func=lambda x: x['name'],
-            key="lkc",
-            help="Kosongkan untuk cek level kota saja"
-        )
+        kec = st.selectbox("🏡 Kecamatan (opsional)", opsi_kec,
+                           format_func=lambda x: x['name'], key="lkc")
     with c4:
         kel_list = load_kelurahan(kec['id']) if kec and kec.get('id') else []
         opsi_kel = [{'id': '', 'name': '-- Semua Kelurahan (opsional) --'}] + kel_list
-        kel = st.selectbox(
-            "🏠 Kelurahan (opsional)",
-            opsi_kel, format_func=lambda x: x['name'],
-            key="lkl",
-            help="Kosongkan untuk cek level kecamatan saja"
-        )
+        kel = st.selectbox("🏠 Kelurahan (opsional)", opsi_kel,
+                           format_func=lambda x: x['name'], key="lkl")
 
     n_prov = prov['name'] if prov else ''
     n_kota = kota['name'] if kota and kota.get('id') else ''
@@ -168,9 +151,7 @@ with tab_lokasi:
     if st.session_state.get('hasil_trending'):
         hasil = st.session_state.hasil_trending
         st.divider()
-
-        kw_lokal = hasil.get('keyword_lokal', '')
-        st.info(f"🔍 Query analisis: **{kw_lokal}**")
+        st.info(f"🔍 Query analisis: **{hasil.get('keyword_lokal', '')}**")
 
         a, b, c = st.columns(3)
         with a:
@@ -214,13 +195,11 @@ with tab_maps:
 
     st.info("""
     **ℹ️ Alur Pakai:**
-    1. Ketik nama kota → pilih dari dropdown
-    2. Klik **🔍 Scan Sekarang** (untuk lihat daftar toko)
-    3. Klik **🎯 Analisis Peluang** (untuk hitung skor)
-    4. Hasil **tersimpan** — tidak hilang saat ganti input
+    1. Ketik nama kota → **pilih KOTA (bukan KABUPATEN)**
+    2. Klik **🔍 Scan Sekarang** → lihat daftar toko
+    3. Klik **🎯 Analisis Peluang** → hitung skor
     """)
 
-    # === Input Kota ===
     keyword_kota = st.text_input("🔍 Cari Kota/Kabupaten", value="Bandung", key="mk_kota")
     hasil_kota = cari_kota_lengkap(keyword_kota, limit=20)
 
@@ -238,7 +217,6 @@ with tab_maps:
         kota_pilih = st.selectbox("📌 Pilih Kota", list(opsi_kota.keys()), key="mk_pilih")
         kota_data = opsi_kota[kota_pilih]
 
-        # === INFO PENDUDUK & LUAS ===
         if kota_data.get('penduduk'):
             pend = kota_data['penduduk']
             luas = kota_data.get('luas') or 0
@@ -247,29 +225,18 @@ with tab_maps:
                 info += f" | 📐 **Luas**: {luas:.1f} km² | 📊 **Kepadatan**: {pend/luas:.0f} org/km²"
             st.caption(info)
 
-        # Warning kalau belum geocoded
         if kota_data and not kota_data.get('geocoded', False):
-            st.warning(
-                f"⚠️ **{kota_data.get('kota', 'Kota ini')}** belum punya koordinat. "
-                "Scan tidak akan jalan. Coba pilih kota lain."
-            )
+            st.warning(f"⚠️ **{kota_data.get('kota', 'Kota ini')}** belum punya koordinat.")
 
-    # === Input Keyword & Radius ===
     c1, c2 = st.columns([3, 1])
     with c1:
         keyword_scan = st.text_input("Keyword Usaha", value="kue", key="mk_kw")
     with c2:
-        radius_scan = st.number_input(
-            "Radius (km)", 1, 30, 5, key="mk_rad",
-            help="Untuk kota besar (Jakarta/Bandung/Surabaya), pakai 3-8 km. "
-                 "Radius besar bikin scan lambat/gagal."
-        )
+        radius_scan = st.number_input("Radius (km)", 1, 30, 5, key="mk_rad")
 
     if radius_scan > 10:
-        st.warning("⚠️ Radius > 10 km bisa gagal karena server Overpass timeout. "
-                   "Saran: pecah jadi beberapa scan radius kecil.")
+        st.warning("⚠️ Radius > 10 km bisa gagal. Saran: 3-8 km.")
 
-    # === 3 Tombol ===
     col1, col2, col3 = st.columns(3)
     with col1:
         btn_scan = st.button("🔍 Scan Sekarang", key="btn_scan", use_container_width=True)
@@ -278,46 +245,34 @@ with tab_maps:
     with col3:
         btn_reset = st.button("🔄 Reset", key="btn_reset", use_container_width=True)
 
-        # ====== AKSI: SCAN ======
+    # ====== AKSI: SCAN ======
     if btn_scan and kota_data:
         lat, lon = kota_data.get('lat'), kota_data.get('lon')
         if not lat or not lon:
             st.error("Kota tidak punya koordinat. Pilih kota lain.")
         else:
-            # Cek dulu: KOTA atau KABUPATEN?
             nama_kota = kota_data.get('kota', '')
-            is_kabupaten = 'KABUPATEN' in nama_kota.upper()
+            if 'KABUPATEN' in nama_kota.upper():
+                st.info(f"💡 **{nama_kota}** adalah KABUPATEN (rural). "
+                        "Coba pilih **KOTA** untuk hasil lebih baik.")
 
-            if is_kabupaten:
-                st.info(
-                    f"💡 **{nama_kota}** adalah kabupaten (bukan kota). "
-                    "Biasanya wilayah kabupaten lebih luas & rural. "
-                    "Coba pilih **KOTA** untuk hasil lebih baik."
-                )
-
-            # Progress messages
-            status_placeholder = st.empty()
-            status_placeholder.info(f"🔄 Memproses scan {keyword_scan} di {nama_kota}...")
-
-            try:
-                scan_result = scan_sekitar(lat, lon,
-                                            radius_m=int(radius_scan * 1000),
-                                            keyword=keyword_scan, maks=100)
-            except Exception as e:
-                status_placeholder.empty()
-                st.error(f"❌ Exception: {e}")
-                scan_result = {'success': False, 'data': [], 'error': str(e)}
-
-            status_placeholder.empty()
+            with st.spinner(f"Scan {keyword_scan} di {nama_kota}..."):
+                try:
+                    scan_result = scan_sekitar(lat, lon,
+                                                radius_m=int(radius_scan * 1000),
+                                                keyword=keyword_scan, maks=100)
+                except Exception as e:
+                    st.error(f"❌ Exception: {e}")
+                    scan_result = {'success': False, 'data': [], 'error': str(e)}
 
             if not scan_result.get('success'):
-                st.error(f"❌ Gagal scan: {scan_result.get('error', 'Unknown')}")
+                st.error(f"❌ Gagal: {scan_result.get('error', 'Unknown')}")
                 st.warning("""
-                ### 💡 Coba salah satu:
-                1. **Ganti kota** dari KABUPATEN ke KOTA (misal: "Kota Bandung" bukan "Kabupaten Bandung")
-                2. **Tunggu 60 detik** lalu klik Scan lagi (server Overpass rate limit)
-                3. **Ganti keyword**: `restoran`, `cafe`, `hotel`, `toko`
-                4. **Perkecil radius** jadi 3 km
+                **Coba salah satu:**
+                1. Ganti **KABUPATEN** → **KOTA** (misal: "Kota Bandung")
+                2. Tunggu 60 detik → scan lagi
+                3. Ganti keyword: `restoran`, `cafe`, `toko`
+                4. Perkecil radius jadi 3 km
                 """)
             else:
                 hasil_data = scan_result.get('data', [])
@@ -325,20 +280,11 @@ with tab_maps:
                 query_used = scan_result.get('query_used', '')
 
                 if not hasil_data:
-                    st.warning(f"⚠️ 0 hasil untuk '{keyword_scan}' di {nama_kota}")
-                    st.info("""
-                    **Kemungkinan penyebab:**
-                    - Data OpenStreetMap belum lengkap di area ini
-                    - Keyword terlalu spesifik
-                    - Radius terlalu kecil
-                    
-                    **Coba:** Keyword lebih umum (`restoran`, `toko`) atau radius lebih besar.
-                    """)
+                    st.warning(f"⚠️ 0 hasil untuk '{keyword_scan}'")
+                    st.info("Coba keyword lebih umum: `restoran`, `toko`, `cafe`")
                 else:
-                    if from_cache:
-                        st.success(f"✅ {len(hasil_data)} toko (dari cache)")
-                    else:
-                        st.success(f"✅ {len(hasil_data)} toko ditemukan (query: {query_used})")
+                    status = "dari cache" if from_cache else f"query: {query_used}"
+                    st.success(f"✅ {len(hasil_data)} toko ditemukan ({status})")
 
                 st.session_state.hasil_scan = hasil_data
                 st.session_state.info_scan = {
@@ -361,21 +307,18 @@ with tab_maps:
                     info_s['radius'] == radius_scan):
                     reuse = st.session_state.hasil_scan
                     if reuse:
-                        st.info(f"♻️ Reuse {len(reuse)} toko dari scan sebelumnya — tidak scan ulang.")
+                        st.info(f"♻️ Reuse {len(reuse)} toko dari scan.")
 
-            with st.spinner(f"Menganalisis peluang di {kota_pilih}..."):
-                peluang = analisis_peluang(
-                    lat, lon, keyword_scan,
-                    radius_km=radius_scan,
-                    kompetitor_list=reuse
-                )
+            with st.spinner("Menganalisis..."):
+                peluang = analisis_peluang(lat, lon, keyword_scan,
+                                            radius_km=radius_scan,
+                                            kompetitor_list=reuse)
             st.session_state.hasil_analisis = peluang
             st.session_state.info_analisis = {
                 'kota': kota_pilih, 'keyword': keyword_scan,
                 'radius': radius_scan, 'lat': lat, 'lon': lon,
             }
 
-    # ====== RESET ======
     if btn_reset:
         st.session_state.hasil_scan = None
         st.session_state.hasil_analisis = None
@@ -392,28 +335,24 @@ with tab_maps:
         st.divider()
 
         if not hasil:
-            st.warning("Tidak ada toko/usaha ditemukan. Coba keyword lain atau perbesar radius.")
+            st.warning("Tidak ada toko ditemukan.")
         else:
-            st.success(f"✅ **{len(hasil)}** lokasi ditemukan di **{info['kota']}** (radius {info['radius']} km)")
+            st.success(f"✅ **{len(hasil)}** lokasi di **{info['kota']}** (radius {info['radius']} km)")
 
             df = pd.DataFrame([{
-                'No': i+1,
-                'Nama': h['nama'],
-                'Jarak (km)': h['jarak_km'],
-                'Kategori': h['kategori'],
-                'Skor Match': h.get('_skor', '-'),
-                'Alasan': h.get('_alasan', '-'),
-                'Alamat': h['alamat'],
+                'No': i+1, 'Nama': h['nama'], 'Jarak (km)': h['jarak_km'],
+                'Kategori': h['kategori'], 'Skor Match': h.get('_skor', '-'),
+                'Alasan': h.get('_alasan', '-'), 'Alamat': h['alamat'],
                 'Kontak': h['kontak'],
             } for i, h in enumerate(hasil)])
             st.dataframe(df, use_container_width=True, hide_index=True)
 
-            st.subheader("🗺️ Peta Sebaran")
+            st.subheader("🗺️ Peta")
             try:
                 import folium
                 from streamlit_folium import st_folium
                 m = folium.Map(location=[info['lat'], info['lon']], zoom_start=13)
-                folium.Marker([info['lat'], info['lon']], popup="Pusat Scan",
+                folium.Marker([info['lat'], info['lon']], popup="Pusat",
                               icon=folium.Icon(color='red', icon='star', prefix='fa')).add_to(m)
                 folium.Circle([info['lat'], info['lon']], radius=info['radius']*1000,
                               color='red', fill=True, fill_opacity=0.05).add_to(m)
@@ -439,18 +378,17 @@ with tab_maps:
         info = st.session_state.info_analisis
 
         st.divider()
-        st.success(f"✅ Analisis untuk **{info['kota']}** (keyword `{info['keyword']}`)")
+        st.success(f"✅ Analisis untuk **{info['kota']}** (`{info['keyword']}`)")
 
         status = peluang.get('status_data', '')
         if status:
             st.caption(f"📊 **Sumber data**: {status}")
 
         skor = peluang.get('skor_peluang')
-
         c1, c2, c3 = st.columns(3)
         with c1:
             if skor is None:
-                st.metric("⚠️ Skor Peluang", "N/A", help="Data tidak tersedia")
+                st.metric("⚠️ Skor Peluang", "N/A")
             else:
                 warna = "🟢" if skor >= 7 else ("🟡" if skor >= 4 else "🔴")
                 st.metric(f"{warna} Skor Peluang", f"{skor}/10")
@@ -476,53 +414,34 @@ with tab_maps:
         kompetitor = peluang.get('kompetitor', [])
         if kompetitor:
             st.divider()
-            st.subheader(f"🏪 Daftar {len(kompetitor)} Pesaing Terdeteksi")
-
+            st.subheader(f"🏪 Daftar {len(kompetitor)} Pesaing")
             df_pesaing = pd.DataFrame([{
                 'No': i+1, 'Nama Toko': k['nama'], 'Jarak (km)': k['jarak_km'],
                 'Kategori': k['kategori'], 'Alamat': k['alamat'],
-                'Kontak': k['kontak'], 'Jam Buka': k['jam_buka'],
+                'Kontak': k['kontak'],
             } for i, k in enumerate(kompetitor)])
             st.dataframe(df_pesaing, use_container_width=True, hide_index=True)
-
-            st.subheader("🗺️ Peta Pesaing")
-            try:
-                import folium
-                from streamlit_folium import st_folium
-                m = folium.Map(location=[info['lat'], info['lon']], zoom_start=13)
-                folium.Marker([info['lat'], info['lon']], popup="Lokasi Anda",
-                              icon=folium.Icon(color='red', icon='star', prefix='fa')).add_to(m)
-                folium.Circle([info['lat'], info['lon']], radius=info['radius']*1000,
-                              color='red', fill=True, fill_opacity=0.05).add_to(m)
-                for k in kompetitor:
-                    folium.Marker([k['lat'], k['lon']],
-                                  popup=f"<b>{k['nama']}</b><br>{k['jarak_km']} km",
-                                  tooltip=k['nama'],
-                                  icon=folium.Icon(color='orange', icon='store', prefix='fa')).add_to(m)
-                st_folium(m, width=None, height=450, key="map_pesaing")
-            except Exception as e:
-                st.warning(f"Peta error: {e}")
 
             csv2 = df_pesaing.to_csv(index=False).encode('utf-8')
             st.download_button("📥 Download Daftar Pesaing", data=csv2,
                                file_name=f"pesaing_{info['keyword']}.csv",
                                mime="text/csv", key="dl_pesaing")
         elif skor is None:
-            st.info("💡 **Tips**: Klik **🔍 Scan Sekarang** dulu untuk verifikasi apakah area ini benar-benar kosong atau cuma rate limit server.")
+            st.info("💡 Klik **🔍 Scan Sekarang** dulu untuk verifikasi.")
         else:
-            st.success("🎉 **Tidak ada pesaing ditemukan!** Peluang EMAS.")
+            st.success("🎉 **Tidak ada pesaing!** Peluang EMAS.")
 
         st.divider()
         st.subheader("📊 Interpretasi Skor")
         st.markdown("""
         | Skor | Arti |
         |---|---|
-        | **9-10** | 🟢 Peluang Emas (pesaing 0-2) |
-        | **7-8** | 🟢 Peluang Baik (pesaing 3-5) |
-        | **5-6** | 🟡 Sedang (pesaing 6-10) |
-        | **3-4** | 🔴 Sulit (pesaing 11-20) |
-        | **1-2** | 🔴 Jenuh (pesaing >20) |
-        | **N/A** | ⚠️ Data tidak tersedia — coba lagi |
+        | **9-10** | 🟢 Peluang Emas |
+        | **7-8** | 🟢 Peluang Baik |
+        | **5-6** | 🟡 Sedang |
+        | **3-4** | 🔴 Sulit |
+        | **1-2** | 🔴 Jenuh |
+        | **N/A** | ⚠️ Data tidak tersedia |
         """)
 
 
@@ -549,7 +468,7 @@ with tab1:
                     st.error(f"❌ {e}")
 
     st.divider()
-    kws = st.text_input("Bandingkan (pisahkan koma)", value="kue, bolu, lapis, pastry", key="t_cmp")
+    kws = st.text_input("Bandingkan (koma)", value="kue, bolu, lapis, pastry", key="t_cmp")
     if st.button("⚖️ Bandingkan", key="btn_cmp"):
         daftar = [x.strip() for x in kws.split(',') if x.strip()]
         if len(daftar) >= 2:
@@ -682,48 +601,36 @@ with tab6:
 
     with st.expander("🗺️ Cara Pakai Tab Kompetitor", expanded=True):
         st.markdown("""
-        ### 3 Tombol
-        - **🔍 Scan Sekarang** — cari daftar toko/usaha di area
-        - **🎯 Analisis Peluang** — hitung skor peluang buka outlet
-        - **🔄 Reset** — bersihkan hasil
-
-        ### Alur Terbaik
-        1. Ketik nama kota → pilih dari dropdown
-        2. Isi keyword usaha + radius
-        3. Klik **Scan Sekarang** dulu (lihat daftar toko)
-        4. **Langsung** klik **Analisis Peluang** → pakai data scan (cepat + hindari rate limit)
+        ### Tips Penting
+        - Pilih **KOTA** (bukan KABUPATEN) — lebih padat
+        - Radius **3-8 km** untuk kota besar
+        - Kalau error, tunggu **60 detik** lalu coba lagi
 
         ### Skor Peluang
         | Skor | Arti |
         |---|---|
-        | **9-10** | 🟢 Peluang Emas (pesaing 0-2) |
-        | **7-8** | 🟢 Peluang Baik (3-5) |
-        | **5-6** | 🟡 Sedang (6-10) |
-        | **3-4** | 🔴 Sulit (11-20) |
-        | **1-2** | 🔴 Jenuh (>20) |
-        | **N/A** | ⚠️ Rate limit — coba lagi 30 detik |
+        | **9-10** | 🟢 Peluang Emas |
+        | **7-8** | 🟢 Baik |
+        | **5-6** | 🟡 Sedang |
+        | **3-4** | 🔴 Sulit |
+        | **1-2** | 🔴 Jenuh |
         """)
 
     with st.expander("🔬 Sumber Data"):
         st.markdown("""
         - **Google Trends** — skor relatif keyword
-        - **Google Autocomplete** — real query orang Indonesia
-        - **OpenStreetMap** (Overpass API) — data toko/usaha gratis
-        - **EMSIFA API** — data wilayah Indonesia (514 kota)
-        - **Rising Queries** — keyword sedang naik
+        - **Google Autocomplete** — real query
+        - **OpenStreetMap (Overpass)** — toko gratis
+        - **EMSIFA API** — wilayah Indonesia
         """)
 
     with st.expander("⚠️ Kenapa Skor N/A?"):
         st.markdown("""
-        Skor **N/A** muncul kalau:
-        - Server Overpass API sedang **rate limit** (banyak request)
-        - Data OpenStreetMap di area tersebut memang kosong
-        - Koneksi internet terputus
+        - Server Overpass rate limit
+        - Data OSM kurang lengkap di area
+        - Koneksi terputus
 
-        **Solusi:**
-        1. Tunggu 30-60 detik
-        2. Klik **🔍 Scan Sekarang** dulu untuk verifikasi
-        3. Coba keyword lain: `restoran`, `cafe`, `toko`
+        **Solusi:** tunggu 60 detik, ganti keyword, atau pilih KOTA bukan KABUPATEN.
         """)
 
 st.divider()
