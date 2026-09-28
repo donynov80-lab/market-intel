@@ -278,29 +278,69 @@ with tab_maps:
     with col3:
         btn_reset = st.button("🔄 Reset", key="btn_reset", use_container_width=True)
 
-    # ====== AKSI: SCAN ======
+        # ====== AKSI: SCAN ======
     if btn_scan and kota_data:
         lat, lon = kota_data.get('lat'), kota_data.get('lon')
         if not lat or not lon:
-            st.error("Kota tidak punya koordinat.")
+            st.error("Kota tidak punya koordinat. Pilih kota lain.")
         else:
-            with st.spinner(f"Scan {keyword_scan} di radius {radius_scan} km..."):
+            # Cek dulu: KOTA atau KABUPATEN?
+            nama_kota = kota_data.get('kota', '')
+            is_kabupaten = 'KABUPATEN' in nama_kota.upper()
+
+            if is_kabupaten:
+                st.info(
+                    f"💡 **{nama_kota}** adalah kabupaten (bukan kota). "
+                    "Biasanya wilayah kabupaten lebih luas & rural. "
+                    "Coba pilih **KOTA** untuk hasil lebih baik."
+                )
+
+            # Progress messages
+            status_placeholder = st.empty()
+            status_placeholder.info(f"🔄 Memproses scan {keyword_scan} di {nama_kota}...")
+
+            try:
                 scan_result = scan_sekitar(lat, lon,
                                             radius_m=int(radius_scan * 1000),
                                             keyword=keyword_scan, maks=100)
+            except Exception as e:
+                status_placeholder.empty()
+                st.error(f"❌ Exception: {e}")
+                scan_result = {'success': False, 'data': [], 'error': str(e)}
 
-                if scan_result.get('success') and not scan_result.get('data'):
-                    if keyword_scan.lower() not in ['restoran', 'cafe', 'toko', 'hotel']:
-                        st.info(f"Keyword '{keyword_scan}' tidak ada hasil. Fallback ke 'restoran'...")
-                        scan_result = scan_sekitar(lat, lon,
-                                                    radius_m=int(radius_scan * 1000),
-                                                    keyword='restoran', maks=100)
+            status_placeholder.empty()
 
             if not scan_result.get('success'):
-                st.error(f"❌ {scan_result.get('error', 'Gagal scan')}")
-                st.warning("💡 Server Overpass sedang rate limit. Tunggu 30-60 detik, coba lagi.")
+                st.error(f"❌ Gagal scan: {scan_result.get('error', 'Unknown')}")
+                st.warning("""
+                ### 💡 Coba salah satu:
+                1. **Ganti kota** dari KABUPATEN ke KOTA (misal: "Kota Bandung" bukan "Kabupaten Bandung")
+                2. **Tunggu 60 detik** lalu klik Scan lagi (server Overpass rate limit)
+                3. **Ganti keyword**: `restoran`, `cafe`, `hotel`, `toko`
+                4. **Perkecil radius** jadi 3 km
+                """)
             else:
-                st.session_state.hasil_scan = scan_result.get('data', [])
+                hasil_data = scan_result.get('data', [])
+                from_cache = scan_result.get('from_cache', False)
+                query_used = scan_result.get('query_used', '')
+
+                if not hasil_data:
+                    st.warning(f"⚠️ 0 hasil untuk '{keyword_scan}' di {nama_kota}")
+                    st.info("""
+                    **Kemungkinan penyebab:**
+                    - Data OpenStreetMap belum lengkap di area ini
+                    - Keyword terlalu spesifik
+                    - Radius terlalu kecil
+                    
+                    **Coba:** Keyword lebih umum (`restoran`, `toko`) atau radius lebih besar.
+                    """)
+                else:
+                    if from_cache:
+                        st.success(f"✅ {len(hasil_data)} toko (dari cache)")
+                    else:
+                        st.success(f"✅ {len(hasil_data)} toko ditemukan (query: {query_used})")
+
+                st.session_state.hasil_scan = hasil_data
                 st.session_state.info_scan = {
                     'kota': kota_pilih, 'keyword': keyword_scan,
                     'radius': radius_scan, 'lat': lat, 'lon': lon,

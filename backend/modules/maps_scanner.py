@@ -327,124 +327,146 @@ OVERPASS_ENDPOINTS = [
 ]
 
 
-def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=3, smart=True):
-    """Scan POI + smart filter + CACHE + multi-endpoint fallback."""
+def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart=True):
+    """Scan POI + SMART FALLBACK (query simpel dulu, baru kompleks)."""
     keyword_lower = keyword.lower()
     radius_km = radius_m / 1000
-
-    # Validasi: kota besar → batasi radius
-    KOTA_BESAR = ['jakarta', 'surabaya', 'bandung', 'medan', 'semarang',
-                  'makassar', 'palembang', 'tangerang', 'bekasi', 'depok']
-    is_kota_besar = any(k in keyword_lower for k in KOTA_BESAR)
 
     # === 1. CACHE ===
     from backend.db.cache_db import get_cached, save_cache
     cached = get_cached(lat, lon, radius_km, keyword_lower)
     if cached:
-        print(f"♻️ Cache ({cached['jumlah']} toko)")
-        return {
-            'success': True, 'data': cached['data'][:maks],
-            'error': '', 'from_cache': True,
-            'cached_at': cached['cached_at'],
-        }
+        print(f"♻️ Cache hit: {cached['jumlah']} toko")
+        return {'success': True, 'data': cached['data'][:maks], 'error': '',
+                'from_cache': True}
 
-    # === 2. BUILD QUERY ===
+    # === 2. DAFTAR QUERY — DARI SIMPEL KE KOMPLEKS ===
+    queries = []
+
+    # Query 1: SANGAT SIMPLE — semua shop/amenity di radius (raw)
+    queries.append({
+        'name': 'raw-all-shops',
+        'query': f"""
+[out:json][timeout:25];
+(
+  node["shop"](around:{radius_m},{lat},{lon});
+  way["shop"](around:{radius_m},{lat},{lon});
+  node["amenity"](around:{radius_m},{lat},{lon});
+  way["amenity"](around:{radius_m},{lat},{lon});
+);
+out center {maks};
+""".strip()
+    })
+
+    # Query 2: MEDIUM — pakai tag dari keyword
     if smart:
-        from backend.modules.business_classifier import (
-            expand_keyword, cari_konfigurasi_keyword
-        )
-        expanded = expand_keyword(keyword)
-        config = cari_konfigurasi_keyword(keyword)
-        tags = config.get('osm_tags', [])
+        try:
+            from backend.modules.business_classifier import cari_konfigurasi_keyword
+            config = cari_konfigurasi_keyword(keyword)
+            tags = config.get('osm_tags', [])
+        except:
+            tags = KEYWORD_TO_OSM.get(keyword_lower, [])
     else:
-        expanded = [keyword]
         tags = KEYWORD_TO_OSM.get(keyword_lower, [])
 
-    if not tags:
-        tags = [f'shop={keyword_lower}']
+    if tags:
+        tq = []
+        for tag in tags:
+            if '=' in tag:
+                k, v = tag.split('=')
+                tq.append(f'node["{k}"="{v}"](around:{radius_m},{lat},{lon});')
+                tq.append(f'way["{k}"="{v}"](around:{radius_m},{lat},{lon});')
+        if tq:
+            queries.append({
+                'name': f'tag-{keyword}',
+                'query': f"""
+[out:json][timeout:25];
+(
+  {chr(10).join(tq)}
+);
+out center {maks};
+""".strip()
+            })
 
-    tag_queries = []
-    for tag in tags:
-        if '=' in tag:
-            k, v = tag.split('=')
-            tag_queries.append(f'node["{k}"="{v}"](around:{radius_m},{lat},{lon});')
-            tag_queries.append(f'way["{k}"="{v}"](around:{radius_m},{lat},{lon});')
+    # Query 3: by name (paling akhir, untuk kasus khusus)
+    queries.append({
+        'name': f'name-{keyword}',
+        'query': f"""
+[out:json][timeout:25];
+(
+  node["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
+  way["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
+);
+out center {maks};
+""".strip()
+    })
 
-    for kw in expanded[:3]:
-        tag_queries.append(f'node["name"~"{kw}",i](around:{radius_m},{lat},{lon});')
-        tag_queries.append(f'way["name"~"{kw}",i](around:{radius_m},{lat},{lon});')
-
-    overpass_query = f"""
-    [out:json][timeout:30];
-    (
-      {chr(10).join(tag_queries)}
-    );
-    out center {maks};
-    """.strip()
+    endpoints = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
+        "https://overpass.osm.ch/api/interpreter",
+    ]
 
     headers = {
-        "User-Agent": "Mozilla/5.0 MarketIntelApp/1.0",
+        "User-Agent": "Mozilla/5.0",
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-    # === 3. COBA SEMUA ENDPOINT (5 server x 3 retry) ===
-    for attempt in range(retry):
-        for endpoint in OVERPASS_ENDPOINTS:
-            try:
-                print(f"🔍 Attempt {attempt+1}: {endpoint.split('/')[2]}")
-                r = requests.post(endpoint, data={"data": overpass_query},
-                                   headers=headers, timeout=90)
+    # === 3. LOOP: QUERY × ENDPOINT × RETRY ===
+    for q in queries:
+        print(f"🔍 Coba query: {q['name']}")
+        for attempt in range(retry):
+            for endpoint in endpoints:
+                try:
+                    print(f"   → {endpoint.split('/')[2]} (attempt {attempt+1})")
+                    r = requests.post(endpoint, data={"data": q['query']},
+                                       headers=headers, timeout=60)
 
-                if r.status_code == 200:
-                    data = r.json()
-                    hasil = _parse_overpass_result(data, lat, lon, maks)
+                    if r.status_code == 200:
+                        data = r.json()
+                        raw = _parse_overpass_result(data, lat, lon, maks)
+                        print(f"   ✅ {len(raw)} hasil mentah")
 
-                    if smart and hasil:
-                        from backend.modules.business_classifier import filter_bisnis_smart
-                        filtered = filter_bisnis_smart(hasil, keyword, threshold=8)
-                        final = filtered if filtered else hasil
+                        # Smart filter (kalau smart)
+                        if smart and raw and q['name'] != 'raw-all-shops':
+                            try:
+                                from backend.modules.business_classifier import filter_bisnis_smart
+                                filtered = filter_bisnis_smart(raw, keyword, threshold=8)
+                                final = filtered if filtered else raw
+                            except:
+                                final = raw
+                        else:
+                            final = raw
+
+                        if final:
+                            save_cache(lat, lon, radius_km, keyword_lower, final)
+                            return {'success': True, 'data': final, 'error': '',
+                                    'from_cache': False, 'query_used': q['name']}
+
+                        # Kalau 0 hasil, coba query berikutnya
+                        break
+                    elif r.status_code in [429, 504]:
+                        sleep(3)
+                        continue
                     else:
-                        final = hasil
-
-                    if final:
-                        save_cache(lat, lon, radius_km, keyword_lower, final)
-                        print(f"💾 Cache disimpan ({len(final)} toko)")
-
-                    return {
-                        'success': True, 'data': final, 'error': '',
-                        'from_cache': False,
-                    }
-                elif r.status_code in [429, 504]:
-                    print(f"⚠️ {endpoint}: rate limit/timeout")
-                    sleep(3)
+                        print(f"   ⚠️ Status {r.status_code}")
+                        continue
+                except Exception as e:
+                    print(f"   ⚠️ {str(e)[:60]}")
                     continue
-                else:
-                    print(f"⚠️ {endpoint}: status {r.status_code}")
-                    continue
-            except Exception as e:
-                print(f"⚠️ {endpoint.split('/')[2]}: {str(e)[:60]}")
-                continue
 
-        if attempt < retry - 1:
-            print(f"🔄 Retry {attempt+2}/{retry} — tunggu 5 detik...")
-            sleep(5)
+            if attempt < retry - 1:
+                sleep(2)
 
     # === 4. SEMUA GAGAL ===
-    # Coba cache lama (walaupun expired) sebagai fallback terakhir
-    from backend.db.cache_db import get_cached
-    old = get_cached(lat, lon, radius_km, keyword_lower, max_age_hours=8760)  # 1 tahun
-    if old:
-        print("♻️ Pakai cache lama sebagai fallback")
-        return {
-            'success': True, 'data': old['data'][:maks], 'error': '',
-            'from_cache': True, 'cached_at': old['cached_at'],
-            'warning': 'Pakai cache lama — server Overpass sedang down',
-        }
-
     return {
-        'success': False, 'data': [],
-        'error': 'Semua 5 server Overpass tidak merespons. Tunggu 60 detik, coba lagi.',
+        'success': False,
+        'data': [],
+        'error': 'Semua server Overpass tidak merespons atau tidak ada hasil. '
+                 'Coba: (1) Tunggu 60 detik, (2) Ganti kota lebih spesifik '
+                 '(KOTA bukan KABUPATEN), (3) Ganti keyword ke restoran/cafe.',
     }
 
 
