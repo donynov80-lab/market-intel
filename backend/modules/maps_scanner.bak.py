@@ -1,11 +1,6 @@
 """
 maps_scanner.py
 Scan lokasi/toko pakai Overpass API + Smart Classifier + Cache.
-
-Update terbaru:
-- Setiap bisnis hasil scan OTOMATIS diklasifikasi ke KBLI 4-digit (subgolongan)
-- Helper group_by_subgolongan() untuk dropdown filter
-- Class MapsScanner (adapter OOP) untuk kompatibilitas dashboard
 """
 import requests
 from time import sleep
@@ -80,22 +75,6 @@ KEYWORD_TO_OSM = {
 }
 
 
-# Mapping kategori UI dashboard -> keyword internal
-KATEGORI_KE_KEYWORD = {
-    "semua": "toko",
-    "makanan": "restoran",
-    "minuman": "minuman",
-    "retail": "sembako",
-    "kesehatan": "apotek",
-    "pendidikan": "buku",
-    "otomotif": "bengkel",
-    "jasa": "salon",
-    "wisata": "hotel",
-    "olahraga": "cafe",
-    "miras": "minuman",
-}
-
-
 _KOTA_CACHE = None
 
 
@@ -128,6 +107,7 @@ def _load_semua_kota_online():
 
 def cari_kota_lengkap(keyword, limit=50):
     import sqlite3
+    from pathlib import Path
 
     keyword_lower = str(keyword).lower().strip()
     hasil_raw = []
@@ -193,77 +173,6 @@ def cari_kota_lengkap(keyword, limit=50):
     return hasil_raw[:limit]
 
 
-# =====================================================================
-# ENRICHMENT: Klasifikasi KBLI per bisnis
-# =====================================================================
-def _enrich_dengan_kbli(businesses, prefer_level=4):
-    """
-    Tambahkan field KBLI (kode 2/3/4/5 digit + judul) ke setiap bisnis.
-    Tidak mengubah struktur lama — hanya menambah key baru.
-    Kalau classifier tidak siap, dikembalikan apa adanya.
-    """
-    if not businesses:
-        return businesses
-
-    try:
-        from backend.modules.business_classifier import get_classifier
-        clf = get_classifier(prefer_level=prefer_level)
-    except Exception as e:
-        print(f"[Enrich] Classifier tidak tersedia: {e}")
-        for b in businesses:
-            b.setdefault('code_4digit', None)
-            b.setdefault('subgolongan_title', None)
-        return businesses
-
-    for b in businesses:
-        # Ambil tag dari field 'kategori' (format "shop=bakery, amenity=cafe")
-        kat_str = b.get('kategori', '') or ''
-        tags = [t.strip() for t in kat_str.split(',') if '=' in t]
-        try:
-            cls = clf.classify(name=b.get('nama', ''), tags=tags)
-            hier = cls.get('hierarchy') or {}
-            sub = hier.get('subgol') or {}
-            gol = hier.get('gol') or {}
-            b['code_2digit'] = cls.get('code_2digit')
-            b['code_3digit'] = cls.get('code_3digit')
-            b['code_4digit'] = cls.get('code_4digit')
-            b['code_5digit'] = cls.get('code_5digit')
-            b['kbli_title'] = cls.get('title')
-            b['kbli_source'] = cls.get('source')
-            b['kbli_confidence'] = cls.get('confidence', 0.0)
-            b['subgolongan_title'] = sub.get('title') if isinstance(sub, dict) else None
-            b['golongan_title'] = gol.get('title') if isinstance(gol, dict) else None
-        except Exception as e:
-            print(f"[Enrich] Gagal klasifikasi '{b.get('nama')}': {e}")
-            b.setdefault('code_4digit', None)
-            b.setdefault('subgolongan_title', None)
-
-    return businesses
-
-
-def group_by_subgolongan(businesses):
-    """
-    Kelompokkan bisnis hasil scan per KBLI 4-digit.
-    Return: {code_4digit: {'code_4digit','title','count','businesses'}}
-    """
-    groups = {}
-    for b in businesses or []:
-        code = b.get('code_4digit') or 'UNCLASSIFIED'
-        if code not in groups:
-            groups[code] = {
-                'code_4digit': code,
-                'title': b.get('subgolongan_title') or 'Tidak terklasifikasi',
-                'count': 0,
-                'businesses': [],
-            }
-        groups[code]['count'] += 1
-        groups[code]['businesses'].append(b)
-    return groups
-
-
-# =====================================================================
-# PARSER OVERPASS
-# =====================================================================
 def _parse_overpass_result(data, lat, lon, maks):
     hasil = []
     for el in data.get('elements', []):
@@ -304,20 +213,15 @@ def _parse_overpass_result(data, lat, lon, maks):
     return hasil[:maks]
 
 
-# =====================================================================
-# SCAN UTAMA (dipertahankan + enrichment)
-# =====================================================================
 def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart=True):
-    """Scan POI + SMART FILTER + KBLI ENRICHMENT pada semua hasil."""
+    """Scan POI + SMART FILTER pada SEMUA query."""
     keyword_lower = keyword.lower()
     radius_km = radius_m / 1000
 
     from backend.db.cache_db import get_cached, save_cache
     cached = get_cached(lat, lon, radius_km, keyword_lower)
     if cached:
-        # Cache lama mungkin belum punya field KBLI — enrich ulang
-        data = _enrich_dengan_kbli(cached['data'][:maks])
-        return {'success': True, 'data': data,
+        return {'success': True, 'data': cached['data'][:maks],
                 'error': '', 'from_cache': True, 'query_used': 'cache'}
 
     # === BUILD QUERIES (prioritas: tag spesifik → name → raw) ===
@@ -404,21 +308,19 @@ out center {maks};"""
                         if smart and raw:
                             try:
                                 from backend.modules.business_classifier import filter_bisnis_smart
+                                # Threshold lebih rendah untuk fallback raw-all
                                 threshold = 6 if q['name'] == 'raw-all' else 8
                                 filtered = filter_bisnis_smart(raw, keyword, threshold=threshold)
                                 final = filtered
                             except Exception as e:
                                 print(f"⚠️ Filter error: {e}")
-                                final = []
+                                final = []  # jangan return raw, biar coba query berikutnya
                         else:
                             final = raw
 
                         print(f"   ✅ {len(raw)} mentah → {len(final)} setelah filter")
 
                         if final:
-                            # === ENRICHMENT KBLI (BARU) ===
-                            final = _enrich_dengan_kbli(final)
-
                             save_cache(lat, lon, radius_km, keyword_lower, final)
                             return {'success': True, 'data': final,
                                     'error': '', 'from_cache': False,
@@ -438,8 +340,7 @@ out center {maks};"""
     # Fallback: cache lama
     old = get_cached(lat, lon, radius_km, keyword_lower, max_age_hours=8760)
     if old:
-        data = _enrich_dengan_kbli(old['data'][:maks])
-        return {'success': True, 'data': data,
+        return {'success': True, 'data': old['data'][:maks],
                 'error': '', 'from_cache': True, 'query_used': 'old-cache'}
 
     return {
@@ -448,9 +349,6 @@ out center {maks};"""
     }
 
 
-# =====================================================================
-# ANALISIS PELUANG (existing, dipertahankan)
-# =====================================================================
 def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=None):
     hasil = {
         'lat': lat, 'lon': lon, 'keyword': keyword, 'radius_km': radius_km,
@@ -539,73 +437,3 @@ def analisis_peluang(*args, **kwargs):
                 kwargs.get('keyword', 'kue'), kwargs.get('radius_km', 5),
                 kwargs.get('kompetitor_list', None))
         return []
-
-
-# =====================================================================
-# ADAPTER CLASS: Kompatibilitas dengan dashboard (streamlit_app.py)
-# =====================================================================
-class MapsScanner:
-    """
-    Wrapper OOP untuk fungsi scan_sekitar.
-    Bikin interface seragam: scanner.scan(lat, lon, radius, kategori).
-    """
-
-    def scan(self, lat, lon, radius=1000, kategori="semua"):
-        keyword = KATEGORI_KE_KEYWORD.get(kategori, "toko")
-        hasil = scan_sekitar(lat, lon, radius_m=radius, keyword=keyword, maks=200)
-
-        data = hasil.get('data', []) or []
-        return {
-            'success': hasil.get('success', False),
-            'count': len(data),
-            'businesses': data,
-            'by_subgolongan': group_by_subgolongan(data),
-            'error': hasil.get('error', ''),
-            'from_cache': hasil.get('from_cache', False),
-            'query_used': hasil.get('query_used', ''),
-        }
-
-    def scan_dan_filter_miras(self, lat, lon, radius=1000):
-        """Shortcut: hanya tampilkan subgolongan 4722."""
-        hasil = self.scan(lat, lon, radius, kategori="miras")
-        if not hasil['success']:
-            return hasil
-        hasil['businesses'] = [
-            b for b in hasil['businesses'] if b.get('code_4digit') == "4722"
-        ]
-        hasil['count'] = len(hasil['businesses'])
-        hasil['by_subgolongan'] = group_by_subgolongan(hasil['businesses'])
-        return hasil
-
-
-# =====================================================================
-# Quick test
-# =====================================================================
-if __name__ == "__main__":
-    print("=" * 60)
-    print("MAPS SCANNER + KBLI ENRICHMENT — SELF TEST")
-    print("=" * 60)
-
-    # Test 1: scan Monas
-    hasil = scan_sekitar(lat=-6.1754, lon=106.8272, radius_m=800,
-                          keyword="restoran", maks=20)
-    print(f"\n[Scan] Success={hasil['success']}, N={len(hasil.get('data', []))}, "
-          f"Cache={hasil.get('from_cache')}")
-    if hasil['success'] and hasil['data']:
-        print("\nContoh 3 hasil + KBLI:")
-        for b in hasil['data'][:3]:
-            print(f"  • {b['nama']}")
-            print(f"      KBLI 4d : {b.get('code_4digit')}")
-            print(f"      Subgol  : {b.get('subgolongan_title')}")
-
-        print("\n[Group by subgolongan]")
-        groups = group_by_subgolongan(hasil['data'])
-        for code, info in sorted(groups.items(), key=lambda x: -x[1]['count']):
-            print(f"  {code}  {info['title'][:50]}  ({info['count']})")
-
-    # Test 2: adapter class
-    print("\n[Adapter Class MapsScanner]")
-    scanner = MapsScanner()
-    out = scanner.scan(-6.1754, 106.8272, radius=800, kategori="makanan")
-    print(f"  count={out['count']}, success={out['success']}, "
-          f"subgol={len(out['by_subgolongan'])} grup")
