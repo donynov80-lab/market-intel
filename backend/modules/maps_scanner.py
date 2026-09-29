@@ -478,12 +478,12 @@ def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart
         tq = []
         for k, v in osm_filter.items():
             # Regex multi-value: shop~"alcohol|wine|beverages"
-            tq.append(f'node["{k}"~"^({v})$"](around:{radius_m},{lat},{lon});')
-            tq.append(f'way["{k}"~"^({v})$"](around:{radius_m},{lat},{lon});')
+            tq.append(f'node["{k}"~"{v}"](around:{radius_m},{lat},{lon});')
+            tq.append(f'way["{k}"~"{v}"](around:{radius_m},{lat},{lon});')
         if tq:
             queries.append({
                 'name': f'osm-filter-{keyword}',
-                'query': f"""[out:json][timeout:25];
+                'query': f"""[out:json][timeout:60];
 (
   {chr(10).join(tq)}
 );
@@ -493,7 +493,7 @@ out center 500;"""
     # ---------- Query 2: BY NAME (fallback) ----------
     queries.append({
         'name': f'name-{keyword}',
-        'query': f"""[out:json][timeout:25];
+        'query': f"""[out:json][timeout:60];
 (
   node["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
   way["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
@@ -504,7 +504,7 @@ out center {maks};"""
     # ---------- Query 3: RAW-ALL (naikkan limit 100 -> 300) ----------
     queries.append({
         'name': 'raw-all',
-        'query': f"""[out:json][timeout:30];
+        'query': f"""[out:json][timeout:60];
 (
   node["shop"](around:{radius_m},{lat},{lon});
   way["shop"](around:{radius_m},{lat},{lon});
@@ -517,12 +517,14 @@ out center 300;"""
     })
 
     endpoints = [
-        # Diurut dari yang PALING stabil (hasil tes 2026-09-29)
+        # Diurut dari yang PALING stabil
         "https://overpass-api.de/api/interpreter",
         "https://overpass.private.coffee/api/interpreter",
         "https://overpass.osm.ch/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter",   # sering 504, taruh belakang
+        "https://overpass.kumi.systems/api/interpreter",
     ]
+    # Timeout lebih longgar: Streamlit Cloud → server Eropa butuh waktu
+    HTTP_TIMEOUT = 120
 
     headers = {
         "User-Agent": "MarketIntelDashboard/1.0 (contact: donynov80@gmail.com)",
@@ -536,8 +538,7 @@ out center 300;"""
             for endpoint in endpoints:
                 try:
                     r = requests.post(endpoint, data={"data": q['query']},
-                                       headers=headers, timeout=60)
-
+                                       headers=headers, timeout=HTTP_TIMEOUT)
                     if r.status_code == 200:
                         data = r.json()
                         raw = _parse_overpass_result(data, lat, lon, maks)
