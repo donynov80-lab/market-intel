@@ -1,41 +1,31 @@
-"""
-cek_db.py
-Script untuk melihat isi database trending.
-"""
-import sys
-from pathlib import Path
+"""cek_db.py — Diagnosa isi market_intel.db"""
+import sqlite3
+import os
 
-# Biar bisa import dari backend/
-sys.path.insert(0, str(Path(__file__).parent))
+DB = "market_intel.db"
 
-from backend.db.trending_db import ambil_trending, hitung_total, list_region
+if not os.path.exists(DB):
+    print(f"❌ {DB} tidak ditemukan")
+    raise SystemExit(1)
 
+print(f"\n📦 DB: {DB} ({os.path.getsize(DB)/1024:.1f} KB)\n")
 
-def main():
-    print("=" * 55)
-    print("📊 CEK DATABASE TRENDING")
-    print("=" * 55)
+con = sqlite3.connect(DB)
+c = con.cursor()
 
-    total = hitung_total()
-    regions = list_region()
+c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+tables = [r[0] for r in c.fetchall()]
 
-    print(f"\nTotal baris : {total}")
-    print(f"Region      : {regions if regions else '(kosong)'}\n")
+print(f"=== {len(tables)} TABEL DITEMUKAN ===\n")
+for t in tables:
+    c.execute(f"SELECT COUNT(*) FROM {t}")
+    n = c.fetchone()[0]
+    print(f"  📋 {t:<30} {n:>6} baris")
+    c.execute(f"PRAGMA table_info({t})")
+    cols = c.fetchall()
+    for col in cols:
+        print(f"       - {col[1]:<25} {col[2]}")
+    print()
 
-    if total == 0:
-        print("⚠️  Database masih kosong.")
-        print("Jalankan dulu: python backend/modules/trending_collector.py")
-        return
-
-    for region in regions:
-        print("=" * 55)
-        print(f"🌏 Region: {region}")
-        print("=" * 55)
-        rows = ambil_trending(region=region, limit=20)
-        for rank, kw, collected_at in rows:
-            print(f"{rank:2}. {kw}")
-        print()
-
-
-if __name__ == "__main__":
-    main()
+con.close()
+print("=== SELESAI ===")
