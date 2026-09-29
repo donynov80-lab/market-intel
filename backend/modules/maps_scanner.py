@@ -441,9 +441,29 @@ def _parse_overpass_result(data, lat, lon, maks):
 # =====================================================================
 # SCAN UTAMA (diperbaiki)
 # =====================================================================
+def _area_selector(radius_m, lat, lon):
+    """
+    Return string area selector untuk query Overpass.
+    - radius <= 25 km: pakai 'around:...' (lingkaran presisi)
+    - radius > 25 km : pakai bbox (kotak) — JAUH lebih efisien & anti-timeout
+    """
+    from math import radians, cos
+    if radius_m <= 25000:
+        return f"(around:{radius_m},{lat},{lon})"
+    # Hitung bounding box
+    dlat = radius_m / 111000.0
+    dlon = radius_m / (111000.0 * max(cos(radians(lat)), 0.01))
+    south = lat - dlat
+    north = lat + dlat
+    west = lon - dlon
+    east = lon + dlon
+    return f"({south:.6f},{west:.6f},{north:.6f},{east:.6f})"
+
+
 def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=1, smart=True):
     keyword_lower = keyword.lower().strip()
     radius_km = radius_m / 1000
+    _area = _area_selector(radius_m, lat, lon)
 
     from backend.db.cache_db import get_cached, save_cache
     cached = get_cached(lat, lon, radius_km, keyword_lower)
@@ -483,7 +503,7 @@ def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=1, smart
                 if not val:
                     continue
                 # 'nwr' = node + way + relation, lebih clean & cepat
-                tq.append(f'nwr["{k}"="{val}"](around:{radius_m},{lat},{lon});')
+                tq.append(f'nwr["{k}"="{val}"]{_area};')
         if tq:
             queries.append({
                 'name': f'osm-filter-{keyword}',
@@ -499,8 +519,8 @@ out center 500;"""
         'name': f'name-{keyword}',
         'query': f"""[out:json][timeout:60];
 (
-  node["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
-  way["name"~"{keyword}",i](around:{radius_m},{lat},{lon});
+  node["name"~"{keyword}",i]{_area};
+  way["name"~"{keyword}",i]{_area};
 );
 out center {maks};"""
     })
@@ -510,12 +530,12 @@ out center {maks};"""
         'name': 'raw-all',
         'query': f"""[out:json][timeout:60];
 (
-  node["shop"](around:{radius_m},{lat},{lon});
-  way["shop"](around:{radius_m},{lat},{lon});
-  node["amenity"](around:{radius_m},{lat},{lon});
-  way["amenity"](around:{radius_m},{lat},{lon});
-  node["craft"](around:{radius_m},{lat},{lon});
-  way["craft"](around:{radius_m},{lat},{lon});
+  node["shop"]{_area};
+  way["shop"]{_area};
+  node["amenity"]{_area};
+  way["amenity"]{_area};
+  node["craft"]{_area};
+  way["craft"]{_area};
 );
 out center 300;"""
     })

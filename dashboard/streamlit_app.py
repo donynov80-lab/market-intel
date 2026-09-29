@@ -213,42 +213,116 @@ with tab_maps:
     4. Klik **🎯 Analisis Peluang** → hitung skor
     """)
 
-    keyword_kota = st.text_input("🔍 Cari Kota/Kabupaten", value="Bandung", key="mk_kota")
-    hasil_kota = cari_kota_lengkap(keyword_kota, limit=20)
+    # === MODE PEMILIHAN LOKASI ===
+    mode_lokasi = st.radio(
+        "📍 Pilih mode pemilihan lokasi:",
+        ["🗺️ Klik di Peta", "📋 Dropdown Wilayah"],
+        horizontal=True,
+        key="mk_mode",
+    )
 
     kota_data = None
     kota_pilih = None
-    if not hasil_kota:
-        st.warning(f"Kota '{keyword_kota}' tidak ditemukan.")
+
+    # ---- MODE 1: KLIK PETA ----
+    if mode_lokasi == "🗺️ Klik di Peta":
+        from backend.modules.peta_picker import render_peta_picker
+
+        c_rad1, c_rad2 = st.columns([3, 1])
+        with c_rad2:
+            radius_scan = st.number_input(
+                "Radius (km)", 1, 200, 5, key="mk_rad_peta"
+            )
+
+        hasil_peta = render_peta_picker(
+            default_lat=-6.2088, default_lon=106.8456,
+            default_radius_km=radius_scan,
+            zoom_start=11, key="mk_peta",
+        )
+
+        kota_data = {
+            'kota': f"Titik ({hasil_peta['lat']:.4f}, {hasil_peta['lon']:.4f})",
+            'display': f"📍 {hasil_peta['lat']:.4f}, {hasil_peta['lon']:.4f}",
+            'lat': hasil_peta['lat'],
+            'lon': hasil_peta['lon'],
+            'penduduk': 0,
+            'luas': 0,
+        }
+        kota_pilih = kota_data['display']
+        st.caption(f"📍 Titik terpilih: **{hasil_peta['lat']:.4f}, {hasil_peta['lon']:.4f}**")
+
+    # ---- MODE 2: DROPDOWN WILAYAH ----
     else:
-        opsi_kota = {}
-        for k in hasil_kota:
-            label_k = k.get('display', k.get('name', str(k)))
-            opsi_kota[label_k] = k
+        from backend.modules.wilayah_bertingkat import (
+            list_provinsi, list_kota, get_lokasi, ke_format_kota_data,
+        )
 
-        st.caption(f"📋 Ditemukan **{len(opsi_kota)}** kota. Pilih yang sesuai:")
-        kota_pilih = st.selectbox("📌 Pilih Kota", list(opsi_kota.keys()), key="mk_pilih")
-        kota_data = opsi_kota[kota_pilih]
+        prov_list = list_provinsi()
+        opsi_prov = {f"{p['nama']}": p for p in prov_list}
 
-        if kota_data.get('penduduk'):
-            pend = kota_data['penduduk']
-            luas = kota_data.get('luas') or 0
-            info = f"👥 **Penduduk**: {pend:,} orang"
-            if luas:
-                info += f" | 📐 **Luas**: {luas:.1f} km² | 📊 **Kepadatan**: {pend/luas:.0f} org/km²"
-            st.caption(info)
+        # Default: cari "DKI Jakarta" kalau ada
+        default_prov = next(
+            (k for k in opsi_prov if "jakarta" in k.lower()),
+            list(opsi_prov.keys())[0] if opsi_prov else None,
+        )
 
-        if kota_data and not kota_data.get('geocoded', False):
-            st.warning(f"⚠️ **{kota_data.get('kota', 'Kota ini')}** belum punya koordinat.")
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            pilih_prov = st.selectbox(
+                "🏛️ Provinsi", list(opsi_prov.keys()),
+                index=list(opsi_prov.keys()).index(default_prov) if default_prov else 0,
+                key="mk_prov",
+            )
+        prov_kode = opsi_prov[pilih_prov]['kode']
+
+        kota_list = list_kota(prov_kode)
+        opsi_kota_db = {f"{k['nama']}": k for k in kota_list}
+
+        with col_p2:
+            pilih_kota = st.selectbox(
+                "🏙️ Kota / Kabupaten (opsional)",
+                ["— Seluruh Provinsi —"] + list(opsi_kota_db.keys()),
+                key="mk_kota_db",
+            )
+
+        # Tentukan lokasi aktif
+        if pilih_kota == "— Seluruh Provinsi —":
+            lokasi_db = get_lokasi(prov_kode)
+            st.caption(f"📌 Mode: **Seluruh {pilih_prov}**")
+        else:
+            lokasi_db = get_lokasi(opsi_kota_db[pilih_kota]['kode'])
+
+        kota_data = ke_format_kota_data(lokasi_db)
+        kota_pilih = kota_data['display'] if kota_data else None
+
+        if not kota_data or not kota_data.get('lat'):
+            st.warning(f"Lokasi '{kota_pilih}' belum punya koordinat. Coba pilih yang lain.")
+
+    # ---- Info penduduk & luas ----
+    if kota_data and kota_data.get('penduduk'):
+        pend = kota_data['penduduk']
+        luas = kota_data.get('luas') or 0
+        info = f"👥 **Penduduk**: {int(pend):,} orang"
+        if luas:
+            info += f" | 📐 **Luas**: {luas:,.1f} km²"
+            if pend and luas:
+                density = pend / luas
+                info += f" | 📊 Kepadatan: {density:,.0f} org/km²"
+        st.caption(info)
 
     c1, c2 = st.columns([3, 1])
     with c1:
         keyword_scan = st.text_input("Keyword Usaha", value="kue", key="mk_kw")
     with c2:
-        radius_scan = st.number_input("Radius (km)", 1, 30, 5, key="mk_rad")
-
-    if radius_scan > 10:
-        st.warning("⚠️ Radius > 10 km bisa gagal. Saran: 3-8 km.")
+        if mode_lokasi == "🗺️ Klik di Peta":
+            # Radius sudah didefinisikan di mode peta
+            st.metric("Radius", f"{radius_scan} km")
+        else:
+            radius_scan = st.number_input("Radius (km)", 1, 200, 5, key="mk_rad")
+    if radius_scan > 25:
+        st.info(f"ℹ️ Radius {radius_scan} km → pakai mode kotak (bbox). Proses bisa 1–2 menit.")
+    elif radius_scan > 10:
+        st.info(f"ℹ️ Radius {radius_scan} km — agak luas, tunggu ~30–60 detik.")
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -273,8 +347,7 @@ with tab_maps:
                 try:
                     scan_result = scan_sekitar(lat, lon,
                                                 radius_m=int(radius_scan * 1000),
-                                                keyword=keyword_scan, maks=100)
-                except Exception as e:
+                                                keyword=keyword_scan, maks=300)                except Exception as e:
                     st.error(f"❌ Exception: {e}")
                     scan_result = {'success': False, 'data': [], 'error': str(e)}
 
@@ -297,8 +370,11 @@ with tab_maps:
                     st.info("Coba keyword lebih umum: `restoran`, `toko`, `cafe`")
                 else:
                     status = "dari cache" if from_cache else f"query: {query_used}"
-                    st.success(f"✅ {len(hasil_data)} toko ditemukan ({status})")
-
+                    total_raw = scan_result.get('total_raw', len(hasil_data))
+                    pesan = f"✅ {len(hasil_data)} toko ditemukan ({status})"
+                    if total_raw and total_raw >= 290:
+                        pesan += f" ⚠️ hasil mentok {total_raw}, kemungkinan masih ada lagi"
+                    st.success(pesan)
                 st.session_state.hasil_scan = hasil_data
                 st.session_state.info_scan = {
                     'kota': kota_pilih, 'keyword': keyword_scan,
@@ -977,7 +1053,7 @@ with tab_tren:
         with col_c1:
             kw_cmp = st.text_input("Keyword", value="miras", key="cmp_kw")
         with col_c2:
-            rad_cmp = st.number_input("Radius (km)", 1, 30, 7, key="cmp_rad")
+            rad_cmp = st.number_input("Radius (km)", 1, 200, 7, key="cmp_rad")
         with col_c3:
             auto_snap = st.checkbox("Auto-save snapshot", value=True, key="cmp_snap")
 
