@@ -43,7 +43,7 @@ Thumbs.db
 *.tar.gz
 *.rar
 data_eksternal/
-db_eksternal/
+# db_eksternal/
 data_wilayah/
 *.psd
 *.mp4
