@@ -13,7 +13,11 @@ from math import radians, sin, cos, sqrt, atan2
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+# Setup path: tambahkan ROOT project (market-intel/) dan folder ini
+_THIS_DIR = Path(__file__).resolve().parent           # .../backend/modules
+_PROJECT_ROOT = _THIS_DIR.parent.parent                # .../market-intel
+sys.path.insert(0, str(_PROJECT_ROOT))
+sys.path.insert(0, str(_THIS_DIR))
 
 
 KOORDINAT_KOTA = {
@@ -470,7 +474,7 @@ def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart
 (
   {chr(10).join(tq)}
 );
-out center 200;"""
+out center 500;"""
             })
 
     # ---------- Query 2: BY NAME (fallback) ----------
@@ -500,14 +504,15 @@ out center 300;"""
     })
 
     endpoints = [
-        "https://overpass.kumi.systems/api/interpreter",
+        # Diurut dari yang PALING stabil (hasil tes 2026-09-29)
         "https://overpass-api.de/api/interpreter",
         "https://overpass.private.coffee/api/interpreter",
         "https://overpass.osm.ch/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",   # sering 504, taruh belakang
     ]
-
+    
     headers = {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "MarketIntelDashboard/1.0 (contact: donynov80@gmail.com)",
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
     }
@@ -524,17 +529,37 @@ out center 300;"""
                         data = r.json()
                         raw = _parse_overpass_result(data, lat, lon, maks)
 
-                        # Filter smart
+                        # Filter smart — threshold DINAMIS per jenis query
+                        #   osm-filter-*  -> query sudah presisi, threshold rendah (4)
+                        #   name-*        -> sedang (6)
+                        #   raw-all       -> semua shop/amenity, threshold tinggi (7)
+                        #   jika raw < 5  -> turunkan 2 poin (longgarkan)
+                        qname = q['name']
+                        if qname.startswith('osm-filter'):
+                            threshold = 4
+                        elif qname.startswith('name-'):
+                            threshold = 6
+                        else:  # raw-all
+                            threshold = 7
+                        if len(raw) < 5:
+                            threshold = max(2, threshold - 2)
+
                         if smart and raw:
                             try:
                                 from backend.modules.business_classifier import filter_bisnis_smart
-                                threshold = 6 if q['name'] == 'raw-all' else 8
                                 filtered = filter_bisnis_smart(raw, keyword, threshold=threshold)
+                                print(f"      [filter] threshold={threshold}, raw={len(raw)}, lolos={len(filtered)}")
                                 final = filtered
                             except Exception as e:
-                                print(f"⚠️ Filter error: {e}")
+                                print(f"   Filter error: {e}")
                                 final = []
                         else:
+                            final = raw
+
+                        # Fallback: query osm-filter sudah presisi, kalau filter buang semua
+                        # lebih baik pakai raw daripada dapat 0
+                        if (not final) and raw and qname.startswith('osm-filter'):
+                            print(f"      [fallback] filter buang semua -> pakai raw (query presisi)")
                             final = raw
 
                         print(f"   ✅ {len(raw)} mentah → {len(final)} setelah filter")

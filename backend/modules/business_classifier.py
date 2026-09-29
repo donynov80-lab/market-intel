@@ -559,6 +559,109 @@ def classify(name: str = "", tags=None, category: str = "") -> dict:
 def filter_miras(items):
     return get_classifier().filter_by_subgolongan(items, ["4722"])
 
+# =========================================================
+# 7b. SMART FILTER SERBAGUNA (dipakai maps_scanner.py)
+# =========================================================
+def filter_bisnis_smart(data: List[dict], keyword: str,
+                        threshold: int = 6) -> List[dict]:
+    """
+    Saring hasil scan OSM berdasarkan relevansi keyword.
+
+    Skor relevansi 0-10:
+      - 10     : tag OSM persis cocok filter keyword
+                 (mis. keyword="miras", item punya shop=alcohol)
+      - 5-9    : KBLI 4-digit item sama dengan KBLI keyword
+                 (skor = confidence x 10)
+      - <thr   : dibuang (tidak relevan)
+
+    Args:
+        data      : list item hasil Overpass (dict dengan key 'tags')
+        keyword   : kata kunci (mis. "miras")
+        threshold : ambang minimum 0-10 (default 6)
+
+    Return:
+        list item yang lolos, diurutkan dari skor tertinggi.
+        Tiap item dapat field tambahan: _score, _code, _code_4digit,
+        _matched_kw, _source, _subgolongan.
+    """
+    if not data:
+        return []
+
+    classifier = get_classifier()
+    kw_low = (keyword or "").lower().strip()
+    if not kw_low:
+        return list(data)
+
+    # --- 1. Kumpulkan KBLI code yang relevan dengan keyword ---
+    relevant_codes = set()
+
+    km = classifier._match_kamus(keyword)
+    if km:
+        relevant_codes.add(str(km["code"])[:4])
+
+    for k, code in classifier.kamus.items():
+        if k in kw_low or kw_low in k:
+            relevant_codes.add(str(code)[:4])
+
+    tm = classifier._match_title(keyword, min_score=0.5)
+    if tm:
+        relevant_codes.add(str(tm["code"])[:4])
+
+    # --- 2. Kumpulkan OSM pair (key=value) yang relevan ---
+    kw_filters = classifier.cari_osm_filter_dari_keyword(keyword)
+    kw_osm_pairs = set()
+    for k, v in kw_filters.items():
+        for val in str(v).split("|"):
+            kw_osm_pairs.add(f"{k}={val.strip()}")
+
+    # --- 3. Skoring tiap item ---
+    hasil = []
+    for item in data:
+        raw_tags = item.get("tags", {})
+        if isinstance(raw_tags, dict):
+            tag_list = [f"{k}={v}" for k, v in raw_tags.items()]
+        elif isinstance(raw_tags, list):
+            tag_list = [str(t) for t in raw_tags]
+        else:
+            tag_list = []
+
+        name = (item.get("name") or "").strip()
+        if not name and isinstance(raw_tags, dict):
+            name = str(raw_tags.get("name", "")).strip()
+
+        if not name and not tag_list:
+            continue
+
+        osm_hit = any(t in kw_osm_pairs for t in tag_list)
+
+        cls = classifier.classify(name=name, tags=tag_list)
+        code_4 = str(cls.get("code") or "")[:4]
+        kbli_hit = bool(code_4) and code_4 in relevant_codes
+
+        if osm_hit:
+            score = 10
+        elif kbli_hit:
+            score = int(round(cls.get("confidence", 0.5) * 10))
+        else:
+            score = 0
+
+        if score >= threshold:
+            new_item = dict(item)
+            new_item["_score"] = score
+            new_item["_code"] = cls.get("code")
+            new_item["_code_4digit"] = code_4 or None
+            new_item["_matched_kw"] = cls.get("matched_keyword", "")
+            new_item["_source"] = cls.get("source", "NONE")
+            h = cls.get("hierarchy") or {}
+            subgol = h.get("subgol")
+            new_item["_subgolongan"] = (
+                subgol.get("title") if isinstance(subgol, dict) else None
+            )
+            hasil.append(new_item)
+
+    hasil.sort(key=lambda x: x.get("_score", 0), reverse=True)
+    return hasil
+
 
 def cari_osm_filter_dari_keyword(keyword: str) -> Dict[str, str]:
     """Shortcut module-level untuk dipakai maps_scanner."""
