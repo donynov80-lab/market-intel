@@ -347,7 +347,8 @@ with tab_maps:
                 try:
                     scan_result = scan_sekitar(lat, lon,
                                                 radius_m=int(radius_scan * 1000),
-                                                keyword=keyword_scan, maks=300)                except Exception as e:
+                                                keyword=keyword_scan, maks=300)
+                except Exception as e:
                     st.error(f"❌ Exception: {e}")
                     scan_result = {'success': False, 'data': [], 'error': str(e)}
 
