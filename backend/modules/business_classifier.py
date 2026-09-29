@@ -141,7 +141,7 @@ class KBLIIndex:
 # =========================================================
 KAMUS_BISNIS: Dict[str, str] = {
     # Makanan & Minuman
-    "kue": "1071", "bakery": "1071", "roti": "1071", "bolu": "1071",
+    "kue": "4724", "bakery": "4724", "roti": "4724", "bolu": "4724",
     "warung": "4711", "toko kelontong": "4711", "minimarket": "4711",
     "restoran": "5610", "rumah makan": "5610", "resto": "5610",
     "kafe": "5630", "cafe": "5630", "kedai kopi": "5630", "coffee shop": "5630",
@@ -213,7 +213,7 @@ KAMUS_BISNIS: Dict[str, str] = {
 # 4. KAMUS OSM TAG -> KBLI
 # =========================================================
 KAMUS_OSM: Dict[str, str] = {
-    "shop=bakery": "1071", "shop=butcher": "4721", "shop=seafood": "4721",
+    "shop=bakery": "4724", "shop=butcher": "4721", "shop=seafood": "4721",
     "shop=greengrocer": "4721", "shop=convenience": "4711",
     "shop=supermarket": "4711", "shop=department_store": "4719",
     "shop=clothes": "4771", "shop=shoes": "4771", "shop=bags": "4771",
@@ -272,7 +272,7 @@ KAMUS_OSM: Dict[str, str] = {
     "leisure=bowling_alley": "9311",
 
     "craft=carpenter": "1629", "craft=tailor": "1412", "craft=brewery": "1103",
-    "craft=bakery": "1071", "craft=photographer": "7420", "craft=plumber": "4322",
+    "craft=bakery": "4724", "craft=photographer": "7420", "craft=plumber": "4322",
     "craft=electrician": "4321", "craft=painter": "4330", "craft=shoemaker": "1520",
     "craft=blacksmith": "2593", "craft=joiner": "1622", "craft=jeweller": "3212",
     "craft=stonemason": "2396", "craft=car_repair": "4520",

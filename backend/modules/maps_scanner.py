@@ -558,7 +558,7 @@ out center 300;"""
                         elif qname.startswith('name-'):
                             threshold = 6
                         else:  # raw-all
-                            threshold = 7
+                            threshold = 5
                         if len(raw) < 5:
                             threshold = max(2, threshold - 2)
 
