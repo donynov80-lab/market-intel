@@ -3,10 +3,12 @@
 Business Classifier - SMART FILTER dengan integrasi KBLI lengkap.
 Filter bisnis sampai level subgolongan (4 digit) dan kelompok (5 digit).
 
-Update terbaru:
-- Fungsi cari_osm_filter_dari_keyword() : "miras" -> {"shop": "alcohol|wine|beverages"}
-- Reverse mapping KBLI code -> OSM tags
+Analoginya seperti "kamus pintar":
+- Kamus manual (KAMUS_BISNIS)  = kata kunci cepat yang kita tulis sendiri
+- KBLI pemerintah              = kamus resmi lengkap berjenjang
+Digabung => filter yang paham konteks DAN punya rujukan resmi.
 """
+
 import os
 import json
 import re
@@ -20,18 +22,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 KBLI_DIR = os.path.join(BASE_DIR, "db_eksternal")
 
 KBLI_FILES = {
-    "golpok":   "kbli_golpok.json",
-    "gol":      "kbli_gol.json",
-    "subgol":   "kbli_subgol.json",
-    "kelompok": "kbli_kelompok.json",
-    "lengkap":  "kbli_lengkap.json",
+    "golpok":   "kbli_golpok.json",     # 2 digit
+    "gol":      "kbli_gol.json",        # 3 digit
+    "subgol":   "kbli_subgol.json",     # 4 digit
+    "kelompok": "kbli_kelompok.json",   # 5 digit
+    "lengkap":  "kbli_lengkap.json",    # semua level (backup)
 }
-
 
 # =========================================================
 # 2. SINGLETON INDEX KBLI
 # =========================================================
 class KBLIIndex:
+    """Index KBLI - load sekali, pakai terus (biar cepat)."""
     _instance = None
     _loaded = False
 
@@ -80,9 +82,11 @@ class KBLIIndex:
                     existing["title"] = title
                 continue
             self.by_code[code] = {
-                "code": code, "title": title,
+                "code": code,
+                "title": title,
                 "desc": item.get("desc", ""),
-                "level": level, "source": source,
+                "level": level,
+                "source": source,
             }
             self.by_level[level].append(code)
             norm = self._normalize(title)
@@ -96,10 +100,14 @@ class KBLIIndex:
         text = re.sub(r"\s+", " ", text).strip()
         return text
 
+    # ---------------- Public API ----------------
     def get(self, code: str) -> Optional[dict]:
         return self.by_code.get(code)
 
     def get_hierarchy(self, code: str) -> Dict[str, Optional[dict]]:
+        """Ambil semua level induk dari suatu code.
+        Misal 01111 -> golpok=01, gol=011, subgol=0111, kelompok=01111.
+        """
         code = str(code)
         return {
             "golpok":   self.by_code.get(code[:2]),
@@ -137,39 +145,35 @@ class KBLIIndex:
 
 
 # =========================================================
-# 3. KAMUS BISNIS MANUAL
+# 3. KAMUS BISNIS MANUAL (keyword -> KBLI code)
 # =========================================================
 KAMUS_BISNIS: Dict[str, str] = {
     # Makanan & Minuman
-    "kue": "1071", "bakery": "1071", "roti": "1071", "bolu": "1071",
+    "kue": "1071", "bakery": "1071", "roti": "1071",
     "warung": "4711", "toko kelontong": "4711", "minimarket": "4711",
-    "restoran": "5610", "rumah makan": "5610", "resto": "5610",
+    "restoran": "5610", "rumah makan": "5610",
     "kafe": "5630", "cafe": "5630", "kedai kopi": "5630", "coffee shop": "5630",
     "catering": "5621", "katering": "5621",
     "bakso": "5610", "mie": "1074", "nasi goreng": "5610", "sate": "5610",
     "kopi": "1076", "teh": "1076", "pizza": "1075", "burger": "5610",
     "ayam goreng": "5610", "seafood": "5610", "es krim": "1053",
-    "martabak": "5610", "soto": "5610", "pecel": "5610",
 
-    # Minuman beralkohol
+    # Minuman beralkohol (contoh penting)
     "miras": "4722", "minuman keras": "4722", "alkohol": "4722",
-    "arak": "4722", "wine": "4722", "bir": "4722", "whisky": "4722",
-    "bar": "5630", "pub": "5630", "nightclub": "9329", "klub malam": "9329",
+    "bar": "5630", "pub": "5630", "wine": "4722", "bir": "4722",
 
     # Retail
     "toko": "4711", "toko buah": "4721", "toko sayur": "4721",
     "toko baju": "4771", "butik": "4771", "toko sepatu": "4771",
     "apotek": "4772", "apotik": "4772", "toko obat": "4772", "farmasi": "4772",
-    "toko kosmetik": "4772", "salon": "9611", "barbershop": "9611",
-    "pangkas rambut": "9611", "spa": "9612",
-    "toko emas": "4773", "toko perhiasan": "4773", "optik": "4773",
+    "toko kosmetik": "4772",
+    "salon": "9611", "barbershop": "9611", "pangkas rambut": "9611",
+    "spa": "9612", "toko emas": "4773", "toko perhiasan": "4773",
     "toko hp": "4741", "toko handphone": "4741", "toko komputer": "4741",
     "toko bangunan": "4752", "toko material": "4752", "toko cat": "4752",
     "toko mebel": "4759", "toko furniture": "4759",
     "bengkel": "4520", "bengkel mobil": "4520", "bengkel motor": "4540",
     "cuci mobil": "4520", "car wash": "4520", "tambal ban": "4520",
-    "sparepart": "4530", "suku cadang": "4530", "dealer mobil": "4510",
-    "showroom": "4510", "jual mobil": "4510", "jual motor": "4540",
     "laundry": "9620", "penatu": "9620",
     "fotokopi": "8219", "percetakan": "1811", "digital printing": "1811",
 
@@ -188,7 +192,7 @@ KAMUS_BISNIS: Dict[str, str] = {
     "akuntan": "6920", "pajak": "6920", "arsitek": "7110",
     "kontraktor": "4101", "developer": "4101",
     "gym": "9311", "fitness": "9311", "kolam renang": "9311", "stadion": "9311",
-    "bioskop": "5914", "karaoke": "9329",
+    "bioskop": "5914", "karaoke": "9329", "klub malam": "9329",
     "panti pijat": "9612", "pijat": "9612",
     "toko bunga": "4776", "florist": "4776",
     "pet shop": "4775", "petshop": "4775", "toko hewan": "4775",
@@ -199,8 +203,12 @@ KAMUS_BISNIS: Dict[str, str] = {
     "perkebunan": "0121", "tambang": "0510", "konstruksi": "4101",
     "manufaktur": "1011",
 
+    # Otomotif
+    "dealer mobil": "4510", "showroom": "4510", "jual mobil": "4510",
+    "jual motor": "4540", "sparepart": "4530", "suku cadang": "4530",
+
     # Properti
-    "properti": "6811", "real estate": "6811", "kontrakan": "6811",
+    "properti": "6811", "real estate": "6811", "kontrakan": "6811", "sewa rumah": "6811",
 
     # Teknologi
     "software house": "6201", "startup": "6201",
@@ -210,9 +218,10 @@ KAMUS_BISNIS: Dict[str, str] = {
 
 
 # =========================================================
-# 4. KAMUS OSM TAG -> KBLI
+# 4. KAMUS OSM TAG -> KBLI (untuk data peta/Overpass)
 # =========================================================
 KAMUS_OSM: Dict[str, str] = {
+    # shop=*
     "shop=bakery": "1071", "shop=butcher": "4721", "shop=seafood": "4721",
     "shop=greengrocer": "4721", "shop=convenience": "4711",
     "shop=supermarket": "4711", "shop=department_store": "4719",
@@ -229,13 +238,12 @@ KAMUS_OSM: Dict[str, str] = {
     "shop=tobacco": "4723",
     "shop=books": "4761", "shop=stationery": "4761",
     "shop=toys": "4764", "shop=sports": "4763",
-    "shop=laundry": "9620", "shop=dry_cleaning": "9620",
-    "shop=travel_agency": "7911",
+    "shop=laundry": "9620", "shop=travel_agency": "7911",
     "shop=optician": "4773", "shop=watchmaker": "4773", "shop=photo": "7420",
     "shop=tailor": "1412", "shop=massage": "9612",
     "shop=mall": "4719", "shop=variety_store": "4719", "shop=wholesale": "4690",
-    "shop=coffee": "5630", "shop=tea": "4722", "shop=frozen_food": "4721",
 
+    # amenity=*
     "amenity=restaurant": "5610", "amenity=fast_food": "5610",
     "amenity=cafe": "5630", "amenity=bar": "5630", "amenity=pub": "5630",
     "amenity=nightclub": "9329", "amenity=biergarten": "5630",
@@ -250,27 +258,30 @@ KAMUS_OSM: Dict[str, str] = {
     "amenity=post_office": "5310", "amenity=place_of_worship": "9491",
     "amenity=fuel": "4730", "amenity=car_wash": "4520", "amenity=car_rental": "7710",
     "amenity=driving_school": "8549", "amenity=internet_cafe": "6199",
-    "amenity=ice_cream": "5610", "amenity=juice_bar": "5630",
-    "amenity=food_court": "5610",
+    "amenity=brothel": "9329",
 
+    # office=*
     "office=lawyer": "6910", "office=accountant": "6920",
     "office=estate_agent": "6820", "office=insurance": "6512",
     "office=it": "6202", "office=consulting": "7020", "office=architect": "7110",
     "office=travel_agent": "7911", "office=advertising_agency": "7310",
     "office=company": "7010", "office=government": "8411",
 
+    # tourism=*
     "tourism=hotel": "5511", "tourism=motel": "5519", "tourism=hostel": "5519",
     "tourism=guest_house": "5519", "tourism=bed_and_breakfast": "5519",
     "tourism=camp_site": "5519", "tourism=chalet": "5519", "tourism=apartment": "5519",
     "tourism=museum": "9102", "tourism=attraction": "9321",
     "tourism=zoo": "9103", "tourism=theme_park": "9321",
 
+    # leisure=*
     "leisure=fitness_centre": "9311", "leisure=sports_centre": "9311",
     "leisure=stadium": "9311", "leisure=swimming_pool": "9311",
     "leisure=golf_course": "9311", "leisure=park": "8130",
     "leisure=playground": "9329", "leisure=dance": "9329",
     "leisure=bowling_alley": "9311",
 
+    # craft=*
     "craft=carpenter": "1629", "craft=tailor": "1412", "craft=brewery": "1103",
     "craft=bakery": "1071", "craft=photographer": "7420", "craft=plumber": "4322",
     "craft=electrician": "4321", "craft=painter": "4330", "craft=shoemaker": "1520",
@@ -281,30 +292,28 @@ KAMUS_OSM: Dict[str, str] = {
 
 
 # =========================================================
-# 5. REVERSE MAPPING: KBLI code -> list OSM tags
-# =========================================================
-def _build_kbli_to_osm() -> Dict[str, List[str]]:
-    """Dari KAMUS_OSM, bangun reverse: KBLI code -> list OSM tag."""
-    reverse: Dict[str, List[str]] = {}
-    for osm_tag, kbli_code in KAMUS_OSM.items():
-        reverse.setdefault(kbli_code, []).append(osm_tag)
-    return reverse
-
-
-KBLI_TO_OSM: Dict[str, List[str]] = _build_kbli_to_osm()
-
-
-# =========================================================
-# 6. KELAS BUSINESS CLASSIFIER
+# 5. KELAS UTAMA BUSINESS CLASSIFIER
 # =========================================================
 class BusinessClassifier:
+    """
+    Filter cerdas untuk klasifikasi bisnis.
+    Analogi: resepsionis hotel yang:
+    - punya buku catatan cepat (KAMUS_BISNIS) untuk tamu umum
+    - punya buku besar resmi (KBLI) untuk kasus detail
+    - kalau ditanya soal tidak jelas, cek dua-duanya
+    """
+
     def __init__(self, prefer_level: int = 4):
+        """
+        prefer_level: level KBLI yang diutamakan saat mengembalikan hasil.
+                      2=golpok, 3=gol, 4=subgol, 5=kelompok. Default 4.
+        """
         self.kbli = KBLIIndex()
         self.prefer_level = prefer_level
         self.kamus = KAMUS_BISNIS
         self.kamus_osm = KAMUS_OSM
-        self.kbli_to_osm = KBLI_TO_OSM
 
+    # ----------------- Utility -----------------
     @staticmethod
     def _norm(text: str) -> str:
         if not text:
@@ -336,24 +345,24 @@ class BusinessClassifier:
     def _match_osm(self, tags: List[str]) -> Optional[dict]:
         if not tags:
             return None
-        # Exact match dulu
         for tag in tags:
             tag_n = self._norm(tag).replace(" ", "_")
             for osm_key, code in self.kamus_osm.items():
                 if self._norm(osm_key).replace(" ", "_") == tag_n:
                     return {
-                        "matched_keyword": osm_key, "code": code,
-                        "source": "KAMUS_OSM", "confidence": 0.95,
+                        "matched_keyword": osm_key,
+                        "code": code,
+                        "source": "KAMUS_OSM",
+                        "confidence": 0.95,
                     }
-        # Partial match
         for tag in tags:
-            tag_low = tag.lower()
             for osm_key, code in self.kamus_osm.items():
-                v = osm_key.split("=")[-1]
-                if v and v in tag_low:
+                if osm_key.split("=")[-1] in tag.lower():
                     return {
-                        "matched_keyword": osm_key, "code": code,
-                        "source": "KAMUS_OSM", "confidence": 0.7,
+                        "matched_keyword": osm_key,
+                        "code": code,
+                        "source": "KAMUS_OSM",
+                        "confidence": 0.7,
                     }
         return None
 
@@ -376,7 +385,8 @@ class BusinessClassifier:
         prefer = str(code)[: self.prefer_level]
         chosen = self.kbli.get(prefer) or self.kbli.get(code) or {}
         return {
-            "code": code, "code_preferred": prefer,
+            "code": code,
+            "code_preferred": prefer,
             "preferred_level": self.prefer_level,
             "preferred_entry": chosen,
             "hierarchy": {
@@ -405,9 +415,14 @@ class BusinessClassifier:
                 return entry.get("title")
         return None
 
-    # ---------------- Public API ----------------
+    # ----------------- Public API -----------------
     def classify(self, name: str = "", tags: Optional[List[str]] = None,
                  category: str = "") -> dict:
+        """
+        Klasifikasi satu bisnis.
+        Return dict dengan code, code_4digit, code_5digit, title, confidence,
+        source, hierarchy.
+        """
         osm_match = self._match_osm(tags or [])
         text_blob = " ".join([name, category, " ".join(tags or [])])
         kamus_match = self._match_kamus(text_blob)
@@ -447,82 +462,15 @@ class BusinessClassifier:
             },
         }
 
-    # ----------------------------------------------------------
-    # FUNGSI BARU: "miras" -> [("shop", "alcohol|wine|beverages"), ...]
-    # ----------------------------------------------------------
-    def cari_osm_filter_dari_keyword(self, keyword: str) -> Dict[str, str]:
-        """
-        Terjemahkan keyword Indonesia bebas ke filter OSM key->regex.
-        Contoh:
-          'miras'   -> {'shop': 'alcohol|wine|beverages', 'amenity': 'bar|pub'}
-          'kue'     -> {'shop': 'bakery|confectionery|pastry'}
-          'bengkel' -> {'shop': 'car_repair|motorcycle_repair'}
-        Return: dict {osm_key: regex_values}
-        """
-        if not keyword:
-            return {}
-
-        # 1. Kumpulkan kandidat KBLI code dari berbagai sumber
-        candidates_codes = set()
-
-        # a. Kamus bisnis
-        km = self._match_kamus(keyword)
-        if km:
-            candidates_codes.add(km["code"])
-
-        # b. KBLI title fuzzy
-        tm = self._match_title(keyword, min_score=0.5)
-        if tm:
-            candidates_codes.add(tm["code"])
-
-        # c. Substring match langsung ke KAMUS_BISNIS
-        kw_low = keyword.lower().strip()
-        for k, code in self.kamus.items():
-            if k in kw_low or kw_low in k:
-                candidates_codes.add(code)
-
-        # 2. Kumpulkan OSM tags dari semua kandidat
-        osm_tags: List[str] = []
-        for code in candidates_codes:
-            # Exact code (4 digit)
-            code4 = str(code)[:4]
-            if code4 in self.kbli_to_osm:
-                osm_tags.extend(self.kbli_to_osm[code4])
-
-        # 3. Kalau masih kosong, coba cari KBLI code yang mirip
-        if not osm_tags:
-            for code4, tags in self.kbli_to_osm.items():
-                # Cari KBLI title yang mengandung keyword
-                entry = self.kbli.get(code4)
-                if entry and keyword.lower() in entry.get("title", "").lower():
-                    osm_tags.extend(tags)
-
-        if not osm_tags:
-            return {}
-
-        # 4. Kelompokkan per key
-        filters: Dict[str, set] = {}
-        for tag in osm_tags:
-            if "=" in tag:
-                k, v = tag.split("=", 1)
-                filters.setdefault(k, set()).add(v)
-
-        return {k: "|".join(sorted(v)) for k, v in filters.items()}
-
-    def cari_osm_tags_dari_keyword(self, keyword: str) -> List[str]:
-        """Wrapper: kembalikan list 'key=value' dari filter di atas."""
-        filters = self.cari_osm_filter_dari_keyword(keyword)
-        out = []
-        for k, v in filters.items():
-            for val in v.split("|"):
-                out.append(f"{k}={val}")
-        return out
-
     def classify_batch(self, items: List[dict]) -> List[dict]:
         return [self.classify(**it) for it in items]
 
     def filter_by_subgolongan(self, items: List[dict],
                               subgol_codes: List[str]) -> List[dict]:
+        """
+        Filter hasil klasifikasi yang subgolongannya (4 digit) ada di list.
+        Berguna untuk memfilter "hanya tampilkan toko miras (4722)".
+        """
         wanted = {str(s).strip()[:4] for s in subgol_codes}
         out = []
         for it in items:
@@ -535,12 +483,11 @@ class BusinessClassifier:
         s = self.kbli.stats()
         s["kamus_bisnis"] = len(self.kamus)
         s["kamus_osm"] = len(self.kamus_osm)
-        s["kbli_to_osm"] = len(self.kbli_to_osm)
         return s
 
 
 # =========================================================
-# 7. SINGLETON + FUNGSI MODULE-LEVEL
+# 6. SINGLETON INSTANCE
 # =========================================================
 _classifier_instance: Optional[BusinessClassifier] = None
 
@@ -557,21 +504,12 @@ def classify(name: str = "", tags=None, category: str = "") -> dict:
 
 
 def filter_miras(items):
+    """Shortcut: filter hanya toko miras (subgolongan 4722)."""
     return get_classifier().filter_by_subgolongan(items, ["4722"])
 
 
-def cari_osm_filter_dari_keyword(keyword: str) -> Dict[str, str]:
-    """Shortcut module-level untuk dipakai maps_scanner."""
-    return get_classifier().cari_osm_filter_dari_keyword(keyword)
-
-
-def cari_osm_tags_dari_keyword(keyword: str) -> List[str]:
-    """Shortcut module-level: list 'key=value'."""
-    return get_classifier().cari_osm_tags_dari_keyword(keyword)
-
-
 # =========================================================
-# 8. SELF-TEST
+# 7. SELF-TEST
 # =========================================================
 if __name__ == "__main__":
     print("=" * 60)
@@ -579,18 +517,31 @@ if __name__ == "__main__":
     print("=" * 60)
 
     c = get_classifier(prefer_level=4)
-    print("\n[Stats]")
+    print("\n[Stats KBLI]")
     for k, v in c.stats().items():
         print(f"  {k}: {v}")
 
-    # === TEST BARU: keyword -> OSM filter ===
-    print("\n[Test keyword -> OSM filter]")
-    for kw in ["miras", "kue", "bengkel", "kopi", "apotek", "hotel",
-               "baju", "restoran", "salon", "laundry"]:
-        f = c.cari_osm_filter_dari_keyword(kw)
-        print(f"  '{kw}' -> {f}")
+    print("\n[Test 1: Outlet 23 dengan tag shop=alcohol]")
+    print(json.dumps(c.classify(name="Outlet 23", tags=["shop=alcohol"]),
+                     indent=2, ensure_ascii=False))
 
-    print("\n[Test klasifikasi 'Outlet 23' + shop=alcohol]")
-    print(json.dumps(
-        c.classify(name="Outlet 23", tags=["shop=alcohol"]),
-        indent=2, ensure_ascii=False))
+    print("\n[Test 2: Toko Kue Sederhana]")
+    print(json.dumps(c.classify(name="Toko Kue Sederhana"),
+                     indent=2, ensure_ascii=False))
+
+    print("\n[Test 3: Bengkel Motor Jaya]")
+    print(json.dumps(c.classify(name="Bengkel Motor Jaya",
+                                tags=["shop=motorcycle_repair"]),
+                     indent=2, ensure_ascii=False))
+
+    print("\n[Test 4: Filter miras dari batch]")
+    items = [
+        {"name": "Outlet 23", "tags": ["shop=alcohol"]},
+        {"name": "Toko Kue Sederhana", "tags": []},
+        {"name": "Warung Bu Ani", "tags": ["shop=convenience"]},
+        {"name": "Toko Minuman Keras", "tags": ["shop=wine"]},
+    ]
+    hasil = c.filter_by_subgolongan(items, ["4722"])
+    print(f"  Ditemukan {len(hasil)} dari {len(items)} yang subgolongan 4722")
+    for h in hasil:
+        print(f"   - {h.get('title')} ({h.get('code_4digit')})")

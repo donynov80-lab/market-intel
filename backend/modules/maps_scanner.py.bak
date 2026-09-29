@@ -3,9 +3,9 @@ maps_scanner.py
 Scan lokasi/toko pakai Overpass API + Smart Classifier + Cache.
 
 Update terbaru:
-- KEYWORD_TO_OSM diperkaya dengan 80+ sinonim Indonesia (termasuk "miras")
-- Query 1 menggunakan regex multi-tag dari classifier (cari_osm_filter_dari_keyword)
-- Limit raw-all dinaikkan 100 -> 300 supaya toko langka seperti miras tidak ke-skip
+- Setiap bisnis hasil scan OTOMATIS diklasifikasi ke KBLI 4-digit (subgolongan)
+- Helper group_by_subgolongan() untuk dropdown filter
+- Class MapsScanner (adapter OOP) untuk kompatibilitas dashboard
 """
 import requests
 from time import sleep
@@ -52,177 +52,47 @@ KOORDINAT_KOTA = {
 
 
 KEYWORD_TO_OSM = {
-    # ============ MAKANAN & KUE ============
     "kue": ["shop=bakery", "shop=confectionery", "shop=pastry"],
     "toko kue": ["shop=bakery", "shop=confectionery"],
-    "roti": ["shop=bakery"],
-    "bolu": ["shop=bakery", "shop=confectionery"],
     "camilan": ["shop=confectionery", "shop=convenience"],
-    "snack": ["shop=confectionery"],
-    "martabak": ["amenity=fast_food", "amenity=restaurant"],
-    "es krim": ["amenity=ice_cream", "shop=ice_cream"],
-    "ice cream": ["amenity=ice_cream", "shop=ice_cream"],
-
-    # ============ RESTORAN & KAFE ============
     "restoran": ["amenity=restaurant"],
     "resto": ["amenity=restaurant"],
-    "rumah makan": ["amenity=restaurant"],
-    "warung": ["amenity=fast_food", "shop=convenience"],
-    "makanan": ["amenity=restaurant", "amenity=fast_food"],
-    "bakso": ["amenity=restaurant", "amenity=fast_food"],
-    "sate": ["amenity=restaurant"],
-    "nasi": ["amenity=restaurant"],
-    "ayam": ["amenity=restaurant", "amenity=fast_food"],
-    "seafood": ["amenity=restaurant"],
-    "pizza": ["amenity=restaurant", "amenity=fast_food"],
-    "burger": ["amenity=fast_food"],
     "cafe": ["amenity=cafe"],
     "kafe": ["amenity=cafe"],
-    "kopi": ["amenity=cafe", "shop=coffee"],
-    "coffee": ["amenity=cafe", "shop=coffee"],
-    "kedai kopi": ["amenity=cafe"],
-    "teh": ["amenity=cafe", "shop=tea"],
-    "jus": ["amenity=juice_bar", "amenity=cafe"],
-    "catering": ["amenity=catering"],
-
-    # ============ MINUMAN BERALKOHOL / MIRAS ============
-    "miras": ["shop=alcohol", "shop=wine", "shop=beverages", "amenity=bar", "amenity=pub"],
-    "minuman keras": ["shop=alcohol", "shop=wine", "amenity=bar", "amenity=pub"],
-    "alkohol": ["shop=alcohol", "shop=wine", "amenity=bar", "amenity=pub"],
-    "arak": ["shop=alcohol", "shop=wine"],
-    "wine": ["shop=wine", "shop=alcohol"],
-    "anggur": ["shop=wine"],
-    "bir": ["shop=alcohol", "shop=beverages"],
-    "whisky": ["shop=alcohol"],
-    "bar": ["amenity=bar", "amenity=pub"],
-    "pub": ["amenity=pub", "amenity=bar"],
-    "nightclub": ["amenity=nightclub"],
-    "klub malam": ["amenity=nightclub"],
-    "minuman": ["amenity=cafe", "amenity=bar", "shop=beverages"],
-    "beverages": ["shop=beverages"],
-
-    # ============ RETAIL UMUM ============
-    "kelontong": ["shop=convenience"],
-    "sembako": ["shop=convenience", "shop=supermarket"],
-    "supermarket": ["shop=supermarket"],
-    "minimarket": ["shop=convenience"],
-    "toko": ["shop=convenience", "shop=supermarket"],
-    "pasar": ["amenity=marketplace"],
-    "frozen food": ["shop=frozen_food", "shop=convenience"],
-    "buah": ["shop=greengrocer"],
-    "sayur": ["shop=greengrocer"],
-    "daging": ["shop=butcher"],
-
-    # ============ FASHION ============
+    "warung": ["amenity=fast_food", "shop=convenience"],
+    "minuman": ["amenity=cafe", "amenity=bar"],
     "baju": ["shop=clothes", "shop=boutique"],
-    "pakaian": ["shop=clothes"],
     "sepatu": ["shop=shoes"],
-    "tas": ["shop=bags"],
-    "perhiasan": ["shop=jewelry"],
-    "emas": ["shop=jewelry"],
-    "optik": ["shop=optician"],
-
-    # ============ KESEHATAN ============
-    "apotek": ["amenity=pharmacy", "shop=chemist"],
-    "apotik": ["amenity=pharmacy"],
-    "obat": ["amenity=pharmacy", "shop=chemist"],
-    "klinik": ["amenity=clinic", "amenity=doctors"],
-    "rumah sakit": ["amenity=hospital"],
-    "dokter": ["amenity=doctors"],
-    "dokter gigi": ["amenity=dentist"],
-    "bidan": ["amenity=clinic"],
-    "veterinary": ["amenity=veterinary"],
-
-    # ============ OTOMOTIF ============
+    "apotek": ["amenity=pharmacy"],
     "bengkel": ["shop=car_repair", "shop=motorcycle_repair"],
-    "bengkel mobil": ["shop=car_repair"],
-    "bengkel motor": ["shop=motorcycle_repair"],
-    "sparepart": ["shop=car_parts", "shop=motorcycle_parts"],
-    "suku cadang": ["shop=car_parts"],
-    "dealer mobil": ["shop=car"],
-    "dealer motor": ["shop=motorcycle"],
-    "jual mobil": ["shop=car"],
-    "jual motor": ["shop=motorcycle"],
-    "cuci mobil": ["amenity=car_wash"],
-    "car wash": ["amenity=car_wash"],
-    "ban": ["shop=tyres"],
-    "spbu": ["amenity=fuel"],
-
-    # ============ JASA KECANTIKAN & KEBERSIHAN ============
     "salon": ["shop=hairdresser", "shop=beauty"],
-    "barbershop": ["shop=hairdresser"],
-    "pangkas": ["shop=hairdresser"],
-    "spa": ["shop=massage", "leisure=spa"],
-    "pijat": ["shop=massage"],
     "laundry": ["shop=laundry", "shop=dry_cleaning"],
-    "penatu": ["shop=laundry", "shop=dry_cleaning"],
-
-    # ============ PENDIDIKAN ============
-    "sekolah": ["amenity=school"],
-    "kursus": ["amenity=language_school", "amenity=driving_school"],
-    "bimbel": ["amenity=school", "amenity=prep_school"],
-    "les": ["amenity=prep_school"],
-    "universitas": ["amenity=university", "amenity=college"],
-    "kampus": ["amenity=university", "amenity=college"],
-    "paud": ["amenity=kindergarten"],
-
-    # ============ JASA PROFESIONAL ============
-    "kantor": ["office"],
-    "pengacara": ["office=lawyer"],
-    "notaris": ["office=lawyer", "office=notary"],
-    "akuntan": ["office=accountant"],
-    "konsultan": ["office=consulting"],
-    "arsitek": ["office=architect"],
-    "travel": ["shop=travel_agency", "office=travel_agent"],
-    "agen travel": ["shop=travel_agency", "office=travel_agent"],
-
-    # ============ WISATA & AKOMODASI ============
-    "hotel": ["tourism=hotel"],
-    "penginapan": ["tourism=hotel", "tourism=guest_house", "tourism=hostel"],
-    "villa": ["tourism=chalet", "tourism=guest_house"],
-    "homestay": ["tourism=guest_house"],
-    "hostel": ["tourism=hostel"],
-    "wisata": ["tourism=attraction", "tourism=theme_park"],
-    "museum": ["tourism=museum"],
-    "masjid": ["amenity=place_of_worship"],
-    "gereja": ["amenity=place_of_worship"],
-
-    # ============ OLAHRAGA ============
-    "gym": ["leisure=fitness_centre"],
-    "fitness": ["leisure=fitness_centre"],
-    "kolam renang": ["leisure=swimming_pool", "leisure=sports_centre"],
-    "stadion": ["leisure=stadium"],
-    "bioskop": ["amenity=cinema"],
-    "karaoke": ["amenity=nightclub"],
-
-    # ============ LAIN-LAIN ============
     "buku": ["shop=books"],
     "mainan": ["shop=toys"],
-    "elektronik": ["shop=electronics"],
-    "hp": ["shop=mobile_phone"],
-    "handphone": ["shop=mobile_phone"],
-    "komputer": ["shop=computer"],
-    "bangunan": ["shop=hardware", "shop=doityourself"],
-    "material": ["shop=hardware", "shop=doityourself"],
-    "cat": ["shop=paint"],
-    "mebel": ["shop=furniture"],
-    "furniture": ["shop=furniture"],
-    "bunga": ["shop=florist"],
-    "pet shop": ["shop=pet"],
-    "toko hewan": ["shop=pet"],
-    "masjid_besar": ["amenity=place_of_worship"],
+    "buah": ["shop=greengrocer"],
+    "sembako": ["shop=convenience", "shop=supermarket"],
+    "frozen food": ["shop=frozen_food", "shop=convenience"],
+    "hotel": ["tourism=hotel"],
+    "masjid": ["amenity=place_of_worship"],
     "bank": ["amenity=bank"],
-    "fotokopi": ["shop=copyshop"],
-    "percetakan": ["shop=copyshop", "craft=printer"],
-    "toko emas": ["shop=jewelry"],
+    "spbu": ["amenity=fuel"],
+    "pasar": ["amenity=marketplace"],
 }
 
 
+# Mapping kategori UI dashboard -> keyword internal
 KATEGORI_KE_KEYWORD = {
-    "semua": "toko", "makanan": "restoran", "minuman": "minuman",
-    "retail": "sembako", "kesehatan": "apotek", "pendidikan": "buku",
-    "otomotif": "bengkel", "jasa": "salon", "wisata": "hotel",
-    "olahraga": "cafe", "miras": "miras",
+    "semua": "toko",
+    "makanan": "restoran",
+    "minuman": "minuman",
+    "retail": "sembako",
+    "kesehatan": "apotek",
+    "pendidikan": "buku",
+    "otomotif": "bengkel",
+    "jasa": "salon",
+    "wisata": "hotel",
+    "olahraga": "cafe",
+    "miras": "minuman",
 }
 
 
@@ -324,11 +194,17 @@ def cari_kota_lengkap(keyword, limit=50):
 
 
 # =====================================================================
-# ENRICHMENT KBLI
+# ENRICHMENT: Klasifikasi KBLI per bisnis
 # =====================================================================
 def _enrich_dengan_kbli(businesses, prefer_level=4):
+    """
+    Tambahkan field KBLI (kode 2/3/4/5 digit + judul) ke setiap bisnis.
+    Tidak mengubah struktur lama — hanya menambah key baru.
+    Kalau classifier tidak siap, dikembalikan apa adanya.
+    """
     if not businesses:
         return businesses
+
     try:
         from backend.modules.business_classifier import get_classifier
         clf = get_classifier(prefer_level=prefer_level)
@@ -340,6 +216,7 @@ def _enrich_dengan_kbli(businesses, prefer_level=4):
         return businesses
 
     for b in businesses:
+        # Ambil tag dari field 'kategori' (format "shop=bakery, amenity=cafe")
         kat_str = b.get('kategori', '') or ''
         tags = [t.strip() for t in kat_str.split(',') if '=' in t]
         try:
@@ -360,10 +237,15 @@ def _enrich_dengan_kbli(businesses, prefer_level=4):
             print(f"[Enrich] Gagal klasifikasi '{b.get('nama')}': {e}")
             b.setdefault('code_4digit', None)
             b.setdefault('subgolongan_title', None)
+
     return businesses
 
 
 def group_by_subgolongan(businesses):
+    """
+    Kelompokkan bisnis hasil scan per KBLI 4-digit.
+    Return: {code_4digit: {'code_4digit','title','count','businesses'}}
+    """
     groups = {}
     for b in businesses or []:
         code = b.get('code_4digit') or 'UNCLASSIFIED'
@@ -371,7 +253,8 @@ def group_by_subgolongan(businesses):
             groups[code] = {
                 'code_4digit': code,
                 'title': b.get('subgolongan_title') or 'Tidak terklasifikasi',
-                'count': 0, 'businesses': [],
+                'count': 0,
+                'businesses': [],
             }
         groups[code]['count'] += 1
         groups[code]['businesses'].append(b)
@@ -379,7 +262,7 @@ def group_by_subgolongan(businesses):
 
 
 # =====================================================================
-# PARSER
+# PARSER OVERPASS
 # =====================================================================
 def _parse_overpass_result(data, lat, lon, maks):
     hasil = []
@@ -395,7 +278,7 @@ def _parse_overpass_result(data, lat, lon, maks):
 
         nama = t.get('name', 'Tanpa nama')
         kategori_list = []
-        for key in ['shop', 'amenity', 'craft', 'office', 'tourism', 'leisure']:
+        for key in ['shop', 'amenity', 'craft', 'office', 'tourism']:
             if t.get(key):
                 kategori_list.append(f"{key}={t[key]}")
 
@@ -422,58 +305,53 @@ def _parse_overpass_result(data, lat, lon, maks):
 
 
 # =====================================================================
-# SCAN UTAMA (diperbaiki)
+# SCAN UTAMA (dipertahankan + enrichment)
 # =====================================================================
 def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart=True):
-    keyword_lower = keyword.lower().strip()
+    """Scan POI + SMART FILTER + KBLI ENRICHMENT pada semua hasil."""
+    keyword_lower = keyword.lower()
     radius_km = radius_m / 1000
 
     from backend.db.cache_db import get_cached, save_cache
     cached = get_cached(lat, lon, radius_km, keyword_lower)
     if cached:
+        # Cache lama mungkin belum punya field KBLI — enrich ulang
         data = _enrich_dengan_kbli(cached['data'][:maks])
         return {'success': True, 'data': data,
                 'error': '', 'from_cache': True, 'query_used': 'cache'}
 
-    # === BUILD QUERIES ===
+    # === BUILD QUERIES (prioritas: tag spesifik → name → raw) ===
     queries = []
 
-    # ---------- Query 1: TAG dari classifier (paling pintar) ----------
-    osm_filter: Dict[str, str] = {}
-    try:
-        from backend.modules.business_classifier import cari_osm_filter_dari_keyword
-        osm_filter = cari_osm_filter_dari_keyword(keyword) or {}
-    except Exception as e:
-        print(f"[Scan] Classifier tidak tersedia: {e}")
+    # Query 1: TAG SPESIFIK (paling presisi)
+    if smart:
+        try:
+            from backend.modules.business_classifier import cari_konfigurasi_keyword
+            config = cari_konfigurasi_keyword(keyword)
+            tags = config.get('osm_tags', [])
+        except Exception:
+            tags = KEYWORD_TO_OSM.get(keyword_lower, [])
+    else:
+        tags = KEYWORD_TO_OSM.get(keyword_lower, [])
 
-    # Fallback: pakai KEYWORD_TO_OSM lokal
-    if not osm_filter:
-        local_tags = KEYWORD_TO_OSM.get(keyword_lower, [])
-        for tag in local_tags:
-            if "=" in tag:
-                k, v = tag.split("=", 1)
-                if k in osm_filter:
-                    osm_filter[k] = osm_filter[k] + "|" + v
-                else:
-                    osm_filter[k] = v
-
-    if osm_filter:
+    if tags:
         tq = []
-        for k, v in osm_filter.items():
-            # Regex multi-value: shop~"alcohol|wine|beverages"
-            tq.append(f'node["{k}"~"^({v})$"](around:{radius_m},{lat},{lon});')
-            tq.append(f'way["{k}"~"^({v})$"](around:{radius_m},{lat},{lon});')
+        for tag in tags:
+            if '=' in tag:
+                k, v = tag.split('=')
+                tq.append(f'node["{k}"="{v}"](around:{radius_m},{lat},{lon});')
+                tq.append(f'way["{k}"="{v}"](around:{radius_m},{lat},{lon});')
         if tq:
             queries.append({
-                'name': f'osm-filter-{keyword}',
+                'name': f'tag-{keyword}',
                 'query': f"""[out:json][timeout:25];
 (
   {chr(10).join(tq)}
 );
-out center 200;"""
+out center {maks};"""
             })
 
-    # ---------- Query 2: BY NAME (fallback) ----------
+    # Query 2: BY NAME
     queries.append({
         'name': f'name-{keyword}',
         'query': f"""[out:json][timeout:25];
@@ -484,19 +362,17 @@ out center 200;"""
 out center {maks};"""
     })
 
-    # ---------- Query 3: RAW-ALL (naikkan limit 100 -> 300) ----------
+    # Query 3: RAW-ALL (fallback terakhir)
     queries.append({
         'name': 'raw-all',
-        'query': f"""[out:json][timeout:30];
+        'query': f"""[out:json][timeout:25];
 (
   node["shop"](around:{radius_m},{lat},{lon});
   way["shop"](around:{radius_m},{lat},{lon});
   node["amenity"](around:{radius_m},{lat},{lon});
   way["amenity"](around:{radius_m},{lat},{lon});
-  node["craft"](around:{radius_m},{lat},{lon});
-  way["craft"](around:{radius_m},{lat},{lon});
 );
-out center 300;"""
+out center {maks};"""
     })
 
     endpoints = [
@@ -524,7 +400,7 @@ out center 300;"""
                         data = r.json()
                         raw = _parse_overpass_result(data, lat, lon, maks)
 
-                        # Filter smart
+                        # === FILTER SMART UNTUK SEMUA QUERY ===
                         if smart and raw:
                             try:
                                 from backend.modules.business_classifier import filter_bisnis_smart
@@ -540,7 +416,9 @@ out center 300;"""
                         print(f"   ✅ {len(raw)} mentah → {len(final)} setelah filter")
 
                         if final:
+                            # === ENRICHMENT KBLI (BARU) ===
                             final = _enrich_dengan_kbli(final)
+
                             save_cache(lat, lon, radius_km, keyword_lower, final)
                             return {'success': True, 'data': final,
                                     'error': '', 'from_cache': False,
@@ -557,6 +435,7 @@ out center 300;"""
             if attempt < retry - 1:
                 sleep(2)
 
+    # Fallback: cache lama
     old = get_cached(lat, lon, radius_km, keyword_lower, max_age_hours=8760)
     if old:
         data = _enrich_dengan_kbli(old['data'][:maks])
@@ -570,7 +449,7 @@ out center 300;"""
 
 
 # =====================================================================
-# ANALISIS PELUANG (existing)
+# ANALISIS PELUANG (existing, dipertahankan)
 # =====================================================================
 def _analisis_peluang_single(lat, lon, keyword, radius_km=5, kompetitor_list=None):
     hasil = {
@@ -663,12 +542,18 @@ def analisis_peluang(*args, **kwargs):
 
 
 # =====================================================================
-# ADAPTER CLASS
+# ADAPTER CLASS: Kompatibilitas dengan dashboard (streamlit_app.py)
 # =====================================================================
 class MapsScanner:
+    """
+    Wrapper OOP untuk fungsi scan_sekitar.
+    Bikin interface seragam: scanner.scan(lat, lon, radius, kategori).
+    """
+
     def scan(self, lat, lon, radius=1000, kategori="semua"):
         keyword = KATEGORI_KE_KEYWORD.get(kategori, "toko")
         hasil = scan_sekitar(lat, lon, radius_m=radius, keyword=keyword, maks=200)
+
         data = hasil.get('data', []) or []
         return {
             'success': hasil.get('success', False),
@@ -681,6 +566,7 @@ class MapsScanner:
         }
 
     def scan_dan_filter_miras(self, lat, lon, radius=1000):
+        """Shortcut: hanya tampilkan subgolongan 4722."""
         hasil = self.scan(lat, lon, radius, kategori="miras")
         if not hasil['success']:
             return hasil
@@ -697,23 +583,29 @@ class MapsScanner:
 # =====================================================================
 if __name__ == "__main__":
     print("=" * 60)
-    print("MAPS SCANNER - SELF TEST (miras fix)")
+    print("MAPS SCANNER + KBLI ENRICHMENT — SELF TEST")
     print("=" * 60)
 
-    # Test classifier: "miras" -> filter
-    from backend.modules.business_classifier import cari_osm_filter_dari_keyword
-    for kw in ["miras", "kue", "bengkel", "apotek"]:
-        print(f"\n'{kw}' -> {cari_osm_filter_dari_keyword(kw)}")
+    # Test 1: scan Monas
+    hasil = scan_sekitar(lat=-6.1754, lon=106.8272, radius_m=800,
+                          keyword="restoran", maks=20)
+    print(f"\n[Scan] Success={hasil['success']}, N={len(hasil.get('data', []))}, "
+          f"Cache={hasil.get('from_cache')}")
+    if hasil['success'] and hasil['data']:
+        print("\nContoh 3 hasil + KBLI:")
+        for b in hasil['data'][:3]:
+            print(f"  • {b['nama']}")
+            print(f"      KBLI 4d : {b.get('code_4digit')}")
+            print(f"      Subgol  : {b.get('subgolongan_title')}")
 
-    # Test scan miras di Jakarta Selatan
-    print("\n" + "=" * 60)
-    print("Scan 'miras' di Jakarta Selatan (-6.2615, 106.8106)")
-    print("=" * 60)
-    hasil = scan_sekitar(lat=-6.2615, lon=106.8106, radius_m=3000,
-                          keyword="miras", maks=50)
-    print(f"Success={hasil['success']}, N={len(hasil.get('data', []))}, "
-          f"query={hasil.get('query_used')}")
-    if hasil['success']:
-        for b in hasil['data'][:10]:
-            print(f"  • {b['nama']:35} | {b.get('code_4digit')} | "
-                  f"{(b.get('subgolongan_title') or '')[:40]}")
+        print("\n[Group by subgolongan]")
+        groups = group_by_subgolongan(hasil['data'])
+        for code, info in sorted(groups.items(), key=lambda x: -x[1]['count']):
+            print(f"  {code}  {info['title'][:50]}  ({info['count']})")
+
+    # Test 2: adapter class
+    print("\n[Adapter Class MapsScanner]")
+    scanner = MapsScanner()
+    out = scanner.scan(-6.1754, 106.8272, radius=800, kategori="makanan")
+    print(f"  count={out['count']}, success={out['success']}, "
+          f"subgol={len(out['by_subgolongan'])} grup")
