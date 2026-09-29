@@ -183,26 +183,22 @@ def bandingkan_2_kota(kota_a: dict, kota_b: dict, keyword: str,
             from datetime import datetime
             label_auto = f"Bandingkan {datetime.now().strftime('%d %b %H:%M')}"
 
-            # Re-scan untuk simpan data lengkap (karena _metrik_kota hanya simpan top 5)
-            from backend.modules.maps_scanner import scan_sekitar
-            for key, kota, metrik in [('a', kota_a, a), ('b', kota_b, b)]:
+
+            # Simpan snapshot pakai data yang SUDAH di-scan (jangan scan 2x!)
+            for key, metrik in [('a', a), ('b', b)]:
+                if metrik.get('error'):
+                    continue
                 try:
-                    scan_full = scan_sekitar(
-                        metrik['lat'], metrik['lon'],
-                        radius_m=int(radius_km * 1000),
-                        keyword=keyword, maks=300,
+                    sid = save_snapshot(
+                        kota=metrik['nama'],
+                        keyword=keyword,
+                        radius_km=radius_km,
+                        data=metrik.get('top_toko', []),  # ← batasan: hanya top 5
+                        lat=metrik['lat'], lon=metrik['lon'],
+                        label=label_auto,
+                        catatan=f"Auto-save dari Bandingkan Kota (partial)",
                     )
-                    if scan_full.get('success'):
-                        sid = save_snapshot(
-                            kota=metrik['nama'],
-                            keyword=keyword,
-                            radius_km=radius_km,
-                            data=scan_full.get('data', []),
-                            lat=metrik['lat'], lon=metrik['lon'],
-                            label=label_auto,
-                            catatan=f"Auto-save dari Bandingkan Kota",
-                        )
-                        snapshot_ids[key] = sid
+                    snapshot_ids[key] = sid
                 except Exception as e:
                     print(f"[Compare] Gagal snapshot {key}: {e}")
         except Exception as e:

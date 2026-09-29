@@ -441,7 +441,7 @@ def _parse_overpass_result(data, lat, lon, maks):
 # =====================================================================
 # SCAN UTAMA (diperbaiki)
 # =====================================================================
-def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart=True):
+def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=1, smart=True):
     keyword_lower = keyword.lower().strip()
     radius_km = radius_m / 1000
 
@@ -528,7 +528,7 @@ out center 300;"""
         "https://overpass.kumi.systems/api/interpreter",
     ]
     # Timeout lebih longgar: Streamlit Cloud → server Eropa butuh waktu
-    HTTP_TIMEOUT = 120
+    HTTP_TIMEOUT = 90
 
     headers = {
         "User-Agent": "MarketIntelDashboard/1.0 (contact: donynov80@gmail.com)",
