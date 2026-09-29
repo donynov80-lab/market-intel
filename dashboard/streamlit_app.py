@@ -1007,20 +1007,65 @@ with tab_tren:
             # Tabel metrik side-by-side
             st.markdown("### 📊 Metrik Side-by-Side")
             metrik_rows = [
-                ('Total Toko', a['total_toko'], b['total_toko']),
+                ('Total Toko', str(a['total_toko']), str(b['total_toko'])),
                 ('Penduduk', f"{a['penduduk']:,}", f"{b['penduduk']:,}"),
-                ('Luas (km²)', a['luas'] or '-', b['luas'] or '-'),
+                ('Luas (km²)', str(a['luas'] or '-'), str(b['luas'] or '-')),
                 ('Density / 10rb',
-                 a['density_per_10rb'] if a['density_per_10rb'] is not None else '-',
-                 b['density_per_10rb'] if b['density_per_10rb'] is not None else '-'),
-                ('Rata-rata Jarak (km)', a['rata_jarak_km'] or '-', b['rata_jarak_km'] or '-'),
-                ('Skor Peluang', f"{a['skor_peluang']}/10" if a['skor_peluang'] else 'N/A',
+                 str(a['density_per_10rb']) if a['density_per_10rb'] is not None else '-',
+                 str(b['density_per_10rb']) if b['density_per_10rb'] is not None else '-'),
+                ('Rata-rata Jarak (km)', str(a['rata_jarak_km'] or '-'), str(b['rata_jarak_km'] or '-')),
+                ('Skor Peluang',
+                 f"{a['skor_peluang']}/10" if a['skor_peluang'] else 'N/A',
                  f"{b['skor_peluang']}/10" if b['skor_peluang'] else 'N/A'),
-                ('Kategori', a['kategori'], b['kategori']),
+                ('Kategori', str(a['kategori']), str(b['kategori'])),
             ]
             df_cmp = pd.DataFrame(metrik_rows, columns=['Metrik', a['nama'], b['nama']])
             st.dataframe(df_cmp, use_container_width=True, hide_index=True)
+            
+            # === DAFTAR TOKO A & B dengan Maps link ===
+            col_lst_a, col_lst_b = st.columns(2)
 
+            def _df_toko(toko_list):
+                return pd.DataFrame([{
+                    'Nama': t.get('nama') or 'Tanpa nama',
+                    'KBLI': t.get('code_4digit') or '-',
+                    'Subgolongan': t.get('subgolongan_title') or '-',
+                    'Jarak': t.get('jarak_km'),
+                    'Maps': (
+                        f"https://www.google.com/maps?q={t.get('lat')},{t.get('lon')}"
+                        if t.get('lat') and t.get('lon') else None
+                    ),
+                } for t in toko_list])
+
+            with col_lst_a:
+                st.markdown(f"#### 📋 {a['nama']} — {a['total_toko']} toko")
+                if a.get('semua_toko'):
+                    st.dataframe(
+                        _df_toko(a['semua_toko']),
+                        use_container_width=True, hide_index=True, height=400,
+                        column_config={
+                            'Maps': st.column_config.LinkColumn(
+                                '🗺️ Maps', display_text='Buka'
+                            ),
+                        },
+                    )
+                else:
+                    st.info("Tidak ada toko ditemukan.")
+
+            with col_lst_b:
+                st.markdown(f"#### 📋 {b['nama']} — {b['total_toko']} toko")
+                if b.get('semua_toko'):
+                    st.dataframe(
+                        _df_toko(b['semua_toko']),
+                        use_container_width=True, hide_index=True, height=400,
+                        column_config={
+                            'Maps': st.column_config.LinkColumn(
+                                '🗺️ Maps', display_text='Buka'
+                            ),
+                        },
+                    )
+                else:
+                    st.info("Tidak ada toko ditemukan.")
             # Bar chart per KBLI
             if hb['chart_kbli']:
                 st.markdown("### 📊 Breakdown per KBLI 4-digit")

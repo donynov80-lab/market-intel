@@ -95,11 +95,13 @@ def _metrik_kota(kota: dict, keyword: str, radius_km: float,
     except Exception as e:
         hasil['error'] = f"Analisis error: {str(e)[:120]}"
 
-    # Top 5 toko terdekat
-    hasil['top_toko'] = sorted(
+    # SEMUA toko (sorted by jarak)
+    hasil['semua_toko'] = sorted(
         kompetitor,
         key=lambda x: x.get('jarak_km') or 999,
-    )[:5]
+    )
+    # Top 5 (untuk kompatibilitas kalau ada yang pakai)
+    hasil['top_toko'] = hasil['semua_toko'][:5]
 
     return hasil
 
@@ -193,7 +195,7 @@ def bandingkan_2_kota(kota_a: dict, kota_b: dict, keyword: str,
                         kota=metrik['nama'],
                         keyword=keyword,
                         radius_km=radius_km,
-                        data=metrik.get('top_toko', []),  # ← batasan: hanya top 5
+                        data=metrik.get('semua_toko', []),  # ← batasan: hanya top 5
                         lat=metrik['lat'], lon=metrik['lon'],
                         label=label_auto,
                         catatan=f"Auto-save dari Bandingkan Kota (partial)",
