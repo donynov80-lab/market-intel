@@ -12,6 +12,9 @@ from time import sleep
 from math import radians, sin, cos, sqrt, atan2
 import sys
 from pathlib import Path
+# === FIX: paksa print langsung flush ke stdout (biar muncul di Streamlit Cloud logs) ===
+import functools
+print = functools.partial(print, flush=True)
 
 # Setup path: tambahkan ROOT project (market-intel/) dan folder ini
 _THIS_DIR = Path(__file__).resolve().parent           # .../backend/modules
@@ -510,7 +513,7 @@ out center 300;"""
         "https://overpass.osm.ch/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",   # sering 504, taruh belakang
     ]
-    
+
     headers = {
         "User-Agent": "MarketIntelDashboard/1.0 (contact: donynov80@gmail.com)",
         "Accept": "application/json",
