@@ -477,15 +477,19 @@ def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=2, smart
     if osm_filter:
         tq = []
         for k, v in osm_filter.items():
-            # Regex multi-value: shop~"alcohol|wine|beverages"
-            tq.append(f'node["{k}"~"{v}"](around:{radius_m},{lat},{lon});')
-            tq.append(f'way["{k}"~"{v}"](around:{radius_m},{lat},{lon});')
+            # Split pipe jadi OR-statement LANGSUNG (tanpa regex — jauh lebih cepat)
+            for val in str(v).split("|"):
+                val = val.strip()
+                if not val:
+                    continue
+                # 'nwr' = node + way + relation, lebih clean & cepat
+                tq.append(f'nwr["{k}"="{val}"](around:{radius_m},{lat},{lon});')
         if tq:
             queries.append({
                 'name': f'osm-filter-{keyword}',
-                'query': f"""[out:json][timeout:60];
+                'query': f"""[out:json][timeout:90];
 (
-  {chr(10).join(tq)}
+{chr(10).join(tq)}
 );
 out center 500;"""
             })
