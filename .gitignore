@@ -47,3 +47,8 @@ data_eksternal/
 data_wilayah/
 *.psd
 *.mp4
+
+# ===== Wilayah SQL (besar, TIDAK di-push) =====
+db_eksternal/*.sql
+db_eksternal/archive/
+db_eksternal/db_cahyadsn.php
