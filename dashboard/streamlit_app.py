@@ -18,6 +18,15 @@ from backend.modules.wa_analyzer import analisis_daftar_nomor
 from backend.modules.location_trending import trending_per_lokasi, skor_autocomplete
 from backend.modules.maps_scanner import cari_kota_lengkap, scan_sekitar, analisis_peluang
 
+from backend.db.snapshot_db import (
+    save_snapshot, get_snapshots, get_tren,
+    compare_snapshots, stats_snapshot, list_kombinasi,
+)
+from backend.db.master_db import (
+    upsert_master_batch, get_master, get_master_stats,
+)
+
+
 
 KOTA_PER_PROVINSI = {
     "DKI Jakarta": ["Jakarta Pusat", "Jakarta Selatan", "Jakarta Barat", "Jakarta Timur", "Jakarta Utara"],
@@ -44,7 +53,7 @@ KOTA_PER_PROVINSI = {
 st.set_page_config(page_title="Market Intel Dashboard", page_icon="🧠",
                     layout="wide", initial_sidebar_state="expanded")
 
-for key in ['hasil_scan', 'hasil_analisis', 'info_scan', 'info_analisis', 'hasil_trending']:
+for key in ['hasil_scan', 'hasil_analisis', 'info_scan', 'info_analisis', 'hasil_trending', 'master_baru_scan_terakhir']:
     if key not in st.session_state:
         st.session_state[key] = None
 
@@ -70,9 +79,10 @@ st.title("🧠 Market Intel Dashboard")
 st.caption("Pusat data marketing untuk UMKM")
 st.divider()
 
-tab_lokasi, tab_maps, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab_lokasi, tab_maps, tab1, tab2, tab3, tab4, tab5, tab6, tab_tren = st.tabs([
     "📍 Trending per Lokasi", "🗺️ Peta Kompetitor", "📊 Trends",
-    "🔍 Keyword", "🗺️ Campaign", "👥 Leads", "📱 WA Analyzer", "📖 Panduan"
+    "🔍 Keyword", "🗺️ Campaign", "👥 Leads", "📱 WA Analyzer", "📖 Panduan",
+    "📈 Tren & Master"
 ])
 
 
@@ -297,6 +307,18 @@ with tab_maps:
                 }
                 st.session_state.hasil_analisis = None
 
+                  # === BARU: Auto-upsert ke master katalog ===
+                try:
+                    stat_master = upsert_master_batch(
+                        hasil_data or [],
+                        keyword=keyword_scan,
+                        kota=kota_pilih,
+                    )
+                    st.session_state.master_baru_scan_terakhir = stat_master
+                except Exception as e:
+                    st.warning(f"Master upsert gagal: {e}")
+                    st.session_state.master_baru_scan_terakhir = None              
+
     # ====== AKSI: ANALISIS ======
     if btn_analisis and kota_data:
         lat, lon = kota_data.get('lat'), kota_data.get('lon')
@@ -338,6 +360,49 @@ with tab_maps:
     if st.session_state.get('hasil_scan') is not None:
         hasil = st.session_state.hasil_scan
         info = st.session_state.info_scan
+
+        # === BARU: Info master + tombol Simpan Snapshot ===
+        _m = st.session_state.get('master_baru_scan_terakhir')
+        if _m and (_m.get('baru', 0) > 0 or _m.get('update', 0) > 0):
+            st.info(
+                f"📚 **Master katalog**: {_m['baru']} toko **BARU** "
+                f"| {_m['update']} toko sudah dikenal sebelumnya"
+            )
+
+        with st.expander("💾 Simpan sebagai Snapshot (untuk tracking bulanan)"):
+            col_s1, col_s2 = st.columns([3, 1])
+            with col_s1:
+                label_snap = st.text_input(
+                    "Label snapshot (opsional)",
+                    placeholder="mis. Akhir Sep 2026",
+                    key="snap_label",
+                )
+                catatan_snap = st.text_area(
+                    "Catatan (opsional)", height=68, key="snap_catatan",
+                )
+            with col_s2:
+                st.write("")
+                st.write("")
+                if st.button("💾 Simpan Snapshot", key="btn_snap",
+                             type="primary", use_container_width=True):
+                    try:
+                        sid = save_snapshot(
+                            kota=info.get('kota', '-'),
+                            keyword=info.get('keyword', '-'),
+                            radius_km=info.get('radius', 0),
+                            data=st.session_state.hasil_scan or [],
+                            lat=info.get('lat'),
+                            lon=info.get('lon'),
+                            label=label_snap.strip() or None,
+                            catatan=catatan_snap.strip() or None,
+                        )
+                        if sid:
+                            st.success(f"✅ Snapshot #{sid} tersimpan!")
+                        else:
+                            st.error("Gagal simpan snapshot.")
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+
         st.divider()
 
         if not hasil:
@@ -785,6 +850,107 @@ with tab6:
 
         **Solusi:** tunggu 60 detik, ganti keyword, atau pilih KOTA bukan KABUPATEN.
         """)
+
+# =========================================================
+# TAB 9 — TREN & MASTER
+# =========================================================
+with tab_tren:
+    st.header("📈 Tren Kompetitor & Katalog Master")
+    st.caption("Riwayat snapshot bulanan + semua toko yang pernah terlihat")
+
+    sub_tren, sub_master = st.tabs(["📊 Grafik Tren", "📚 Katalog Master"])
+
+    # -------- SUB 1: TREN --------
+    with sub_tren:
+        st.subheader("📊 Tren Jumlah Kompetitor")
+        kombinasi = list_kombinasi()
+
+        if not kombinasi:
+            st.info(
+                "Belum ada snapshot. Lakukan scan di Tab Peta Kompetitor, "
+                "lalu klik **💾 Simpan Snapshot** untuk mulai tracking."
+            )
+        else:
+            kota_unik = sorted(set(k['kota'] for k in kombinasi))
+            col_t1, col_t2 = st.columns(2)
+            with col_t1:
+                pilihan_kota = st.selectbox("Pilih kota", kota_unik, key="tren_kota")
+            with col_t2:
+                opsi_kw = sorted(set(
+                    k['keyword'] for k in kombinasi if k['kota'] == pilihan_kota
+                ))
+                pilihan_kw = st.selectbox("Pilih keyword", opsi_kw, key="tren_kw")
+
+            tren = get_tren(pilihan_kota, pilihan_kw)
+            if tren:
+                df_tren = pd.DataFrame(tren)
+                df_tren['label_display'] = df_tren['label'].fillna('').replace('', pd.NA)
+                df_tren['label_display'] = df_tren['label_display'].fillna(
+                    df_tren['snapshot_at'].str[:10]
+                )
+                df_tren = df_tren.set_index('label_display')
+                st.line_chart(df_tren['jumlah'], height=320)
+                st.dataframe(
+                    df_tren[['jumlah']].rename(columns={'jumlah': 'Jumlah Toko'}),
+                    use_container_width=True,
+                )
+            else:
+                st.info("Belum ada data tren untuk kombinasi ini.")
+
+    # -------- SUB 2: MASTER --------
+    with sub_master:
+        st.subheader("📚 Katalog Master Kompetitor")
+
+        stats_m = get_master_stats()
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Total Toko Unik", stats_m['total'])
+        c2.metric("🔴 Baru 30 Hari", stats_m['baru_30_hari'])
+        c3.metric(
+            "KBLI Terbanyak",
+            stats_m['top_kbli'][0]['code'] if stats_m['top_kbli'] else '-'
+        )
+
+        st.divider()
+        with st.expander("🔍 Filter & Pencarian", expanded=True):
+            col_f1, col_f2, col_f3 = st.columns(3)
+            with col_f1:
+                kw_filter = st.text_input("Keyword", placeholder="mis. miras", key="mst_kw")
+            with col_f2:
+                kota_filter = st.text_input("Kota (contains)", placeholder="mis. Denpasar", key="mst_kota")
+            with col_f3:
+                nama_filter = st.text_input("Nama toko (contains)", key="mst_nama")
+
+            col_f4, col_f5 = st.columns(2)
+            with col_f4:
+                kode_filter = st.text_input("Kode KBLI 4-digit", placeholder="mis. 4722", key="mst_kode")
+            with col_f5:
+                baru_filter = st.checkbox("🔴 Hanya toko baru 30 hari", key="mst_baru")
+
+        daftar = get_master(
+            keyword=kw_filter.strip() or None,
+            kota=kota_filter.strip() or None,
+            code_4digit=kode_filter.strip() or None,
+            cari_nama=nama_filter.strip() or None,
+            baru_dalam_hari=30 if baru_filter else None,
+            limit=500,
+        )
+
+        if not daftar:
+            st.info("Belum ada data master. Lakukan scan dulu di Tab Peta Kompetitor.")
+        else:
+            st.success(f"📊 {len(daftar)} toko ditemukan")
+            df_master = pd.DataFrame([{
+                'Nama': m['nama'],
+                'Obs': m['observation_count'],
+                'First Seen': (m['first_seen'] or '')[:10],
+                'Last Seen': (m['last_seen'] or '')[:10],
+                'KBLI': m['code_4digit'] or '-',
+                'Subgolongan': m['subgolongan_title'] or '-',
+                'Keywords': ', '.join(m.get('keywords', [])),
+                'Kota': ', '.join(m.get('kotas', [])),
+            } for m in daftar])
+            st.dataframe(df_master, use_container_width=True, hide_index=True)
+
 
 st.divider()
 st.caption("© 2026 Market Intel — Dony Noviandri")
