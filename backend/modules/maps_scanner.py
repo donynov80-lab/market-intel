@@ -349,8 +349,10 @@ def _enrich_dengan_kbli(businesses, prefer_level=4):
     for b in businesses:
         kat_str = b.get('kategori', '') or ''
         tags = [t.strip() for t in kat_str.split(',') if '=' in t]
+        # fallback: pakai 'name' kalau 'nama' kosong
+        nama = b.get('nama') or b.get('name') or ''
         try:
-            cls = clf.classify(name=b.get('nama', ''), tags=tags)
+            cls = clf.classify(name=nama, tags=tags)
             hier = cls.get('hierarchy') or {}
             sub = hier.get('subgol') or {}
             gol = hier.get('gol') or {}
@@ -361,12 +363,20 @@ def _enrich_dengan_kbli(businesses, prefer_level=4):
             b['kbli_title'] = cls.get('title')
             b['kbli_source'] = cls.get('source')
             b['kbli_confidence'] = cls.get('confidence', 0.0)
-            b['subgolongan_title'] = sub.get('title') if isinstance(sub, dict) else None
-            b['golongan_title'] = gol.get('title') if isinstance(gol, dict) else None
+            # === FIX: subgolongan_title — 3 lapis fallback ===
+            subgol_title = None
+            if isinstance(sub, dict):
+                subgol_title = sub.get('title')
+            if not subgol_title:
+                subgol_title = cls.get('title')  # fallback ke title KBLI
+            b['subgolongan_title'] = subgol_title or '-'
+            b['golongan_title'] = (
+                gol.get('title') if isinstance(gol, dict) else None
+            ) or '-'
         except Exception as e:
-            print(f"[Enrich] Gagal klasifikasi '{b.get('nama')}': {e}")
+            print(f"[Enrich] Gagal klasifikasi '{nama}': {e}")
             b.setdefault('code_4digit', None)
-            b.setdefault('subgolongan_title', None)
+            b.setdefault('subgolongan_title', '-')
     return businesses
 
 

@@ -566,23 +566,12 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
                         threshold: int = 6) -> List[dict]:
     """
     Saring hasil scan OSM berdasarkan relevansi keyword.
+    KOMPATIBEL dengan output _parse_overpass_result() yang pakai key
+    'nama' + 'kategori' (Indonesia), sekaligus fallback ke 'name' + 'tags'.
 
-    Skor relevansi 0-10:
-      - 10     : tag OSM persis cocok filter keyword
-                 (mis. keyword="miras", item punya shop=alcohol)
-      - 5-9    : KBLI 4-digit item sama dengan KBLI keyword
-                 (skor = confidence x 10)
-      - <thr   : dibuang (tidak relevan)
-
-    Args:
-        data      : list item hasil Overpass (dict dengan key 'tags')
-        keyword   : kata kunci (mis. "miras")
-        threshold : ambang minimum 0-10 (default 6)
-
-    Return:
-        list item yang lolos, diurutkan dari skor tertinggi.
-        Tiap item dapat field tambahan: _score, _code, _code_4digit,
-        _matched_kw, _source, _subgolongan.
+    Tiap item dapat field tambahan:
+      _skor, _alasan, _score, _code, _code_4digit, _matched_kw,
+      _source, _subgolongan, subgolongan_title
     """
     if not data:
         return []
@@ -617,7 +606,15 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
     # --- 3. Skoring tiap item ---
     hasil = []
     for item in data:
-        raw_tags = item.get("tags", {})
+        # === FIX KOMPATIBILITAS: baca 'tags' ATAU 'kategori' ===
+        raw_tags = item.get("tags")
+        if not raw_tags:
+            kategori_str = item.get("kategori") or ""
+            if isinstance(kategori_str, str) and kategori_str and kategori_str != "-":
+                raw_tags = [t.strip() for t in kategori_str.split(",") if t.strip()]
+            else:
+                raw_tags = []
+
         if isinstance(raw_tags, dict):
             tag_list = [f"{k}={v}" for k, v in raw_tags.items()]
         elif isinstance(raw_tags, list):
@@ -625,9 +622,8 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
         else:
             tag_list = []
 
-        name = (item.get("name") or "").strip()
-        if not name and isinstance(raw_tags, dict):
-            name = str(raw_tags.get("name", "")).strip()
+        # === FIX KOMPATIBILITAS: baca 'name' ATAU 'nama' ===
+        name = (item.get("name") or item.get("nama") or "").strip()
 
         if not name and not tag_list:
             continue
@@ -640,13 +636,17 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
 
         if osm_hit:
             score = 10
+            alasan = f"Tag OSM cocok persis dengan keyword '{keyword}'"
         elif kbli_hit:
             score = int(round(cls.get("confidence", 0.5) * 10))
+            alasan = f"KBLI {code_4} cocok (confidence {cls.get('confidence', 0)})"
         else:
             score = 0
+            alasan = "Tidak ada kecocokan"
 
         if score >= threshold:
             new_item = dict(item)
+            # field versi LAMA (biar backward-compat)
             new_item["_score"] = score
             new_item["_code"] = cls.get("code")
             new_item["_code_4digit"] = code_4 or None
@@ -654,9 +654,16 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
             new_item["_source"] = cls.get("source", "NONE")
             h = cls.get("hierarchy") or {}
             subgol = h.get("subgol")
-            new_item["_subgolongan"] = (
-                subgol.get("title") if isinstance(subgol, dict) else None
+            subgol_title = subgol.get("title") if isinstance(subgol, dict) else None
+            new_item["_subgolongan"] = subgol_title
+
+            # === FIX: field versi BARU (yang dibaca Streamlit) ===
+            new_item["_skor"] = score
+            new_item["_alasan"] = alasan
+            new_item["subgolongan_title"] = (
+                subgol_title or cls.get("title") or "-"
             )
+
             hasil.append(new_item)
 
     hasil.sort(key=lambda x: x.get("_score", 0), reverse=True)
