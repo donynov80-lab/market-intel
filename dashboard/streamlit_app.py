@@ -25,6 +25,7 @@ from backend.db.snapshot_db import (
 from backend.db.master_db import (
     upsert_master_batch, get_master, get_master_stats,
 )
+from backend.modules.compare_kota import bandingkan_2_kota
 
 
 
@@ -858,7 +859,9 @@ with tab_tren:
     st.header("📈 Tren Kompetitor & Katalog Master")
     st.caption("Riwayat snapshot bulanan + semua toko yang pernah terlihat")
 
-    sub_tren, sub_master = st.tabs(["📊 Grafik Tren", "📚 Katalog Master"])
+    sub_tren, sub_master, sub_banding = st.tabs([
+        "📊 Grafik Tren", "📚 Katalog Master", "⚖️ Bandingkan Kota"
+    ])
 
     # -------- SUB 1: TREN --------
     with sub_tren:
@@ -950,6 +953,95 @@ with tab_tren:
                 'Kota': ', '.join(m.get('kotas', [])),
             } for m in daftar])
             st.dataframe(df_master, use_container_width=True, hide_index=True)
+
+    # -------- SUB 3: BANDINGKAN KOTA --------
+    with sub_banding:
+        st.subheader("⚖️ Bandingkan 2 Kota Side-by-Side")
+        st.caption("Pilih 2 kota, keyword & radius sama — lihat mana yang lebih menjanjikan")
+
+        col_bk1, col_bk2 = st.columns(2)
+        with col_bk1:
+            cari_a = st.text_input("🔍 Cari Kota A", value="Denpasar", key="cmp_cari_a")
+            hasil_a = cari_kota_lengkap(cari_a, limit=15) if cari_a else []
+            opsi_a = {k.get('display', k.get('kota', str(k))): k for k in hasil_a}
+            pilih_a = st.selectbox("Kota A", list(opsi_a.keys()) or ['-'], key="cmp_a")
+            kota_a = opsi_a.get(pilih_a)
+        with col_bk2:
+            cari_b = st.text_input("🔍 Cari Kota B", value="Bandung", key="cmp_cari_b")
+            hasil_b = cari_kota_lengkap(cari_b, limit=15) if cari_b else []
+            opsi_b = {k.get('display', k.get('kota', str(k))): k for k in hasil_b}
+            pilih_b = st.selectbox("Kota B", list(opsi_b.keys()) or ['-'], key="cmp_b")
+            kota_b = opsi_b.get(pilih_b)
+
+        col_c1, col_c2, col_c3 = st.columns([2, 1, 1])
+        with col_c1:
+            kw_cmp = st.text_input("Keyword", value="miras", key="cmp_kw")
+        with col_c2:
+            rad_cmp = st.number_input("Radius (km)", 1, 30, 7, key="cmp_rad")
+        with col_c3:
+            auto_snap = st.checkbox("Auto-save snapshot", value=True, key="cmp_snap")
+
+        if st.button("⚖️ Bandingkan Sekarang", key="btn_cmp_run", type="primary"):
+            if not kota_a or not kota_b:
+                st.error("Pilih 2 kota dulu.")
+            elif pilih_a == pilih_b:
+                st.warning("Pilih 2 kota yang **berbeda** untuk dibandingkan.")
+            else:
+                with st.spinner(f"Scan {kw_cmp} di 2 kota... (~30 detik)"):
+                    try:
+                        hasil_cmp = bandingkan_2_kota(
+                            kota_a, kota_b, kw_cmp,
+                            radius_km=rad_cmp, auto_snapshot=auto_snap,
+                        )
+                        st.session_state.hasil_banding = hasil_cmp
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+                        st.session_state.hasil_banding = None
+
+        # Tampilkan hasil bandingkan
+        hb = st.session_state.get('hasil_banding')
+        if hb:
+            st.divider()
+            a, b = hb['a'], hb['b']
+
+            # Tabel metrik side-by-side
+            st.markdown("### 📊 Metrik Side-by-Side")
+            metrik_rows = [
+                ('Total Toko', a['total_toko'], b['total_toko']),
+                ('Penduduk', f"{a['penduduk']:,}", f"{b['penduduk']:,}"),
+                ('Luas (km²)', a['luas'] or '-', b['luas'] or '-'),
+                ('Density / 10rb',
+                 a['density_per_10rb'] if a['density_per_10rb'] is not None else '-',
+                 b['density_per_10rb'] if b['density_per_10rb'] is not None else '-'),
+                ('Rata-rata Jarak (km)', a['rata_jarak_km'] or '-', b['rata_jarak_km'] or '-'),
+                ('Skor Peluang', f"{a['skor_peluang']}/10" if a['skor_peluang'] else 'N/A',
+                 f"{b['skor_peluang']}/10" if b['skor_peluang'] else 'N/A'),
+                ('Kategori', a['kategori'], b['kategori']),
+            ]
+            df_cmp = pd.DataFrame(metrik_rows, columns=['Metrik', a['nama'], b['nama']])
+            st.dataframe(df_cmp, use_container_width=True, hide_index=True)
+
+            # Bar chart per KBLI
+            if hb['chart_kbli']:
+                st.markdown("### 📊 Breakdown per KBLI 4-digit")
+                df_kbli = pd.DataFrame([
+                    {'KBLI': kode, a['nama']: v['a'], b['nama']: v['b']}
+                    for kode, v in hb['chart_kbli'].items()
+                ]).set_index('KBLI')
+                st.bar_chart(df_kbli, height=320)
+
+            # Rekomendasi naratif
+            st.markdown("### 🎯 Rekomendasi")
+            st.markdown(hb['rekomendasi'])
+
+            # Info snapshot
+            sid_a = hb['snapshot_ids'].get('a')
+            sid_b = hb['snapshot_ids'].get('b')
+            if sid_a or sid_b:
+                st.success(
+                    f"✅ Snapshot tersimpan: {a['nama']} #{sid_a or '-'} | "
+                    f"{b['nama']} #{sid_b or '-'}"
+                )
 
 
 st.divider()
