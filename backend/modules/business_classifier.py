@@ -683,6 +683,7 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
         else:
             score = 0
             alasan = "Tidak ada tag OSM atau nama yang cocok"
+
         if score >= threshold:
             new_item = dict(item)
             # field versi LAMA (biar backward-compat)
