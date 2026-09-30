@@ -655,15 +655,18 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
         code_4 = str(cls.get("code") or "")[:4]
         kbli_hit = bool(code_4) and code_4 in relevant_codes
 
+        # PRESISI TINGGI: hanya pakai TAG OSM. KBLI tidak dipakai untuk scoring.
+        # Alasan: KBLI hasil classify bisa nyasar (kedutaan -> 5630 minuman).
         if osm_hit:
             score = 10
             alasan = f"Tag OSM cocok persis dengan keyword '{keyword}'"
-        elif kbli_hit:
-            score = int(round(cls.get("confidence", 0.5) * 10))
-            alasan = f"KBLI {code_4} cocok (confidence {cls.get('confidence', 0)})"
+        elif name and keyword and keyword.lower() in name.lower():
+            # Nama toko mengandung keyword (mis. "Delta Spa" saat keyword "spa")
+            score = 8
+            alasan = f"Nama toko mengandung '{keyword}'"
         else:
             score = 0
-            alasan = "Tidak ada kecocokan"
+            alasan = "Tidak ada tag OSM atau nama yang cocok"
 
         if score >= threshold:
             new_item = dict(item)
