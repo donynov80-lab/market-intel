@@ -26,7 +26,7 @@ from backend.db.master_db import (
     upsert_master_batch, get_master, get_master_stats,
 )
 from backend.modules.compare_kota import bandingkan_2_kota
-
+from backend.modules.peta_dual import render_peta_dual, reverse_geocode, info_penduduk_dari_nama
 
 
 KOTA_PER_PROVINSI = {
@@ -312,7 +312,48 @@ with tab_maps:
 
     c1, c2 = st.columns([3, 1])
     with c1:
-        keyword_scan = st.text_input("Keyword Usaha", value="kue", key="mk_kw")
+        # === MULTI-KEYWORD DENGAN TOMBOL TAMBAH ===
+        if 'kw_list_input' not in st.session_state:
+            st.session_state.kw_list_input = ["roti"]
+
+        st.markdown("**🔎 Keyword Usaha**")
+        for i in range(len(st.session_state.kw_list_input)):
+            col_kw, col_del = st.columns([10, 1])
+            with col_kw:
+                new_val = st.text_input(
+                    f"kw_{i}",
+                    value=st.session_state.kw_list_input[i],
+                    key=f"kw_input_{i}",
+                    label_visibility="collapsed",
+                    placeholder=f"Keyword #{i+1}",
+                )
+                st.session_state.kw_list_input[i] = new_val
+            with col_del:
+                if len(st.session_state.kw_list_input) > 1:
+                    if st.button("❌", key=f"del_kw_{i}", help="Hapus keyword ini"):
+                        st.session_state.kw_list_input.pop(i)
+                        st.rerun()
+
+        col_add, col_info = st.columns([1, 3])
+        with col_add:
+            if st.button("➕ Tambah Keyword", key="add_kw"):
+                if len(st.session_state.kw_list_input) < 10:
+                    st.session_state.kw_list_input.append("")
+                    st.rerun()
+                else:
+                    st.warning("Maksimal 10 keyword.")
+        with col_info:
+            if len(st.session_state.kw_list_input) >= 10:
+                st.caption("Max 10 keyword tercapai.")
+
+        keywords_list = [k.strip() for k in st.session_state.kw_list_input if k.strip()]
+        keyword_scan = keywords_list[0] if keywords_list else ''
+
+        if len(keywords_list) > 1:
+            st.caption(f"🔎 **Mode Multi**: {' **ATAU** '.join(keywords_list)}")
+            st.caption(f"⏱️ Estimasi: ~{len(keywords_list) * 30}–{len(keywords_list) * 60} detik")
+        elif not keywords_list:
+            st.warning("Minimal 1 keyword.")
     with c2:
         if mode_lokasi == "🗺️ Klik di Peta":
             # Radius sudah didefinisikan di mode peta
@@ -345,9 +386,50 @@ with tab_maps:
 
             with st.spinner(f"Scan {keyword_scan} di {nama_kota}..."):
                 try:
-                    scan_result = scan_sekitar(lat, lon,
-                                                radius_m=int(radius_scan * 1000),
-                                                keyword=keyword_scan, maks=300)
+                    # Mode single vs multi keyword
+                    if len(keywords_list) > 1:
+                        # === MULTI-KEYWORD ===
+                        from backend.modules.scan_multi import scan_multi
+
+                        progress_bar = st.progress(0, text="Memulai...")
+                        def _progress(i, total, kw):
+                            progress_bar.progress(
+                                (i) / total,
+                                text=f"Mencari '{kw}'... ({i+1}/{total})",
+                            )
+
+                        multi = scan_multi(
+                            lat, lon,
+                            radius_m=int(radius_scan * 1000),
+                            keywords=keywords_list,
+                            maks_total=300,
+                            progress_callback=_progress,
+                        )
+                        progress_bar.empty()
+
+                        scan_result = {
+                            'success': multi['success'],
+                            'data': multi['data'],
+                            'error': multi['error'],
+                            'from_cache': False,
+                            'query_used': f"multi ({multi['total_keywords']} keyword)",
+                            'total_raw': multi['total_unik'],
+                        }
+                        # Simpan info multi untuk ditampilkan
+                        st.session_state.info_multi = {
+                            'per_keyword': multi['per_keyword'],
+                            'total_unik': multi['total_unik'],
+                        }
+                    else:
+                        # === SINGLE KEYWORD (existing) ===
+                        keyword_scan = keywords_list[0] if keywords_list else ''
+                        scan_result = scan_sekitar(
+                            lat, lon,
+                            radius_m=int(radius_scan * 1000),
+                            keyword=keyword_scan,
+                            maks=300,
+                        )
+                        st.session_state.info_multi = None
                 except Exception as e:
                     st.error(f"❌ Exception: {e}")
                     scan_result = {'success': False, 'data': [], 'error': str(e)}
@@ -376,6 +458,16 @@ with tab_maps:
                     if total_raw and total_raw >= 290:
                         pesan += f" ⚠️ hasil mentok {total_raw}, kemungkinan masih ada lagi"
                     st.success(pesan)
+                    # Info breakdown per keyword (kalau multi)
+                    info_multi = st.session_state.get('info_multi')
+                    if info_multi:
+                        with st.expander(
+                            f"🔎 Breakdown per keyword ({info_multi['total_unik']} toko unik)",
+                            expanded=False,
+                        ):
+                            for kw, jml in info_multi['per_keyword'].items():
+                                st.write(f"- **{kw}**: {jml} toko")
+
                 st.session_state.hasil_scan = hasil_data
                 st.session_state.info_scan = {
                     'kota': kota_pilih, 'keyword': keyword_scan,
@@ -1036,19 +1128,73 @@ with tab_tren:
         st.subheader("⚖️ Bandingkan 2 Kota Side-by-Side")
         st.caption("Pilih 2 kota, keyword & radius sama — lihat mana yang lebih menjanjikan")
 
-        col_bk1, col_bk2 = st.columns(2)
-        with col_bk1:
-            cari_a = st.text_input("🔍 Cari Kota A", value="Denpasar", key="cmp_cari_a")
-            hasil_a = cari_kota_lengkap(cari_a, limit=15) if cari_a else []
-            opsi_a = {k.get('display', k.get('kota', str(k))): k for k in hasil_a}
-            pilih_a = st.selectbox("Kota A", list(opsi_a.keys()) or ['-'], key="cmp_a")
-            kota_a = opsi_a.get(pilih_a)
-        with col_bk2:
-            cari_b = st.text_input("🔍 Cari Kota B", value="Bandung", key="cmp_cari_b")
-            hasil_b = cari_kota_lengkap(cari_b, limit=15) if cari_b else []
-            opsi_b = {k.get('display', k.get('kota', str(k))): k for k in hasil_b}
-            pilih_b = st.selectbox("Kota B", list(opsi_b.keys()) or ['-'], key="cmp_b")
-            kota_b = opsi_b.get(pilih_b)
+        # === MODE PEMILIHAN LOKASI ===
+        mode_cmp = st.radio(
+            "📍 Mode pilih lokasi:",
+            ["📋 Dropdown Wilayah", "🗺️ Klik di Peta"],
+            horizontal=True, key="cmp_mode",
+        )
+
+        if mode_cmp == "🗺️ Klik di Peta":
+            st.info("**Cara pakai:** Klik peta → set **A** (biru). Klik lagi → set **B** (merah). Klik ke-3 → reset.")
+
+            rad_preview = st.number_input(
+                "Radius preview (km)", 1, 200, 7, key="cmp_rad_preview"
+            )
+            dual = render_peta_dual(radius_km=rad_preview, key="cmp_peta")
+
+            ca, cb = st.columns(2)
+            if dual['a']:
+                ca.success(f"🔵 **A**: {dual['a']['lat']:.4f}, {dual['a']['lon']:.4f}")
+            else:
+                ca.info("🔵 A: belum dipilih — klik peta")
+            if dual['b']:
+                cb.success(f"🔴 **B**: {dual['b']['lat']:.4f}, {dual['b']['lon']:.4f}")
+            else:
+                cb.info("🔴 B: belum dipilih — klik peta")
+
+            if dual['a'] and dual['b']:
+                geo_a = reverse_geocode(dual['a']['lat'], dual['a']['lon'])
+                geo_b = reverse_geocode(dual['b']['lat'], dual['b']['lon'])
+
+                nama_a = geo_a['nama'] if geo_a else f"A ({dual['a']['lat']:.4f}, {dual['a']['lon']:.4f})"
+                nama_b = geo_b['nama'] if geo_b else f"B ({dual['b']['lat']:.4f}, {dual['b']['lon']:.4f})"
+
+                pend_a = info_penduduk_dari_nama(geo_a['nama']) if geo_a else None
+                pend_b = info_penduduk_dari_nama(geo_b['nama']) if geo_b else None
+
+                kota_a = {
+                    'kota': nama_a,
+                    'display': f"🔵 A — {nama_a}",
+                    'lat': dual['a']['lat'], 'lon': dual['a']['lon'],
+                    'penduduk': (pend_a or {}).get('penduduk', 0),
+                    'luas': (pend_a or {}).get('luas', 0),
+                }
+                kota_b = {
+                    'kota': nama_b,
+                    'display': f"🔴 B — {nama_b}",
+                    'lat': dual['b']['lat'], 'lon': dual['b']['lon'],
+                    'penduduk': (pend_b or {}).get('penduduk', 0),
+                    'luas': (pend_b or {}).get('luas', 0),
+                }
+                pilih_a, pilih_b = nama_a, nama_b
+            else:
+                kota_a = kota_b = None
+                pilih_a = pilih_b = None
+        else:
+            col_bk1, col_bk2 = st.columns(2)
+            with col_bk1:
+                cari_a = st.text_input("🔍 Cari Kota A", value="Denpasar", key="cmp_cari_a")
+                hasil_a = cari_kota_lengkap(cari_a, limit=15) if cari_a else []
+                opsi_a = {k.get('display', k.get('kota', str(k))): k for k in hasil_a}
+                pilih_a = st.selectbox("Kota A", list(opsi_a.keys()) or ['-'], key="cmp_a")
+                kota_a = opsi_a.get(pilih_a)
+            with col_bk2:
+                cari_b = st.text_input("🔍 Cari Kota B", value="Bandung", key="cmp_cari_b")
+                hasil_b = cari_kota_lengkap(cari_b, limit=15) if cari_b else []
+                opsi_b = {k.get('display', k.get('kota', str(k))): k for k in hasil_b}
+                pilih_b = st.selectbox("Kota B", list(opsi_b.keys()) or ['-'], key="cmp_b")
+                kota_b = opsi_b.get(pilih_b)
 
         col_c1, col_c2, col_c3 = st.columns([2, 1, 1])
         with col_c1:
