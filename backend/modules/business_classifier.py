@@ -660,14 +660,29 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
         if osm_hit:
             score = 10
             alasan = f"Tag OSM cocok persis dengan keyword '{keyword}'"
-        elif name and keyword and keyword.lower() in name.lower():
-            # Nama toko mengandung keyword (mis. "Delta Spa" saat keyword "spa")
-            score = 8
-            alasan = f"Nama toko mengandung '{keyword}'"
+        elif name and keyword:
+            # Match nama dengan WORD BOUNDARY (cegah 'bar' match 'barat')
+            kw_low = keyword.lower().strip()
+            name_low = name.lower()
+            kata_wilayah = {
+                'barat', 'timur', 'utara', 'selatan', 'tengah',
+                'baru', 'lama', 'jaya', 'makmur', 'sari', 'murni',
+            }
+            if len(kw_low) >= 3 and kw_low not in kata_wilayah:
+                # Word boundary: harus jadi kata tersendiri
+                pattern = r'(?<![a-z])' + re.escape(kw_low) + r'(?![a-z])'
+                if re.search(pattern, name_low):
+                    score = 8
+                    alasan = f"Nama toko mengandung '{keyword}'"
+                else:
+                    score = 0
+                    alasan = "Tidak ada tag OSM / nama tidak cocok"
+            else:
+                score = 0
+                alasan = f"Keyword '{keyword}' terlalu pendek / umum"
         else:
             score = 0
             alasan = "Tidak ada tag OSM atau nama yang cocok"
-
         if score >= threshold:
             new_item = dict(item)
             # field versi LAMA (biar backward-compat)
