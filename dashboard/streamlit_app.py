@@ -684,9 +684,17 @@ with tab_maps:
             except Exception as e:
                 st.warning(f"Peta error: {e}")
 
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 Download CSV", data=csv,
-                               file_name=f"kompetitor_{info['keyword']}.csv",
+                    # === CSV dengan kolom koordinat (untuk analisa Excel) ===
+            df_csv = df.copy()
+            df_csv['lat_awal'] = info.get('lat')
+            df_csv['lon_awal'] = info.get('lon')
+            df_csv['lat_toko'] = [h.get('lat') for h in hasil_filtered]
+            df_csv['lon_toko'] = [h.get('lon') for h in hasil_filtered]
+
+            csv = df_csv.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Download CSV (dengan koordinat)",
+                               data=csv,
+                               file_name=f"kompetitor_{info['keyword']}_koordinat.csv",
                                mime="text/csv", key="dl_scan")
 
     # ============================================
