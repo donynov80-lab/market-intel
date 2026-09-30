@@ -13,6 +13,33 @@ import re
 from typing import Optional, Dict, List, Any
 from difflib import SequenceMatcher
 
+from backend.modules.keyword_whitelist import cari_whitelist
+
+# === Load kbli_osm_mapping.json (hasil auto-generate) ===
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
+_KBLI_MAP_PATH = os.path.join(_ROOT, "db_eksternal", "kbli_osm_mapping.json")
+_KBLI_OSM_MAP = {}
+if os.path.exists(_KBLI_MAP_PATH):
+    try:
+        with open(_KBLI_MAP_PATH, encoding="utf-8") as _f:
+            _KBLI_OSM_MAP = json.load(_f)
+        print(f"[Classifier] Loaded {len(_KBLI_OSM_MAP)} KBLI-OSM mapping")
+    except Exception as _e:
+        print(f"[Classifier] Gagal load kbli_osm_mapping.json: {_e}")
+
+# === Tag yang TIDAK relevan untuk keyword umum ===
+TAG_BLACKLIST = {
+    "amenity=police", "amenity=fire_station",
+    "amenity=prison", "amenity=courthouse",
+    "amenity=nightclub", "leisure=playground",
+    "leisure=dance", "leisure=sports_centre",
+    "leisure=stadium", "leisure=pitch", "leisure=park",
+    "amenity=bar", "amenity=pub", "amenity=casino",
+    "railway=station", "aeroway=aerodrome",
+    "office=government", "office=administrative",
+}
+
 # =========================================================
 # 1. LOKASI FILE KBLI
 # =========================================================
@@ -452,63 +479,57 @@ class BusinessClassifier:
     # ----------------------------------------------------------
     def cari_osm_filter_dari_keyword(self, keyword: str) -> Dict[str, str]:
         """
-        Terjemahkan keyword Indonesia bebas ke filter OSM key->regex.
-        Contoh:
-          'miras'   -> {'shop': 'alcohol|wine|beverages', 'amenity': 'bar|pub'}
-          'kue'     -> {'shop': 'bakery|confectionery|pastry'}
-          'bengkel' -> {'shop': 'car_repair|motorcycle_repair'}
-        Return: dict {osm_key: regex_values}
+        Terjemahkan keyword Indonesia ke filter OSM key->regex.
+
+        Alur (dari paling AKURAT ke paling umum):
+          1. Whitelist manual (roti, kue, bakpia, dll.) - PRIORITAS UTAMA
+          2. KAMUS_BISNIS -> KBLI code -> KBLI-OSM mapping
+          3. Fuzzy match ke title KBLI -> KBLI-OSM mapping
+          4. TIDAK ADA -> return {} (keyword ditolak, lebih baik kosong daripada salah)
+
+        Anti-bug: tidak ada fallback ke tag sembarangan (polisi, taman, dll.)
         """
         if not keyword:
             return {}
 
-        # 1. Kumpulkan kandidat KBLI code dari berbagai sumber
-        candidates_codes = set()
+        kw_low = keyword.lower().strip()
 
-        # a. Kamus bisnis
+        # === LAPIS 1: WHITELIST manual ===
+        wl = cari_whitelist(kw_low)
+        if wl:
+            return wl
+
+        # === LAPIS 2: KAMUS_BISNIS -> KBLI-OSM mapping ===
         km = self._match_kamus(keyword)
         if km:
-            candidates_codes.add(km["code"])
+            code4 = str(km["code"])[:4]
+            if code4 in _KBLI_OSM_MAP:
+                tags = _KBLI_OSM_MAP[code4].get("osm_tags", [])
+                if tags:
+                    return self._tags_to_filter(tags)
 
-        # b. KBLI title fuzzy
-        tm = self._match_title(keyword, min_score=0.5)
+        # === LAPIS 3: Fuzzy match ke title KBLI ===
+        tm = self._match_title(keyword, min_score=0.65)  # naikkan threshold
         if tm:
-            candidates_codes.add(tm["code"])
+            code4 = str(tm["code"])[:4]
+            if code4 in _KBLI_OSM_MAP:
+                tags = _KBLI_OSM_MAP[code4].get("osm_tags", [])
+                if tags:
+                    return self._tags_to_filter(tags)
 
-        # c. Substring match langsung ke KAMUS_BISNIS
-        kw_low = keyword.lower().strip()
-        for k, code in self.kamus.items():
-            if k in kw_low or kw_low in k:
-                candidates_codes.add(code)
+        # === LAPIS 4: Tidak ada -> kosong (ditolak) ===
+        # LEBIH BAIK KOSONG daripada salah (contoh: 'bakpia' -> polisi)
+        return {}
 
-        # 2. Kumpulkan OSM tags dari semua kandidat
-        osm_tags: List[str] = []
-        for code in candidates_codes:
-            # Exact code (4 digit)
-            code4 = str(code)[:4]
-            if code4 in self.kbli_to_osm:
-                osm_tags.extend(self.kbli_to_osm[code4])
-
-        # 3. Kalau masih kosong, coba cari KBLI code yang mirip
-        if not osm_tags:
-            for code4, tags in self.kbli_to_osm.items():
-                # Cari KBLI title yang mengandung keyword
-                entry = self.kbli.get(code4)
-                if entry and keyword.lower() in entry.get("title", "").lower():
-                    osm_tags.extend(tags)
-
-        if not osm_tags:
-            return {}
-
-        # 4. Kelompokkan per key
+    def _tags_to_filter(self, tags: List[str]) -> Dict[str, str]:
+        """Helper: list 'key=value' -> dict {key: 'val1|val2'}."""
         filters: Dict[str, set] = {}
-        for tag in osm_tags:
+        for tag in tags:
             if "=" in tag:
                 k, v = tag.split("=", 1)
                 filters.setdefault(k, set()).add(v)
-
         return {k: "|".join(sorted(v)) for k, v in filters.items()}
-
+    
     def cari_osm_tags_dari_keyword(self, keyword: str) -> List[str]:
         """Wrapper: kembalikan list 'key=value' dari filter di atas."""
         filters = self.cari_osm_filter_dari_keyword(keyword)
@@ -565,8 +586,7 @@ def filter_miras(items):
 def filter_bisnis_smart(data: List[dict], keyword: str,
                         threshold: int = 6) -> List[dict]:
     """
-    Saring hasil scan OSM berdasarkan relevansi keyword.
-    KOMPATIBEL dengan output _parse_overpass_result() yang pakai key
+    Saring hasil scan OSM berd name = (item.get("name") or item.get("nama") or "").sut _parse_overpass_result() yang pakai key
     'nama' + 'kategori' (Indonesia), sekaligus fallback ke 'name' + 'tags'.
 
     Tiap item dapat field tambahan:
@@ -627,6 +647,7 @@ def filter_bisnis_smart(data: List[dict], keyword: str,
 
         if not name and not tag_list:
             continue
+ 
 
         osm_hit = any(t in kw_osm_pairs for t in tag_list)
 

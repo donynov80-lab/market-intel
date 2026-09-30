@@ -1,0 +1,4313 @@
+{
+  "0111": {
+    "title": "Pertanian serealia (bukan padi), aneka kacang dan biji-bijian penghasil minyak",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0112": {
+    "title": "Pertanian Padi",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0113": {
+    "title": "Pertanian sayuran, buah dan aneka umbi",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0114": {
+    "title": "Perkebunan tebu",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0115": {
+    "title": "Perkebunan tembakau",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0116": {
+    "title": "Pertanian tanaman berserat",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0119": {
+    "title": "Pertanian tanaman semusim lainnya",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0121": {
+    "title": "Pertanian Buah Anggur",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0122": {
+    "title": "Pertanian Buah-Buahan Tropis dan Subtropis",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0123": {
+    "title": "Pertanian Buah Jeruk",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0124": {
+    "title": "Pertanian Buah Apel dan Buah Batu (Pome and Stone Fruits)",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0125": {
+    "title": "Pertanian Sayuran dan Buah Semak dan Buah Biji Kacang-Kacangan Lainnya",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0126": {
+    "title": "Perkebunan buah-buahan penghasil minyak (oleaginous)",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0127": {
+    "title": "Pertanian Tanaman Untuk Bahan Minuman",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0128": {
+    "title": "Perkebunan tanaman rempah-rempah, aromatik/penyegar, narkotik dan obat",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0129": {
+    "title": "Perkebunan tanaman tahunan lainnya",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "0130": {
+    "title": "Pertanian Tanaman Hias Dan Pengembangbiakan Tanaman",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard",
+      "shop=garden_centre"
+    ],
+    "auto": true
+  },
+  "0141": {
+    "title": "Peternakan sapi dan kerbau",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0142": {
+    "title": "Peternakan kuda dan sejenisnya",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0143": {
+    "title": "Peternakan unta dan sejenisnya",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0144": {
+    "title": "Peternakan domba dan kambing",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0145": {
+    "title": "Peternakan babi",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0146": {
+    "title": "Peternakan unggas",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0149": {
+    "title": "Peternakan lainnya",
+    "osm_tags": [
+      "landuse=farmyard"
+    ],
+    "auto": true
+  },
+  "0161": {
+    "title": "Jasa penunjang pertanian",
+    "osm_tags": [
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0162": {
+    "title": "Jasa penunjang peternakan",
+    "osm_tags": [
+      "landuse=farmyard",
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0163": {
+    "title": "Jasa pasca panen",
+    "osm_tags": [
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0164": {
+    "title": "Pemilihan benih tanaman untuk pengembangbiakan",
+    "osm_tags": [
+      "shop=garden_centre"
+    ],
+    "auto": true
+  },
+  "0171": {
+    "title": "Perburuan dan penangkapan satwa liar",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0172": {
+    "title": "Penangkaran Tumbuhan/Satwa Liar",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0211": {
+    "title": "Pemanfaatan Hutan Tanaman",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0212": {
+    "title": "Pemanfaatan Hutan Alam",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0213": {
+    "title": "Pemanfaatan Hasil Hutan Bukan Kayu",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0214": {
+    "title": "Pengusahaan Perbenihan Tanaman Kehutanan",
+    "osm_tags": [
+      "landuse=forest",
+      "shop=garden_centre"
+    ],
+    "auto": true
+  },
+  "0220": {
+    "title": "Pemanenan dan Pemungutan Kayu",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0230": {
+    "title": "Pemungutan hasil hutan bukan kayu",
+    "osm_tags": [
+      "landuse=forest"
+    ],
+    "auto": true
+  },
+  "0240": {
+    "title": "Jasa penunjang kehutanan",
+    "osm_tags": [
+      "landuse=forest",
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0311": {
+    "title": "Penangkapan ikan di laut",
+    "osm_tags": [
+      "harbour=yes",
+      "landuse=aquaculture",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "0312": {
+    "title": "Penangkapan Ikan Di Perairan Darat",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0313": {
+    "title": "Jasa Penangkapan Ikan Di laut",
+    "osm_tags": [
+      "harbour=yes",
+      "landuse=aquaculture",
+      "landuse=industrial",
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0314": {
+    "title": "Jasa penangkapan ikan di perairan darat",
+    "osm_tags": [
+      "landuse=aquaculture",
+      "office=company"
+    ],
+    "auto": true
+  },
+  "0315": {
+    "title": "Penangkapan/Pengambilan Jenis Ikan yang Dilindungi dan/atau Termasuk Dalam Appendiks CITES",
+    "osm_tags": [],
+    "auto": true
+  },
+  "0321": {
+    "title": "Budidaya ikan laut",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0322": {
+    "title": "Budidaya Ikan Air Tawar",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0323": {
+    "title": "Jasa Budidaya Ikan Laut",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0324": {
+    "title": "Jasa Budidaya Ikan Air tawar",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0325": {
+    "title": "Budidaya Ikan Air Payau",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0326": {
+    "title": "Jasa Budidaya Ikan Air Payau",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0327": {
+    "title": "Pengembangbiakan Jenis Ikan yang Dilindungi dan/atau Termasuk dalam Appendiks CITES",
+    "osm_tags": [
+      "landuse=aquaculture"
+    ],
+    "auto": true
+  },
+  "0510": {
+    "title": "Pertambangan Batu Bara",
+    "osm_tags": [
+      "industrial=mining",
+      "industrial=oil",
+      "landuse=industrial",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0520": {
+    "title": "Pertambangan lignit",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0610": {
+    "title": "Pertambangan minyak bumi",
+    "osm_tags": [
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "0620": {
+    "title": "Pertambangan gas alam dan pengusahaan tenaga panas bumi",
+    "osm_tags": [
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "0710": {
+    "title": "Pertambangan pasir besi dan bijih besi",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0721": {
+    "title": "Pertambangan bijih uranium dan torium",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0729": {
+    "title": "Pertambangan bijih logam lainnya yang tidak mengandung besi, tidak termasuk bijih logam mulia",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0730": {
+    "title": "Pertambangan bijih logam mulia",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0810": {
+    "title": "Penggalian batu, pasir dan tanah liat",
+    "osm_tags": [
+      "industrial=ceramic",
+      "landuse=industrial",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0891": {
+    "title": "Pertambangan mineral, bahan kimia dan bahan pupuk",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0892": {
+    "title": "Ekstraksi tanah gemuk (peat)",
+    "osm_tags": [
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0893": {
+    "title": "Ekstraksi garam",
+    "osm_tags": [
+      "landuse=saltern"
+    ],
+    "auto": true
+  },
+  "0899": {
+    "title": "Pertambangan dan penggalian lainnya ytdl",
+    "osm_tags": [
+      "industrial=mining",
+      "landuse=quarry"
+    ],
+    "auto": true
+  },
+  "0910": {
+    "title": "Aktivitas Penunjang pertambangan minyak bumi dan gas alam",
+    "osm_tags": [
+      "industrial=leather",
+      "industrial=oil",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "0990": {
+    "title": "Aktivitas Penunjang pertambangan dan penggalian lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "industrial=mining",
+      "landuse=industrial",
+      "landuse=quarry",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1011": {
+    "title": "Kegiatan Rumah Potong dan Pengepakan Daging Bukan Unggas",
+    "osm_tags": [
+      "shop=butcher"
+    ],
+    "auto": true
+  },
+  "1012": {
+    "title": "Kegiatan Rumah Potong dan Pengepakan Daging Unggas",
+    "osm_tags": [
+      "shop=butcher"
+    ],
+    "auto": true
+  },
+  "1013": {
+    "title": "Industri Pengolahan dan Pengawetan Produk Daging dan Daging Unggas",
+    "osm_tags": [
+      "shop=butcher"
+    ],
+    "auto": true
+  },
+  "1021": {
+    "title": "Industri Pengolahan dan Pengawetan Ikan dan Produk Ikan",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=fish"
+    ],
+    "auto": true
+  },
+  "1022": {
+    "title": "Industri Pengolahan dan Pengawetan Ikan dan biota air Dalam Kaleng",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=fish"
+    ],
+    "auto": true
+  },
+  "1029": {
+    "title": "Industri Pengolahan dan Pengawetan Biota Air Lainnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=seafood"
+    ],
+    "auto": true
+  },
+  "1031": {
+    "title": "Industri Pengolahan dan Pengawetan Buah-buahan dan Sayuran dengan cara diasinkan, dilumatkan, dikeringkan dan dibekukan",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=fruit"
+    ],
+    "auto": true
+  },
+  "1032": {
+    "title": "Industri Pengolahan dan Pengawetan Buah-buahan dan Sayuran Dalam Kaleng",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=fruit"
+    ],
+    "auto": true
+  },
+  "1033": {
+    "title": "Industri Pengolahan Sari Buah dan Sayuran",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=juice"
+    ],
+    "auto": true
+  },
+  "1039": {
+    "title": "Industri Pengolahan dan Pengawetan Lainnya Buah-buahan dan Sayuran",
+    "osm_tags": [],
+    "auto": true
+  },
+  "1041": {
+    "title": "Industri Minyak dan Lemak Nabati dan Hewani (Bukan Kelapa dan Kelapa Sawit)",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=oil"
+    ],
+    "auto": true
+  },
+  "1042": {
+    "title": "Industri Kopra, Minyak Mentah dan Minyak Goreng Kelapa, dan Pelet Kelapa",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1043": {
+    "title": "Industri Minyak Mentah/Murni Kelapa Sawit (Crude Palm Oil) Dan Minyak Goreng Kelapa Sawit",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1049": {
+    "title": "Industri Minyak Mentah dan Lemak Nabati dan Hewani Lainnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=oil"
+    ],
+    "auto": true
+  },
+  "1051": {
+    "title": "Industri Pengolahan Susu Segar dan Krim",
+    "osm_tags": [
+      "industrial=dairy",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1052": {
+    "title": "Industri Pengolahan Susu Bubuk dan Susu Kental",
+    "osm_tags": [
+      "industrial=dairy",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1053": {
+    "title": "Industri Pengolahan Es Krim dan Sejenisnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=ice_cream"
+    ],
+    "auto": true
+  },
+  "1059": {
+    "title": "Industri Pengolahan Produk dari Susu Lainnya",
+    "osm_tags": [
+      "industrial=dairy",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1061": {
+    "title": "Industri Penggilingan Serelia dan Biji-bijian Lainnya (Bukan Beras dan Jagung)",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=flour"
+    ],
+    "auto": true
+  },
+  "1062": {
+    "title": "Industri Pati dan Produk Pati (Bukan Beras dan Jagung)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "1063": {
+    "title": "Industri Penggilingan Beras dan Jagung dan Industri Tepung Beras dan Jagung",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=flour"
+    ],
+    "auto": true
+  },
+  "1071": {
+    "title": "Industri Produk Roti dan Kue",
+    "osm_tags": [
+      "craft=bakery",
+      "shop=bakery",
+      "shop=pastry"
+    ],
+    "auto": true
+  },
+  "1072": {
+    "title": "Industri Gula",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=sugar"
+    ],
+    "auto": true
+  },
+  "1073": {
+    "title": "Industri Kakao, Cokelat dan Kembang gula",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=chocolate"
+    ],
+    "auto": true
+  },
+  "1074": {
+    "title": "Industri Makaroni, Mie dan Produk Sejenisnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=pasta"
+    ],
+    "auto": true
+  },
+  "1075": {
+    "title": "Industri Makanan dan Masakan Olahan",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1076": {
+    "title": "Industri Pengolahan Kopi, Teh dan Herbal (Herb infusion)",
+    "osm_tags": [
+      "industrial=beverage",
+      "industrial=food",
+      "industrial=pharmaceutical",
+      "landuse=industrial",
+      "product=coffee"
+    ],
+    "auto": true
+  },
+  "1077": {
+    "title": "Industri Bumbu-bumbuan dan Produk Masak Lainnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "product=spice"
+    ],
+    "auto": true
+  },
+  "1079": {
+    "title": "Industri Produk Makanan Lainnya",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1080": {
+    "title": "Industri Makanan Hewan",
+    "osm_tags": [
+      "industrial=food",
+      "landuse=industrial",
+      "shop=pet"
+    ],
+    "auto": true
+  },
+  "1101": {
+    "title": "Industri Minuman Beralkohol Hasil Destilasi",
+    "osm_tags": [
+      "industrial=beverage",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1102": {
+    "title": "Industri Minuman Beralkohol Hasil Fermentasi Anggur dan Hasil Pertanian Lainnya\n",
+    "osm_tags": [
+      "industrial=beverage",
+      "industrial=leather",
+      "landuse=farmland",
+      "landuse=industrial",
+      "landuse=orchard",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1103": {
+    "title": "Industri Minuman Beralkohol Hasil Fermentasi Malt dan Industri Malt\n",
+    "osm_tags": [
+      "industrial=beverage",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1104": {
+    "title": "Industri Minuman Ringan",
+    "osm_tags": [
+      "industrial=beverage",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1105": {
+    "title": "Industri Air Kemasan dan Air Minum Isi Ulang",
+    "osm_tags": [
+      "man_made=water_works",
+      "shop=jewelry"
+    ],
+    "auto": true
+  },
+  "1109": {
+    "title": "Industri Minuman Lainnya",
+    "osm_tags": [
+      "industrial=beverage",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1201": {
+    "title": "Industri Rokok dan Produk Tembakau Lainnya",
+    "osm_tags": [
+      "industrial=tobacco",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1209": {
+    "title": "Industri Pengolahan Tembakau Lainnya",
+    "osm_tags": [
+      "industrial=tobacco",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1311": {
+    "title": "Industri Persiapan dan Pemintalan Serat Tekstil",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1312": {
+    "title": "Industri Pertenunan Tekstil",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1313": {
+    "title": "Industri Penyempurnaan Tekstil",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1391": {
+    "title": "Industri Kain Rajutan dan Sulaman",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1392": {
+    "title": "Industri Pembuatan Barang Tekstil, Bukan Pakaian Jadi",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1393": {
+    "title": "Industri Karpet dan Permadani",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1394": {
+    "title": "Industri Tali Dan Barang Dari Tali",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1399": {
+    "title": "Industri Tekstil Lainnya Ytdl",
+    "osm_tags": [
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1411": {
+    "title": "Industri Pakaian Jadi (Bukan Penjahitan dan Pembuatan Pakaian)",
+    "osm_tags": [
+      "industrial=clothes",
+      "landuse=industrial",
+      "shop=tailor"
+    ],
+    "auto": true
+  },
+  "1412": {
+    "title": "Penjahitan dan Pembuatan Pakaian Sesuai Pesanan",
+    "osm_tags": [
+      "industrial=clothes",
+      "landuse=industrial",
+      "shop=tailor"
+    ],
+    "auto": true
+  },
+  "1413": {
+    "title": "Industri Perlengkapan Pakaian yang Utamanya Terbuat dari Tekstil",
+    "osm_tags": [
+      "industrial=clothes",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1420": {
+    "title": "Industri pakaian jadi dan barang dari kulit berbulu",
+    "osm_tags": [
+      "industrial=clothes",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1430": {
+    "title": "Industri pakaian jadi rajutan dan sulaman/bordir",
+    "osm_tags": [
+      "industrial=clothes",
+      "industrial=textile",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1511": {
+    "title": "Industri Kulit dan Kulit Komposisi, Termasuk Pencelupan Kulit Berbulu",
+    "osm_tags": [
+      "industrial=shoe",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1512": {
+    "title": "Industri Barang dari Kulit dan Kulit Komposisi, Koper, Tas Tangan dan Sejenisnya, Pelana dan Alat Pengekang (Harness)",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1520": {
+    "title": "Industri Alas Kaki",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=shoes"
+    ],
+    "auto": true
+  },
+  "1610": {
+    "title": "Industri Penggergajian dan Pengawetan Kayu, Rotan, Bambu dan Sejenisnya",
+    "osm_tags": [
+      "industrial=wood",
+      "landuse=forest",
+      "landuse=industrial",
+      "shop=craft"
+    ],
+    "auto": true
+  },
+  "1621": {
+    "title": "Industri Veneer, Kayu Lapis, Kayu Laminasi dan sejenisnya",
+    "osm_tags": [
+      "industrial=wood",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1622": {
+    "title": "Industri Barang Bangunan Dari Kayu",
+    "osm_tags": [
+      "industrial=wood",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1623": {
+    "title": "Industri Wadah dari Kayu",
+    "osm_tags": [
+      "industrial=wood",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1629": {
+    "title": "Industri Barang Lainnya dari Kayu; Industri Barang dari Gabus dan Barang Anyaman dari Jerami, Rotan, Bambu dan Sejenisnya",
+    "osm_tags": [
+      "industrial=wood",
+      "landuse=industrial",
+      "shop=craft"
+    ],
+    "auto": true
+  },
+  "1701": {
+    "title": "Industri Bubur Kertas, Kertas dan Papan Kertas",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1702": {
+    "title": "Industri Kertas dan Papan Kertas Bergelombang dan Wadah Dari Kertas dan Papan Kertas",
+    "osm_tags": [
+      "industrial=leather",
+      "industrial=paper",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1709": {
+    "title": "Industri Barang dari Kertas dan Papan Kertas Lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "industrial=paper",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "1811": {
+    "title": "Industri Pencetakan",
+    "osm_tags": [
+      "industrial=printing",
+      "landuse=industrial",
+      "shop=copyshop"
+    ],
+    "auto": true
+  },
+  "1812": {
+    "title": "Kegiatan Jasa Penunjang Pencetakan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "1820": {
+    "title": "Reproduksi Media Rekaman",
+    "osm_tags": [
+      "industrial=printing",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1910": {
+    "title": "Industri produk dari batu bara",
+    "osm_tags": [
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1921": {
+    "title": "Industri Bahan Bakar dan Minyak Pelumas Hasil Pengilangan Minyak Bumi",
+    "osm_tags": [
+      "amenity=fuel",
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "1929": {
+    "title": "Industri Produk Pengilangan Minyak Bumi Lainnya",
+    "osm_tags": [
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2011": {
+    "title": "Industri Kimia Dasar",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2012": {
+    "title": "Industri Pupuk dan Bahan Senyawa Nitrogen",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2013": {
+    "title": "Industri Plastik dan Karet Buatan dalam Bentuk Dasar",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2021": {
+    "title": "Industri Pestisida dan Produk Agrokimia Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2022": {
+    "title": "Industri Cat dan Tinta Cetak, Pernis dan Bahan Pelapisan Sejenisnya dan Lak",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2023": {
+    "title": "Industri Sabun dan Deterjen, Bahan Pembersih dan Pengilap, Parfum dan Kosmetik",
+    "osm_tags": [
+      "shop=beauty",
+      "shop=cosmetics"
+    ],
+    "auto": true
+  },
+  "2029": {
+    "title": "Industri Barang Kimia Lainnya Ytdl",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2030": {
+    "title": "Industri Serat Buatan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2101": {
+    "title": "Industri Farmasi Dan Produk Obat Kimia",
+    "osm_tags": [
+      "amenity=pharmacy",
+      "industrial=pharmaceutical",
+      "landuse=industrial",
+      "shop=chemist"
+    ],
+    "auto": true
+  },
+  "2102": {
+    "title": "Industri Obat Tradisional",
+    "osm_tags": [
+      "industrial=pharmaceutical",
+      "landuse=industrial",
+      "shop=herbalist"
+    ],
+    "auto": true
+  },
+  "2211": {
+    "title": "Industri Ban dan Vulkanisir Ban",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2212": {
+    "title": "Industri Pengasapan, Remilling dan Karet Remah",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2219": {
+    "title": "Industri Barang dari Karet Lainnya",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2221": {
+    "title": "Industri Barang dari Plastik untuk Bangunan",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2222": {
+    "title": "Industri Barang dari Plastik untuk Pengemasan",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial",
+      "shop=jewelry"
+    ],
+    "auto": true
+  },
+  "2223": {
+    "title": "Industri Pipa Plastik dan Perlengkapannya",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2229": {
+    "title": "Industri Barang dari Plastik Lainnya",
+    "osm_tags": [
+      "industrial=plastic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2311": {
+    "title": "Industri Kaca",
+    "osm_tags": [
+      "industrial=glass",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2312": {
+    "title": "Industri Barang dari Kaca",
+    "osm_tags": [
+      "industrial=glass",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2391": {
+    "title": "Industri Barang Refraktori (Tahan Api)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2392": {
+    "title": "Industri Bahan Bangunan dari Tanah Liat/Keramik",
+    "osm_tags": [
+      "industrial=ceramic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2393": {
+    "title": "Industri Barang Tanah Liat/Keramik dan Porselen Bukan Bahan Bangunan",
+    "osm_tags": [
+      "industrial=ceramic",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2394": {
+    "title": "Industri Semen, Kapur dan Gips",
+    "osm_tags": [
+      "industrial=cement",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2395": {
+    "title": "Industri Barang dari Semen, Kapur, Gips dan Asbes",
+    "osm_tags": [
+      "industrial=cement",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2396": {
+    "title": "Industri Barang dari Batu",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2399": {
+    "title": "Industri Barang Galian Bukan Logam Lainnya Ytdl",
+    "osm_tags": [
+      "industrial=mineral",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2410": {
+    "title": "Industri Logam Dasar Besi dan Baja",
+    "osm_tags": [
+      "industrial=metal",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2420": {
+    "title": "Industri logam dasar mulia dan logam dasar bukan besi lainnya",
+    "osm_tags": [
+      "industrial=metal",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2431": {
+    "title": "Industri Pengecoran Besi dan Baja",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2432": {
+    "title": "Industri Pengecoran Logam Bukan Besi dan Baja",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2511": {
+    "title": "Industri Barang Logam Siap Pasang untuk Bangunan",
+    "osm_tags": [
+      "industrial=metal",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2512": {
+    "title": "Industri Tangki, Tandon Air dan Wadah dari Logam",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2513": {
+    "title": "Industri Generator Uap, Bukan Ketel Pemanas",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2520": {
+    "title": "Industri Senjata dan Amunisi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2591": {
+    "title": "Industri Penempaan, Pengepresan, Pencetakan dan Pembentukan Logam; Metalurgi Bubuk",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2592": {
+    "title": "Jasa Industri Untuk Berbagai Pengerjaan Khusus Logam dan Barang Dari logam",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2593": {
+    "title": "Industri Alat Potong, Perkakas Tangan dan Peralatan Umum",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2594": {
+    "title": "Industri Ember, Kaleng, Drum dan Wadah Sejenis Dari Logam",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2595": {
+    "title": "Industri Barang dari Kawat dan Paku, Mur dan Baut, Bukan Kabel Logam",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2599": {
+    "title": "Industri Barang Logam Lainnya Ytdl",
+    "osm_tags": [
+      "industrial=metal",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2611": {
+    "title": "Industri Tabung Elektron dan Konektor Elektronik",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2612": {
+    "title": "Industri Semi Konduktor dan Komponen Elektronik Lainnya",
+    "osm_tags": [
+      "industrial=electronics",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2621": {
+    "title": "Industri  Komputer dan/atau Perakitan Komputer",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2622": {
+    "title": "Industri Perlengkapan Komputer",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2631": {
+    "title": "Industri Peralatan Telepon dan Faksimili",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2632": {
+    "title": "Industri Peralatan Komunikasi Tanpa Kabel (Wireless)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2639": {
+    "title": "Industri Peralatan Komunikasi Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2641": {
+    "title": "Industri Televisi dan/atau Perakitan Televisi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2642": {
+    "title": "Industri Peralatan Perekam, Penerima dan Pengganda Audio dan Video, Bukan Industri Televisi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2649": {
+    "title": "Industri Peralatan Audio dan Video Elektronik Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2651": {
+    "title": "Industri Alat Ukur, Alat Uji, Peralatan Navigasi dan Kontrol",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2652": {
+    "title": "Industri Alat Ukur Waktu",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2660": {
+    "title": "Industri Peralatan Iradiasi, Elektromedikal dan Elektroterapi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2671": {
+    "title": "Industri Peralatan Fotografi",
+    "osm_tags": [
+      "craft=photographer",
+      "shop=photo"
+    ],
+    "auto": true
+  },
+  "2679": {
+    "title": "Industri Peralatan Fotografi dan Instrumen Optik Lainnya",
+    "osm_tags": [
+      "craft=photographer",
+      "shop=optician",
+      "shop=photo"
+    ],
+    "auto": true
+  },
+  "2680": {
+    "title": "Industri Media Magnetik dan Media Optik",
+    "osm_tags": [
+      "shop=optician"
+    ],
+    "auto": true
+  },
+  "2711": {
+    "title": "Industri Motor Listrik, Generator dan Transformator",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2712": {
+    "title": "Industri Peralatan Pengontrol dan Pendistribusian Listrik",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2720": {
+    "title": "Industri batu baterai dan akumulator listrik",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2731": {
+    "title": "Industri Kabel Serat Optik",
+    "osm_tags": [
+      "shop=optician"
+    ],
+    "auto": true
+  },
+  "2732": {
+    "title": "Industri Kabel Listrik dan Elektronik Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2733": {
+    "title": "Industri Perlengkapan Kabel",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2740": {
+    "title": "Industri Peralatan Penerangan Listrik (Termasuk Peralatan Penerangan Bukan Listrik)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2751": {
+    "title": "Industri Peralatan Listrik Rumah Tangga",
+    "osm_tags": [
+      "industrial=electronics",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2752": {
+    "title": "Industri Peralatan Elektrotermal Rumah Tangga",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2753": {
+    "title": "Industri Peralatan Pemanas dan Masak Bukan Listrik Rumah Tangga",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2790": {
+    "title": "Industri Peralatan Listrik Lainnya",
+    "osm_tags": [
+      "industrial=electronics",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2811": {
+    "title": "Industri Mesin dan Turbin, Bukan Mesin Pesawat Terbang dan Kendaraan Bermotor",
+    "osm_tags": [
+      "industrial=machine",
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2812": {
+    "title": "Industri Peralatan Tenaga Zat Cair dan Gas",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2813": {
+    "title": "Industri Pompa Lainnya, Kompresor, Kran dan Klep/katup",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2814": {
+    "title": "Industri Bearing, Roda Gigi dan Elemen Penggerak Mesin",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2815": {
+    "title": "Industri Oven, Perapian dan Tungku Pembakar",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2816": {
+    "title": "Industri Alat Pengangkat dan Pemindah",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2817": {
+    "title": "Industri Mesin dan Peralatan Kantor (Bukan Komputer dan Peralatan Perlengkapannya)",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2818": {
+    "title": "Industri Perkakas Tangan yang Digerakkan Tenaga",
+    "osm_tags": [],
+    "auto": true
+  },
+  "2819": {
+    "title": "Industri Mesin Untuk Keperluan Umum Lainnya",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2821": {
+    "title": "Industri Mesin Pertanian dan Kehutanan",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=farmland",
+      "landuse=forest",
+      "landuse=industrial",
+      "landuse=orchard"
+    ],
+    "auto": true
+  },
+  "2822": {
+    "title": "Industri Mesin dan Perkakas Mesin Untuk Pengerjaan Logam, Kayu Dan Bahan Lainnya",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2823": {
+    "title": "Industri Mesin Metalurgi",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2824": {
+    "title": "Industri Mesin Penambangan, Penggalian dan Konstruksi",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2825": {
+    "title": "Industri Mesin Pengolahan Makanan, Minuman dan Tembakau",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2826": {
+    "title": "Industri Mesin Tekstil, Pakaian Jadi dan Produk Kulit",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2829": {
+    "title": "Industri Mesin Keperluan Khusus Lainnya",
+    "osm_tags": [
+      "industrial=machine",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2910": {
+    "title": "Industri Kendaraan Bermotor Roda Empat atau Lebih",
+    "osm_tags": [
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2920": {
+    "title": "Industri Karoseri Kendaraan Bermotor Roda Empat atau Lebih dan Industri Trailer dan Semi Trailer",
+    "osm_tags": [
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "2930": {
+    "title": "Industri Suku Cadang dan Aksesori Kendaraan Bermotor Roda Empat atau Lebih",
+    "osm_tags": [
+      "industrial=vehicle",
+      "landuse=industrial",
+      "shop=car_parts"
+    ],
+    "auto": true
+  },
+  "3011": {
+    "title": "Industri Pembuatan Kapal, Perahu dan Struktur Bangunan Terapung",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3012": {
+    "title": "Industri Pembuatan Kapal dan Perahu Untuk Tujuan Wisata atau Rekreasi dan Olahraga",
+    "osm_tags": [
+      "leisure=sports_centre"
+    ],
+    "auto": true
+  },
+  "3020": {
+    "title": "Industri lokomotif dan gerbong kereta",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3030": {
+    "title": "Industri Pesawat Terbang dan Perlengkapannya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3040": {
+    "title": "Industri Kendaraan Perang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3091": {
+    "title": "Industri Sepeda Motor",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3092": {
+    "title": "Industri Sepeda dan Kursi Roda",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3099": {
+    "title": "Industri Alat Angkutan Lainnya Ytdl",
+    "osm_tags": [
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "3100": {
+    "title": "Industri Furnitur",
+    "osm_tags": [
+      "industrial=furniture",
+      "landuse=industrial",
+      "shop=furniture"
+    ],
+    "auto": true
+  },
+  "3211": {
+    "title": "Industri Perhiasan dan Barang Sejenis",
+    "osm_tags": [
+      "craft=jeweller",
+      "landuse=industrial",
+      "shop=jewelry"
+    ],
+    "auto": true
+  },
+  "3212": {
+    "title": "Industri Perhiasan Imitasi dan Barang Sejenis",
+    "osm_tags": [
+      "craft=jeweller",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=jewelry"
+    ],
+    "auto": true
+  },
+  "3220": {
+    "title": "Industri Alat Musik",
+    "osm_tags": [
+      "craft=musical_instrument",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "3230": {
+    "title": "Industri Alat Olahraga",
+    "osm_tags": [
+      "industrial=sports_equipment",
+      "landuse=industrial",
+      "leisure=sports_centre"
+    ],
+    "auto": true
+  },
+  "3240": {
+    "title": "Industri Alat Permainan dan Mainan Anak-anak",
+    "osm_tags": [
+      "shop=toys"
+    ],
+    "auto": true
+  },
+  "3250": {
+    "title": "Industri Peralatan Kedokteran dan Kedokteran Gigi serta Perlengkapannya",
+    "osm_tags": [
+      "amenity=clinic",
+      "amenity=doctors"
+    ],
+    "auto": true
+  },
+  "3290": {
+    "title": "Industri Pengolahan Lainnya Ytdl",
+    "osm_tags": [
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "3311": {
+    "title": "Reparasi Produk Logam Pabrikasi",
+    "osm_tags": [
+      "industrial=metal",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3312": {
+    "title": "Reparasi Mesin",
+    "osm_tags": [
+      "industrial=machine",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3313": {
+    "title": "Reparasi Peralatan Elektronik dan Optik",
+    "osm_tags": [
+      "industrial=electronics",
+      "shop=optician",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3314": {
+    "title": "Reparasi Peralatan Listrik",
+    "osm_tags": [
+      "industrial=electronics",
+      "landuse=industrial",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3315": {
+    "title": "Reparasi Alat Angkutan, Bukan Kendaraan Bermotor",
+    "osm_tags": [
+      "industrial=vehicle",
+      "landuse=industrial",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3319": {
+    "title": "Reparasi Peralatan Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3320": {
+    "title": "Instalasi/Pemasangan Mesin dan Peralatan Industri",
+    "osm_tags": [
+      "industrial=machine",
+      "shop=jewelry",
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "3511": {
+    "title": "Penyediaan Tenaga Listrik",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3512": {
+    "title": "Penunjang Tenaga Listrik",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3520": {
+    "title": "Pengadaan dan Distribusi Gas Alam dan Buatan",
+    "osm_tags": [
+      "industrial=oil",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "3530": {
+    "title": "Pengadaan Uap/Air Panas, Udara Dingin dan Produksi Es",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3600": {
+    "title": "Treatment Air",
+    "osm_tags": [
+      "man_made=water_works"
+    ],
+    "auto": true
+  },
+  "3701": {
+    "title": "Pengumpulan Air Limbah",
+    "osm_tags": [
+      "amenity=recycling",
+      "landuse=landfill",
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "3702": {
+    "title": "Treatment dan Pembuangan Air Limbah",
+    "osm_tags": [
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "3811": {
+    "title": "Pengumpulan limbah dan sampah tidak berbahaya",
+    "osm_tags": [
+      "amenity=recycling",
+      "landuse=landfill",
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "3812": {
+    "title": "Pengumpulan Limbah Berbahaya",
+    "osm_tags": [
+      "amenity=recycling",
+      "landuse=landfill",
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "3821": {
+    "title": "Treatment dan pembuangan sampah tidak berbahaya",
+    "osm_tags": [
+      "amenity=recycling",
+      "landuse=landfill"
+    ],
+    "auto": true
+  },
+  "3822": {
+    "title": "Treatment dan Pembuangan Limbah Berbahaya",
+    "osm_tags": [
+      "amenity=recycling",
+      "landuse=landfill",
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "3830": {
+    "title": "Pemulihan Material",
+    "osm_tags": [],
+    "auto": true
+  },
+  "3900": {
+    "title": "Aktivitas Remediasi dan Pengelolaan Limbah dan Sampah Lainnya",
+    "osm_tags": [
+      "amenity=recycling",
+      "industrial=leather",
+      "landuse=industrial",
+      "landuse=landfill",
+      "man_made=wastewater_plant",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "4101": {
+    "title": "Konstruksi Gedung",
+    "osm_tags": [
+      "office=construction_company"
+    ],
+    "auto": true
+  },
+  "4102": {
+    "title": "Jasa Pekerjaan Konstruksi Prapabrikasi Bangunan Gedung",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4210": {
+    "title": "Konstruksi Jalan dan Jalan Rel",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4220": {
+    "title": "Konstruksi Jaringan Irigasi, Komunikasi dan Limbah",
+    "osm_tags": [
+      "man_made=wastewater_plant"
+    ],
+    "auto": true
+  },
+  "4291": {
+    "title": "Konstruksi Bangunan Sipil Lainnya",
+    "osm_tags": [
+      "office=construction_company"
+    ],
+    "auto": true
+  },
+  "4292": {
+    "title": "Konstruksi Khusus Bangunan Sipil Lainnya ",
+    "osm_tags": [
+      "office=construction_company"
+    ],
+    "auto": true
+  },
+  "4293": {
+    "title": "Jasa Pekerjaan Konstruksi Prapabrikasi Bangunan Sipil",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4311": {
+    "title": "Pembongkaran",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4312": {
+    "title": "Penyiapan Lahan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4321": {
+    "title": "Instalasi Sistem Kelistrikan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4322": {
+    "title": "Instalasi Saluran Air (Plambing), Pemanas dan Pendingin",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4329": {
+    "title": "Instalasi Konstruksi Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4330": {
+    "title": "Penyelesaian Konstruksi Bangunan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4390": {
+    "title": "Konstruksi Khusus Lainnya",
+    "osm_tags": [
+      "office=construction_company"
+    ],
+    "auto": true
+  },
+  "4510": {
+    "title": "Perdagangan mobil",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4520": {
+    "title": "Reparasi dan Perawatan Mobil",
+    "osm_tags": [
+      "shop=car_repair"
+    ],
+    "auto": true
+  },
+  "4530": {
+    "title": "Perdagangan suku cadang dan aksesori mobil",
+    "osm_tags": [
+      "shop=car_parts"
+    ],
+    "auto": true
+  },
+  "4540": {
+    "title": "Perdagangan, Reparasi dan Perawatan Sepeda Motor dan Perdagangan Suku Cadang dan Aksesorinya",
+    "osm_tags": [
+      "shop=car_parts",
+      "shop=motorcycle_repair"
+    ],
+    "auto": true
+  },
+  "4610": {
+    "title": "Perdagangan besar atas dasar balas jasa (fee) atau kontrak",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4620": {
+    "title": "Perdagangan besar hasil pertanian dan hewan hidup",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4631": {
+    "title": "Perdagangan besar bahan makanan dan minuman hasil pertanian",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4632": {
+    "title": "Perdagangan besar bahan makanan dan minuman hasil peternakan dan perikanan",
+    "osm_tags": [
+      "landuse=farmyard",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4633": {
+    "title": "Perdagangan besar makanan dan minuman lainnya dan Tembakau",
+    "osm_tags": [
+      "industrial=beverage",
+      "landuse=industrial",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4641": {
+    "title": "Perdagangan besar tekstil, pakaian dan alas kaki",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4642": {
+    "title": "Perdagangan Besar Alat Tulis Dan Hasil Pencetakan Dan Penerbitan",
+    "osm_tags": [
+      "office=publisher",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4643": {
+    "title": "Perdagangan Besar Alat Fotografi Dan Barang Optik",
+    "osm_tags": [
+      "craft=photographer",
+      "shop=optician",
+      "shop=photo",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4644": {
+    "title": "Perdagangan Besar Farmasi, Obat, Dan Kosmetik",
+    "osm_tags": [
+      "amenity=pharmacy",
+      "shop=beauty",
+      "shop=chemist",
+      "shop=cosmetics",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4649": {
+    "title": "Perdagangan Besar Barang Keperluan Rumah Tangga Lainnya",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4651": {
+    "title": "Perdagangan besar komputer, perlengkapan komputer dan piranti lunak",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4652": {
+    "title": "Perdagangan Besar Suku Cadang Elektronik dan Peralatan  Telekomunikasi dan Bagian-Bagiannya",
+    "osm_tags": [
+      "office=telecommunication",
+      "shop=car_parts",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4653": {
+    "title": "Perdagangan Besar Mesin, Peralatan dan Perlengkapan Pertanian",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4659": {
+    "title": "Perdagangan Besar Mesin, Peralatan dan Perlengkapan Lainnya",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4661": {
+    "title": "Perdagangan besar bahan bakar padat, cair dan gas dan produk  ybdi",
+    "osm_tags": [
+      "amenity=fuel",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4662": {
+    "title": "Perdagangan besar logam dan bijih logam",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4663": {
+    "title": "Perdagangan Besar Bahan Dan Perlengkapan Bangunan",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4664": {
+    "title": "Perdagangan Besar Mineral Bukan Logam, Mineral Radioaktif, Zat Radioaktif Dan Pembangkit Radiasi Pengion",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4665": {
+    "title": "Perdagangan Besar Bahan Dan Barang Kimia",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4669": {
+    "title": "Perdagangan Besar Produk Lainnya Termasuk Barang Sisa dan Potongan Ytdl",
+    "osm_tags": [
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4690": {
+    "title": "Perdagangan besar berbagai macam barang",
+    "osm_tags": [
+      "shop=department_store",
+      "shop=variety_store",
+      "shop=wholesale"
+    ],
+    "auto": true
+  },
+  "4711": {
+    "title": "Perdagangan Eceran Yang Utamanya Makanan, Minuman Atau Tembakau di Toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4719": {
+    "title": "Perdagangan Eceran Berbagai Macam Barang Yang Didominasi Oleh Barang Bukan Makanan Dan Tembakau di Toko",
+    "osm_tags": [
+      "shop=department_store",
+      "shop=variety_store"
+    ],
+    "auto": true
+  },
+  "4721": {
+    "title": "Perdagangan eceran khusus komoditi makanan dari hasil pertanian di toko",
+    "osm_tags": [
+      "landuse=farmland",
+      "landuse=orchard",
+      "shop=farm",
+      "shop=greengrocer"
+    ],
+    "auto": true
+  },
+  "4722": {
+    "title": "Perdagangan Eceran Khusus Minuman di Toko",
+    "osm_tags": [
+      "shop=alcohol",
+      "shop=beverages"
+    ],
+    "auto": true
+  },
+  "4723": {
+    "title": "Perdagangan Eceran Khusus Rokok dan Tembakau di Toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4724": {
+    "title": "Perdagangan Eceran Khusus Makanan Hasil Industri di Toko",
+    "osm_tags": [
+      "shop=bakery",
+      "shop=confectionery",
+      "shop=pastry"
+    ],
+    "auto": true
+  },
+  "4730": {
+    "title": "Perdagangan Eceran Khusus Bahan Bakar Kendaraan Bermotor",
+    "osm_tags": [
+      "amenity=fuel",
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "4741": {
+    "title": "Perdagangan eceran khusus komputer dan perlengkapannya; piranti lunak dan perlengkapan telekomunikasi di toko",
+    "osm_tags": [
+      "office=telecommunication"
+    ],
+    "auto": true
+  },
+  "4742": {
+    "title": "Perdagangan eceran khusus peralatan audio dan video di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4751": {
+    "title": "Perdagangan eceran khusus tekstil di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4752": {
+    "title": "Perdagangan eceran khusus barang dan bahan bangunan, cat dan kaca di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4753": {
+    "title": "Perdagangan eceran khusus karpet, permadani dan penutup dinding dan lantai di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4759": {
+    "title": "Perdagangan eceran  khusus furnitur, peralatan listrik rumah tangga, peralatan penerangan dan peralatan rumah tangga lainnya di toko",
+    "osm_tags": [
+      "industrial=electronics",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "4761": {
+    "title": "Perdagangan eceran khusus alat tulis dan hasil pencetakan dan penerbitan di toko",
+    "osm_tags": [
+      "office=publisher"
+    ],
+    "auto": true
+  },
+  "4762": {
+    "title": "Perdagangan eceran khusus rekaman musik dan video di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4763": {
+    "title": "Perdagangan eceran khusus peralatan olahraga di toko",
+    "osm_tags": [
+      "leisure=sports_centre"
+    ],
+    "auto": true
+  },
+  "4764": {
+    "title": "Perdagangan eceran khusus alat permainan dan mainan anak-anak di toko",
+    "osm_tags": [
+      "shop=toys"
+    ],
+    "auto": true
+  },
+  "4765": {
+    "title": "Perdagangan Eceran Kertas, Kertas Karton Dan Barang Dari Kertas/Karton",
+    "osm_tags": [
+      "industrial=leather",
+      "industrial=paper",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "4771": {
+    "title": "Perdagangan eceran khusus pakaian, alas kaki dan barang dari kulit di toko",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "4772": {
+    "title": "Perdagangan Eceran Khusus Barang Dan Obat Farmasi, Alat Kedokteran, Parfum Dan Kosmetik Di Toko",
+    "osm_tags": [
+      "amenity=clinic",
+      "amenity=doctors",
+      "amenity=pharmacy",
+      "shop=beauty",
+      "shop=chemist",
+      "shop=cosmetics"
+    ],
+    "auto": true
+  },
+  "4773": {
+    "title": "Perdagangan eceran khusus barang baru lainnya di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4774": {
+    "title": "Perdagangan eceran khusus barang bekas di toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4775": {
+    "title": "Perdagangan eceran khusus hewan piaraan dan hewan ternak",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4776": {
+    "title": "Perdagangan Eceran Bunga Potong, Tanaman, Pupuk dan YBDI di Toko",
+    "osm_tags": [
+      "shop=florist"
+    ],
+    "auto": true
+  },
+  "4777": {
+    "title": "Perdagangan Eceran Bahan Kimia, Aromatik/Penyegar (Minyak Atsiri), Dan Bahan Bakar Bukan Bahan Bakar Untuk Kendaraan Bermotor Di Toko",
+    "osm_tags": [
+      "amenity=fuel",
+      "industrial=vehicle",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "4778": {
+    "title": "Perdagangan Eceran Barang Kerajinan Dan Lukisan di Toko",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4779": {
+    "title": "Perdagangan eceran khusus barang lainnya ytdl",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4781": {
+    "title": "Perdagangan eceran kaki lima dan los pasar komoditi hasil pertanian",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4782": {
+    "title": "Perdagangan eceran kaki lima dan los pasar makanan, minuman dan produk tembakau hasil industri pengolahan",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace",
+      "industrial=tobacco",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "4783": {
+    "title": "Perdagangan eceran kaki lima dan los pasar tekstil, pakaian dan alas kaki",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4784": {
+    "title": "Perdagangan eceran kaki lima dan los pasar bahan kimia, farmasi, kosmetik dan ybdi",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace",
+      "amenity=pharmacy",
+      "shop=beauty",
+      "shop=chemist",
+      "shop=cosmetics"
+    ],
+    "auto": true
+  },
+  "4785": {
+    "title": "Perdagangan eceran kaki lima dan los pasar barang pribadi",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4786": {
+    "title": "Perdagangan eceran kaki lima dan los pasar perlengkapan rumah tangga",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4787": {
+    "title": "Perdagangan eceran kaki lima dan los pasar kertas, barang dari kertas, alat tulis, barang cetakan, alat olahraga, alat musik, alat fotografi dan komputer",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace",
+      "craft=photographer",
+      "industrial=leather",
+      "industrial=paper",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag",
+      "shop=photo"
+    ],
+    "auto": true
+  },
+  "4788": {
+    "title": "Perdagangan eceran kaki lima dan los pasar barang kerajinan, mainan anak-anak dan lukisan",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace",
+      "shop=toys"
+    ],
+    "auto": true
+  },
+  "4789": {
+    "title": "Perdagangan eceran kaki lima dan los pasar barang lainnya dan barang bekas",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4791": {
+    "title": "Perdagangan eceran melalui pemesanan pos atau internet",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4792": {
+    "title": "Perdagangan Eceran Atas Dasar Balas Jasa (Fee) Atau Kontrak",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "4799": {
+    "title": "Perdagangan eceran bukan di toko, kios, kaki lima dan los pasar lainnya",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "4911": {
+    "title": "Angkutan Jalan Rel untuk Penumpang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4912": {
+    "title": "Angkutan Jalan Rel untuk Barang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4921": {
+    "title": "Angkutan Bus Dalam Trayek",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4922": {
+    "title": "Angkutan bus Tidak Dalam Trayek",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4930": {
+    "title": "Angkutan Melalui Saluran Pipa",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4941": {
+    "title": "Angkutan Darat Bukan Bus untuk Penumpang, Dalam Trayek",
+    "osm_tags": [
+      "amenity=bus_station",
+      "amenity=taxi"
+    ],
+    "auto": true
+  },
+  "4943": {
+    "title": "Angkutan Darat untuk Barang",
+    "osm_tags": [
+      "amenity=bus_station",
+      "amenity=taxi"
+    ],
+    "auto": true
+  },
+  "4944": {
+    "title": "Angkutan Jalan Rel Perkotaan dan Wisata untuk Penumpang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "4945": {
+    "title": "Angkutan Jalan Rel Lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5011": {
+    "title": "Angkutan laut Dalam Negeri untuk Penumpang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5012": {
+    "title": "Angkutan Laut Luar Negeri untuk Penumpang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5013": {
+    "title": "Angkutan Laut Dalam Negeri untuk Barang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5014": {
+    "title": "Angkutan Laut Luar Negeri untuk Barang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5021": {
+    "title": "Angkutan Sungai, Danau dan Penyeberangan untuk Penumpang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5022": {
+    "title": "Angkutan Sungai, Danau dan Penyeberangan untuk Barang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5110": {
+    "title": "Angkutan Udara untuk Penumpang",
+    "osm_tags": [
+      "aeroway=aerodrome"
+    ],
+    "auto": true
+  },
+  "5120": {
+    "title": "Angkutan Udara untuk Kargo",
+    "osm_tags": [
+      "aeroway=aerodrome"
+    ],
+    "auto": true
+  },
+  "5210": {
+    "title": "Pergudangan dan Penyimpanan",
+    "osm_tags": [
+      "industrial=warehouse",
+      "landuse=industrial"
+    ],
+    "auto": true
+  },
+  "5221": {
+    "title": "Aktivitas Penunjang Angkutan Darat",
+    "osm_tags": [
+      "amenity=bus_station",
+      "amenity=taxi",
+      "amenity=warehouse",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5222": {
+    "title": "Aktivitas Penunjang Angkutan Perairan",
+    "osm_tags": [
+      "amenity=ferry_terminal",
+      "amenity=warehouse",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5223": {
+    "title": "Aktivitas Kebandarudaraan dan Jasa Pelayanan Navigasi Penerbangan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5224": {
+    "title": "Penanganan Kargo (Bongkar Muat Barang)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5229": {
+    "title": "Aktivitas Penunjang Angkutan Lainnya",
+    "osm_tags": [
+      "amenity=warehouse",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5310": {
+    "title": "Aktivitas Pos",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5320": {
+    "title": "Aktivitas Kurir",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5511": {
+    "title": "Hotel Bintang",
+    "osm_tags": [
+      "tourism=guest_house",
+      "tourism=hotel"
+    ],
+    "auto": true
+  },
+  "5512": {
+    "title": "Hotel Melati",
+    "osm_tags": [
+      "tourism=guest_house",
+      "tourism=hotel"
+    ],
+    "auto": true
+  },
+  "5513": {
+    "title": "Pondok Wisata",
+    "osm_tags": [
+      "tourism=guest_house"
+    ],
+    "auto": true
+  },
+  "5519": {
+    "title": "Penyediaan Akomodasi jangka pendek lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5590": {
+    "title": "Penyediaan akomodasi lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "5610": {
+    "title": "Restoran dan penyediaan makanan keliling",
+    "osm_tags": [
+      "amenity=fast_food",
+      "amenity=restaurant"
+    ],
+    "auto": true
+  },
+  "5621": {
+    "title": "Jasa Boga Untuk Suatu Event Tertentu (Event Catering)",
+    "osm_tags": [
+      "craft=caterer"
+    ],
+    "auto": true
+  },
+  "5629": {
+    "title": "Penyediaan Jasa Boga Periode Tertentu",
+    "osm_tags": [
+      "craft=caterer"
+    ],
+    "auto": true
+  },
+  "5630": {
+    "title": "Penyediaan minuman",
+    "osm_tags": [
+      "amenity=bar",
+      "amenity=cafe",
+      "amenity=pub",
+      "shop=coffee"
+    ],
+    "auto": true
+  },
+  "5811": {
+    "title": "Penerbitan buku",
+    "osm_tags": [
+      "office=publisher"
+    ],
+    "auto": true
+  },
+  "5812": {
+    "title": "Penerbitan direktori dan mailing list",
+    "osm_tags": [
+      "office=publisher"
+    ],
+    "auto": true
+  },
+  "5813": {
+    "title": "Penerbitan surat kabar, jurnal dan majalah atau terbitan berkala lainnya",
+    "osm_tags": [
+      "office=publisher"
+    ],
+    "auto": true
+  },
+  "5819": {
+    "title": "Aktivitas  penerbitan lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=publisher",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5820": {
+    "title": "Penerbitan piranti lunak (Software)",
+    "osm_tags": [
+      "office=publisher"
+    ],
+    "auto": true
+  },
+  "5911": {
+    "title": "Aktivitas Produksi Gambar Bergerak, Video Dan Program Televisi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5912": {
+    "title": "Aktivitas Pascaproduksi Film, Video Dan Program Televisi",
+    "osm_tags": [
+      "amenity=cinema",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5913": {
+    "title": "Aktivitas Distribusi Gambar Bergerak, Video Dan Program Televisi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5914": {
+    "title": "Aktivitas Pemutaran Film",
+    "osm_tags": [
+      "amenity=cinema",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "5920": {
+    "title": "Aktivitas Perekaman suara dan penerbitan musik",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=publisher",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6010": {
+    "title": "Penyiaran radio",
+    "osm_tags": [
+      "office=media"
+    ],
+    "auto": true
+  },
+  "6020": {
+    "title": "Aktivitas Penyiaran Dan Pemrograman Televisi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=it",
+      "office=media",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6110": {
+    "title": "Aktivitas Telekomunikasi dengan Kabel",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=telecommunication",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6120": {
+    "title": "Aktivitas Telekomunikasi Tanpa Kabel",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=telecommunication",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6130": {
+    "title": "Aktivitas Telekomunikasi Satelit",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=telecommunication",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6191": {
+    "title": "Jasa Nilai Tambah Teleponi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6192": {
+    "title": "Jasa Multimedia",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6199": {
+    "title": "Aktivitas telekomunikasi Lainnya YTDL",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=telecommunication",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6201": {
+    "title": "Aktivitas Pemrograman Komputer",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=it",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6202": {
+    "title": "Aktivitas Konsultasi Komputer dan Manajemen Fasilitas Komputer",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=it",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6209": {
+    "title": "Aktivitas teknologi informasi dan jasa komputer lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6311": {
+    "title": "Aktivitas pengolahan data, hosting dan ybdi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6312": {
+    "title": "Portal Web Dan/Atau Platform Digital",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6391": {
+    "title": "Aktivitas kantor berita",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6399": {
+    "title": "Aktivitas Jasa Informasi Lainnya ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=company",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6411": {
+    "title": "Bank Sentral",
+    "osm_tags": [
+      "amenity=bank"
+    ],
+    "auto": true
+  },
+  "6412": {
+    "title": "Bank Umum",
+    "osm_tags": [
+      "amenity=bank"
+    ],
+    "auto": true
+  },
+  "6413": {
+    "title": "Bank Perkreditan Rakyat dan Bank Pembiayaan Rakyat Syariah",
+    "osm_tags": [
+      "amenity=bank"
+    ],
+    "auto": true
+  },
+  "6414": {
+    "title": "Koperasi Simpan Pinjam/Unit Simpan Pinjam",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=financial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6415": {
+    "title": "Lembaga Keuangan Mikro",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6419": {
+    "title": "Perantara moneter lainnya",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6420": {
+    "title": "Aktivitas Perusahaan Holding",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6430": {
+    "title": "Trust, Pendanaan dan Entitas Keuangan Sejenis",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6440": {
+    "title": "Otoritas Jasa Keuangan (OJK)",
+    "osm_tags": [
+      "amenity=bank",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6450": {
+    "title": "Lembaga Penjamin Simpanan (LPS)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6491": {
+    "title": "Perusahaan Pembiayaan ",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6492": {
+    "title": "Pergadaian",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6493": {
+    "title": "Perusahaan Modal Ventura",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6494": {
+    "title": "Perusahaan Pembiayaan Infrastruktur",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6495": {
+    "title": "Layanan Pinjam Meminjam Uang Berbasis Teknologi Informasi (Fintech P2P Lending)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6499": {
+    "title": "Aktivitas Jasa Keuangan Lainnya Ytdl, Bukan Asuransi dan Dana Pensiun",
+    "osm_tags": [
+      "amenity=bank",
+      "industrial=leather",
+      "landuse=industrial",
+      "office=insurance",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6511": {
+    "title": "Asuransi Jiwa",
+    "osm_tags": [
+      "office=insurance"
+    ],
+    "auto": true
+  },
+  "6512": {
+    "title": "Asuransi Umum",
+    "osm_tags": [
+      "office=insurance"
+    ],
+    "auto": true
+  },
+  "6513": {
+    "title": "Perusahaan  Penjaminan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6521": {
+    "title": "Reasuransi ",
+    "osm_tags": [
+      "office=insurance"
+    ],
+    "auto": true
+  },
+  "6522": {
+    "title": "Perusahaan Penjaminan Ulang",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6531": {
+    "title": "Dana Pensiun Pemberi Kerja",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6532": {
+    "title": "Dana Pensiun Lembaga Keuangan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6611": {
+    "title": "Penyelenggara Infrastruktur Perdagangan di Pasar Modal",
+    "osm_tags": [
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "6612": {
+    "title": "Penyelenggara Infrastruktur Perdagangan di Pasar Berjangka Komoditi",
+    "osm_tags": [
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "6613": {
+    "title": "Penyelenggara Infrastruktur Pasar Uang dan Pasar Valuta Asing",
+    "osm_tags": [
+      "amenity=marketplace"
+    ],
+    "auto": true
+  },
+  "6614": {
+    "title": "Perusahaan Efek Selain Manajemen Investasi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6615": {
+    "title": "Perantara Perdagangan Berjangka Komoditi",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6616": {
+    "title": "Kegiatan Penukaran Valuta Asing (Money Changer)",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6617": {
+    "title": "Aktivitas Penunjang Perdagangan Berjangka Komoditi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6619": {
+    "title": "Aktivitas Penunjang Jasa Keuangan Lainnya",
+    "osm_tags": [
+      "amenity=bank",
+      "industrial=leather",
+      "landuse=industrial",
+      "office=financial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6621": {
+    "title": "Aktivitas Penilaian Risiko dan Kerugian",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6622": {
+    "title": "Aktivitas Agen, Broker, Pialang Asuransi dan Penjaminan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=insurance",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6629": {
+    "title": "Aktivitas Penunjang Lainnya Untuk Asuransi, Penjaminan, dan Dana Pensiun",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=insurance",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6631": {
+    "title": "Manajemen Investasi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6632": {
+    "title": "Penasihat Investasi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6639": {
+    "title": "Aktivitas Manajemen Dana Lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6641": {
+    "title": "Penyelenggara Sistem Pembayaran ",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6642": {
+    "title": "Penyelenggara Kegiatan Jasa Pengolahan Uang Rupiah",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6811": {
+    "title": "Real estat yang dimiliki sendiri atau disewa",
+    "osm_tags": [
+      "office=estate_agent"
+    ],
+    "auto": true
+  },
+  "6812": {
+    "title": "Kawasan Pariwisata",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6813": {
+    "title": "Kawasan Industri",
+    "osm_tags": [],
+    "auto": true
+  },
+  "6820": {
+    "title": "Real estat atas dasar balas jasa (fee) atau kontrak",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=estate_agent",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6910": {
+    "title": "Aktivitas Hukum",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=accountant",
+      "office=lawyer",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "6920": {
+    "title": "Aktivitas akuntansi, pembukuan dan pemeriksa; konsultasi pajak",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=accountant",
+      "office=lawyer",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7010": {
+    "title": "Aktivitas Kantor Pusat",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=company",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7020": {
+    "title": "Aktivitas Konsultasi Manajemen",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=company",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7110": {
+    "title": "Aktivitas arsitektur dan keinsinyuran serta konsultasi teknis ybdi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=architect",
+      "office=engineer",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7120": {
+    "title": "Analisis dan uji teknis",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7210": {
+    "title": "Penelitian dan pengembangan ilmu pengetahuan alam dan ilmu teknologi dan rekayasa",
+    "osm_tags": [
+      "office=research"
+    ],
+    "auto": true
+  },
+  "7220": {
+    "title": "Penelitian dan pengembangan ilmu pengetahuan sosial dan humaniora",
+    "osm_tags": [
+      "office=research"
+    ],
+    "auto": true
+  },
+  "7310": {
+    "title": "Periklanan",
+    "osm_tags": [
+      "office=advertising_agency"
+    ],
+    "auto": true
+  },
+  "7320": {
+    "title": "Penelitian pasar dan jajak pendapat masyarakat",
+    "osm_tags": [
+      "amenity=marketplace",
+      "office=advertising_agency"
+    ],
+    "auto": true
+  },
+  "7411": {
+    "title": "Aktivitas Desain Industri",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7412": {
+    "title": "Aktivitas Desain Interior",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7413": {
+    "title": "Aktivitas Desain Komunikasi Visual/ Desain Grafis",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7414": {
+    "title": "Aktivitas Desain Konten Kreatif",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7420": {
+    "title": "Aktivitas fotografi",
+    "osm_tags": [
+      "craft=photographer",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=photo"
+    ],
+    "auto": true
+  },
+  "7431": {
+    "title": "Aktivitas Sertifikasi Hasil Pendidikan Dan/Atau Pelatihan Berbasis Kompetensi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=educational_institution",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7432": {
+    "title": "Aktivitas Sertifikasi Profesi/Personel Independen",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7490": {
+    "title": "Aktivitas profesional, ilmiah dan teknis lainnya ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7500": {
+    "title": "Aktivitas Kesehatan Hewan",
+    "osm_tags": [
+      "amenity=veterinary",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7710": {
+    "title": "Aktivitas Penyewaan dan Sewa Guna Usaha Tanpa Hak Opsi Mobil, Bus, Truk Dan Sejenisnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7721": {
+    "title": "Aktivitas penyewaan dan sewa guna usaha tanpa hak opsi alat rekreasi dan olahraga",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7722": {
+    "title": "Aktivitas penyewaan kaset video, CD, VCD/DVD Dan Sejenisnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7729": {
+    "title": "Aktivitas penyewaan dan sewa guna usaha tanpa hak opsi barang pribadi dan rumah tangga lain ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7731": {
+    "title": "Aktivitas Penyewaan dan Sewa Guna Tanpa Hak Opsi Alat Transportasi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7732": {
+    "title": "Aktivitas Penyewaan dan Sewa Guna Tanpa Hak Opsi Mesin dan Peralatan Industri Kreatif",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7739": {
+    "title": "Aktivitas Penyewaan dan Sewa Guna Tanpa Hak Opsi Mesin, Peralatan, dan Barang Berwujud Lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7740": {
+    "title": "Sewa guna usaha tanpa hak opsi Intelektual Properti, bukan karya hak cipta",
+    "osm_tags": [
+      "office=estate_agent",
+      "shop=rental"
+    ],
+    "auto": true
+  },
+  "7810": {
+    "title": "Aktivitas penempatan tenaga kerja",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7820": {
+    "title": "Aktivitas penyediaan tenaga kerja waktu tertentu",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7830": {
+    "title": "Penyediaan sumber daya manusia dan manajemen fungsi sumber daya manusia",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7841": {
+    "title": "Pelatihan Kerja Pemerintah",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7842": {
+    "title": "Pelatihan Kerja Swasta",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7843": {
+    "title": "Pelatihan Kerja Perusahaan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7911": {
+    "title": "Aktivitas Agen Perjalanan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=travel_agency"
+    ],
+    "auto": true
+  },
+  "7912": {
+    "title": "Aktivitas Biro Perjalanan ",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "7991": {
+    "title": "Jasa informasi pariwisata dan daya tarik wisata",
+    "osm_tags": [
+      "office=company"
+    ],
+    "auto": true
+  },
+  "7992": {
+    "title": "Jasa pramuwisata dan interpreter wisata",
+    "osm_tags": [],
+    "auto": true
+  },
+  "7999": {
+    "title": "Jasa reservasi lainnya ybdi ytdl",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8010": {
+    "title": "Aktivitas keamanan swasta",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8020": {
+    "title": "Aktivitas Jasa sistem keamanan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8030": {
+    "title": "Aktivitas penyelidikan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8110": {
+    "title": "Aktivitas Penyedia gabungan jasa penunjang fasilitas",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=florist"
+    ],
+    "auto": true
+  },
+  "8121": {
+    "title": "Aktivitas Kebersihan Umum Bangunan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8129": {
+    "title": "Aktivitas Kebersihan Bangunan dan Industri lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8130": {
+    "title": "Aktivitas Jasa Perawatan dan Pemeliharaan Taman",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=garden_centre"
+    ],
+    "auto": true
+  },
+  "8211": {
+    "title": "Aktivitas Penyedia Gabungan Jasa Administrasi Kantor",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=company",
+      "shop=bag",
+      "shop=florist"
+    ],
+    "auto": true
+  },
+  "8219": {
+    "title": "Aktivitas Fotokopi, Penyiapan Dokumen dan Aktivitas Khusus Penunjang Kantor Lainnya",
+    "osm_tags": [
+      "craft=photographer",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=copyshop",
+      "shop=photo"
+    ],
+    "auto": true
+  },
+  "8220": {
+    "title": "Aktivitas call centre",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8230": {
+    "title": "Jasa Penyelenggara Pertemuan, Perjalanan Insentif, Konvensi, Pameran, dan Jasa Penyelenggara Event Khusus",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8291": {
+    "title": "Aktivitas Debt Collection Dan Lembaga Pengelola Informasi Perkreditan ",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8292": {
+    "title": "Aktivitas Pengepakan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8299": {
+    "title": "Aktivitas Jasa Penunjang Usaha Lainnya YTDL",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8411": {
+    "title": "Kegiatan Administrasi Pemerintahan",
+    "osm_tags": [
+      "office=government"
+    ],
+    "auto": true
+  },
+  "8412": {
+    "title": "Administrasi Pelayanan Pemerintah Bidang Kesehatan, Pendidikan, Kebudayaan dan Pelayanan Sosial Lain Bukan Jaminan Sosial",
+    "osm_tags": [
+      "office=government"
+    ],
+    "auto": true
+  },
+  "8413": {
+    "title": "Kegiatan Lembaga Pemerintahan Untuk Menciptakan Efisiensi Produksi Dan Bisnis",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8421": {
+    "title": "Hubungan Luar Negeri",
+    "osm_tags": [
+      "shop=florist"
+    ],
+    "auto": true
+  },
+  "8422": {
+    "title": "Pertahanan dan Keamanan",
+    "osm_tags": [
+      "office=government"
+    ],
+    "auto": true
+  },
+  "8423": {
+    "title": "Ketertiban dan Keamanan Masyarakat",
+    "osm_tags": [
+      "amenity=police"
+    ],
+    "auto": true
+  },
+  "8430": {
+    "title": "Jaminan Sosial Wajib",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8511": {
+    "title": "Pendidikan Dasar Pemerintah",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8512": {
+    "title": "Pendidikan Dasar Swasta",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8513": {
+    "title": "Pendidikan anak usia dini",
+    "osm_tags": [
+      "amenity=kindergarten"
+    ],
+    "auto": true
+  },
+  "8514": {
+    "title": "Satuan Pendidikan Kerjasama Pendidikan Anak Usia Dini dan Pendidikan Dasar",
+    "osm_tags": [
+      "amenity=kindergarten",
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8515": {
+    "title": "Pendidikan Pesantren dan Pendidikan Keagamaan Islam Anak Usia Dini dan Dasar",
+    "osm_tags": [
+      "amenity=place_of_worship"
+    ],
+    "auto": true
+  },
+  "8516": {
+    "title": "Pendidikan Keagamaan Anak Usia Dini dan Dasar",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8521": {
+    "title": "Pendidikan Menengah Atas/Aliyah Pemerintah",
+    "osm_tags": [
+      "amenity=school",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8522": {
+    "title": "Pendidikan Menengah/Aliyah Swasta",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8523": {
+    "title": "Pendidikan Menengah Kejuruan dan Teknis/Aliyah Kejuruan Pemerintah",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8524": {
+    "title": "Pendidikan Menengah Kejuruan/Aliyah Kejuruan Swasta",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8525": {
+    "title": "Satuan Pendidikan Kerjasama Pendidikan Menengah",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8526": {
+    "title": "Pendidikan Pesantren Menengah",
+    "osm_tags": [
+      "amenity=place_of_worship"
+    ],
+    "auto": true
+  },
+  "8527": {
+    "title": "Pendidikan Keagamaan Menengah",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8531": {
+    "title": "Pendidikan Tinggi Pemerintah",
+    "osm_tags": [
+      "amenity=college",
+      "amenity=university"
+    ],
+    "auto": true
+  },
+  "8532": {
+    "title": "Pendidikan Tinggi Swasta",
+    "osm_tags": [
+      "amenity=college",
+      "amenity=university"
+    ],
+    "auto": true
+  },
+  "8533": {
+    "title": "Pendidikan Tinggi Keagamaan ",
+    "osm_tags": [
+      "amenity=college",
+      "amenity=university"
+    ],
+    "auto": true
+  },
+  "8534": {
+    "title": "Pendidikan Pesantren Tinggi (Mahad Aly)",
+    "osm_tags": [
+      "amenity=place_of_worship"
+    ],
+    "auto": true
+  },
+  "8541": {
+    "title": "Pendidikan Olahraga dan Rekreasi",
+    "osm_tags": [
+      "leisure=sports_centre"
+    ],
+    "auto": true
+  },
+  "8542": {
+    "title": "Pendidikan Kebudayaan",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8543": {
+    "title": "Pendidikan Lainnya Pemerintah",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8544": {
+    "title": "Satuan Pendidikan Kerjasama Pendidikan NonFormal ",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8545": {
+    "title": "Pendidikan Pesantren dan Pendidikan Keagamaan Lainnya",
+    "osm_tags": [
+      "amenity=place_of_worship"
+    ],
+    "auto": true
+  },
+  "8549": {
+    "title": "Pendidikan Lainnya ytdl",
+    "osm_tags": [
+      "amenity=school"
+    ],
+    "auto": true
+  },
+  "8550": {
+    "title": "Kegiatan Penunjang Pendidikan",
+    "osm_tags": [],
+    "auto": true
+  },
+  "8610": {
+    "title": "Aktivitas Rumah Sakit",
+    "osm_tags": [
+      "amenity=hospital",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8620": {
+    "title": "Aktivitas Praktik Dokter dan Dokter Gigi",
+    "osm_tags": [
+      "amenity=clinic",
+      "amenity=doctors",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8690": {
+    "title": "Aktivitas pelayanan kesehatan manusia lainnya",
+    "osm_tags": [
+      "amenity=doctors",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8710": {
+    "title": "Aktivitas sosial di dalam panti untuk perawatan dan pemulihan kesehatan",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8720": {
+    "title": "Aktivitas sosial di dalam panti untuk keterbelakangan mental, gangguan mental dan  penyalahgunaan obat terlarang",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8730": {
+    "title": "Aktivitas sosial di dalam panti untuk lanjut usia dan penyandang disabilitas",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8790": {
+    "title": "Aktivitas sosial di dalam panti lainnya ytdl",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8810": {
+    "title": "Aktivitas Sosial Tanpa Akomodasi Untuk Lanjut Usia Dan Penyandang Disabilitas",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8891": {
+    "title": "Aktivitas Sosial Pengumpulan Dana",
+    "osm_tags": [
+      "amenity=recycling",
+      "industrial=leather",
+      "landuse=industrial",
+      "landuse=landfill",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "8899": {
+    "title": "Aktivitas Sosial Tanpa Akomodasi Lainnya YTDL",
+    "osm_tags": [
+      "amenity=social_facility",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9001": {
+    "title": "Aktivitas Seni Pertunjukan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9002": {
+    "title": "Aktivitas Pekerja Kreatif dan Pekerja Seni",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9003": {
+    "title": "Aktivitas Impresariat Bidang Seni dan Festival Seni ",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9004": {
+    "title": "Aktivitas Operasional Fasilitas Seni ",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9009": {
+    "title": "Aktivitas Hiburan, Seni dan Kreativitas Lainnya ",
+    "osm_tags": [
+      "amenity=arts_centre",
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9101": {
+    "title": "Perpustakaan dan Arsip",
+    "osm_tags": [
+      "amenity=library"
+    ],
+    "auto": true
+  },
+  "9102": {
+    "title": "Museum dan Operasional Bangunan dan Situs Bersejarah",
+    "osm_tags": [
+      "tourism=museum"
+    ],
+    "auto": true
+  },
+  "9103": {
+    "title": "Aktivitas Kebun Binatang, Taman Botani dan Cadangan Alam",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9311": {
+    "title": "Pengelolaan Fasilitas Olahraga",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9312": {
+    "title": "Aktivitas Klub Olahraga",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9319": {
+    "title": "Aktivitas Lainnya Yang Berkaitan Dengan Olahraga",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9321": {
+    "title": "Aktivitas Taman Bertema atau Taman Hiburan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "tourism=theme_park"
+    ],
+    "auto": true
+  },
+  "9322": {
+    "title": "Daya tarik wisata alam",
+    "osm_tags": [],
+    "auto": true
+  },
+  "9323": {
+    "title": "Daya tarik wisata buatan/binaan manusia",
+    "osm_tags": [],
+    "auto": true
+  },
+  "9324": {
+    "title": "Wisata tirta",
+    "osm_tags": [],
+    "auto": true
+  },
+  "9329": {
+    "title": "Aktivitas Hiburan dan Rekreasi Lainnya ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=sports_centre",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9411": {
+    "title": "Aktivitas Organisasi Bisnis dan Pengusaha",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9412": {
+    "title": "Aktivitas Organisasi Profesi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9420": {
+    "title": "Aktivitas Organisasi Buruh",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9491": {
+    "title": "Aktivitas Organisasi Keagamaan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9492": {
+    "title": "Aktivitas Organisasi Politik",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9499": {
+    "title": "Aktivitas Organisasi Keanggotaan Lainnya ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9511": {
+    "title": "Reparasi Komputer dan Peralatan Sejenisnya",
+    "osm_tags": [
+      "shop=computer"
+    ],
+    "auto": true
+  },
+  "9512": {
+    "title": "Reparasi Peralatan Komunikasi",
+    "osm_tags": [
+      "shop=mobile_phone"
+    ],
+    "auto": true
+  },
+  "9521": {
+    "title": "Reparasi Alat-alat Elektronik Konsumen",
+    "osm_tags": [],
+    "auto": true
+  },
+  "9522": {
+    "title": "Reparasi Peralatan Rumah Tangga dan Peralatan Rumah dan Kebun",
+    "osm_tags": [
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "9523": {
+    "title": "Reparasi Alas Kaki dan Barang Dari Kulit",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=shoe_repair"
+    ],
+    "auto": true
+  },
+  "9524": {
+    "title": "Reparasi Furnitur dan Perlengkapan Rumah",
+    "osm_tags": [
+      "craft=carpenter"
+    ],
+    "auto": true
+  },
+  "9529": {
+    "title": "Reparasi Barang Keperluan Pribadi Dan Perlengkapan Rumah Tangga Lainnya",
+    "osm_tags": [
+      "shop=repair"
+    ],
+    "auto": true
+  },
+  "9611": {
+    "title": "Aktivitas pangkas rambut dan salon kecantikan",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag",
+      "shop=beauty",
+      "shop=hairdresser"
+    ],
+    "auto": true
+  },
+  "9612": {
+    "title": "Aktivitas Kebugaran",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "leisure=fitness_centre",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9620": {
+    "title": "Aktivitas penatu",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9691": {
+    "title": "Aktivitas pemakaman dan kegiatan ybdi",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9699": {
+    "title": "Aktivitas Jasa perorangan lainnya ytdl",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9700": {
+    "title": "Aktivitas Rumah Tangga Sebagai Pemberi Kerja Dari Personil Domestik",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=company",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9810": {
+    "title": "Aktivitas yang menghasilkan barang oleh rumah tangga yang digunakan untuk memenuhi kebutuhan sendiri",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9820": {
+    "title": "Aktivitas yang menghasilkan jasa oleh rumah tangga yang digunakan untuk memenuhi kebutuhan sendiri",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "shop=bag"
+    ],
+    "auto": true
+  },
+  "9900": {
+    "title": "Aktivitas Badan Internasional Dan Badan Ekstra Internasional Lainnya",
+    "osm_tags": [
+      "industrial=leather",
+      "landuse=industrial",
+      "office=international_organization",
+      "shop=bag"
+    ],
+    "auto": true
+  }
+}
+
