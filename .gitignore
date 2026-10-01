@@ -53,3 +53,6 @@ db_eksternal/*.sql
 db_eksternal/archive/
 db_eksternal/db_cahyadsn.php
 test_*.py
+
+# OSM data (besar, tidak di-push)
+data_osm/

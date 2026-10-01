@@ -459,6 +459,60 @@ def _area_selector(radius_m, lat, lon):
     east = lon + dlon
     return f"({south:.6f},{west:.6f},{north:.6f},{east:.6f})"
 
+def _gabung_sumber(hasil_overpass, keyword, lat, lon, radius_km):
+    """
+    Gabungkan hasil Overpass + Nominatim.
+    Dedupe berdasarkan nama (lowercase) + koordinat ~100m.
+
+    Tandai tiap item dengan 'sumber': 'overpass' | 'nominatim' | 'both'.
+    """
+    # Ambil dari Nominatim
+    try:
+        from backend.modules.nominatim_search import search_nominatim
+        nominatim_results = search_nominatim(
+            keyword, lat, lon, radius_km=radius_km, limit=50
+        )
+    except Exception as e:
+        print(f"[Gabung] Nominatim error: {e}")
+        nominatim_results = []
+
+    # Tandai sumber Overpass
+    for item in hasil_overpass:
+        item["sumber"] = "overpass"
+
+    # Tandai sumber Nominatim
+    for item in nominatim_results:
+        item["sumber"] = "nominatim"
+
+    # Dedupe: kunci berdasarkan nama_lower + lat/lon (3 desimal ~100m)
+    def _key(item):
+        nama = (item.get("nama") or "").strip().lower()
+        try:
+            plat = round(float(item.get("lat") or 0), 3)
+            plon = round(float(item.get("lon") or 0), 3)
+        except (ValueError, TypeError):
+            plat = plon = 0
+        return f"{nama}|{plat}|{plon}"
+
+    merged = {}
+
+    # Overpass dulu (prioritas: tag OSM lengkap)
+    for item in hasil_overpass:
+        merged[_key(item)] = item
+
+    # Tambahkan Nominatim kalau belum ada; kalau ada → jadi 'both'
+    for item in nominatim_results:
+        k = _key(item)
+        if k in merged:
+            merged[k]["sumber"] = "both"
+        else:
+            merged[k] = item
+
+    # Sort berdasarkan jarak
+    hasil = list(merged.values())
+    hasil.sort(key=lambda x: x.get("jarak_km") or 999)
+    return hasil
+
 
 def scan_sekitar(lat, lon, radius_m=5000, keyword="kue", maks=50, retry=1, smart=True):
     keyword_lower = keyword.lower().strip()
@@ -603,6 +657,15 @@ out center 300;"""
                         print(f"   ✅ {len(raw)} mentah → {len(final)} setelah filter")
 
                         if final:
+                            # === GABUNG dengan Nominatim ===
+                            try:
+                                final = _gabung_sumber(
+                                    final, keyword, lat, lon, radius_km
+                                )
+                                print(f"      [gabung] total setelah merge: {len(final)}")
+                            except Exception as e:
+                                print(f"      [gabung] error: {e}")
+
                             final = _enrich_dengan_kbli(final)
                             save_cache(lat, lon, radius_km, keyword_lower, final)
                             return {'success': True, 'data': final,
