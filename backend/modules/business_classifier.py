@@ -15,6 +15,97 @@ from difflib import SequenceMatcher
 
 from backend.modules.keyword_whitelist import cari_whitelist
 
+# === Load keyword_kbli.db (hasil build dari 200rb POI) ===
+import sqlite3 as _sqlite3
+_KW_DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data_osm", "keyword_kbli.db")
+_KW_KBLI_CACHE = {}
+
+
+# === OVERRIDE OSM Tags untuk KBLI yang salah auto-generate ===
+# Format: KBLI_4digit -> list OSM tags
+_KBLI_OSM_OVERRIDE = {
+    "9491": ["amenity=place_of_worship"],   # Organisasi Keagamaan
+    "8515": ["amenity=school"],              # Pesantren (sekolah)
+    "9101": ["amenity=library"],             # Perpustakaan
+    "9102": ["tourism=museum"],              # Museum
+    "9321": ["tourism=theme_park"],          # Taman Hiburan
+    "9329": ["amenity=nightclub", "amenity=karaoke_box",
+             "leisure=playground", "amenity=community_centre"],
+    "9311": ["leisure=fitness_centre", "leisure=sports_centre",
+             "leisure=swimming_pool", "leisure=pitch", "leisure=stadium"],
+    "9612": ["shop=massage", "leisure=spa"],
+    "9611": ["shop=hairdresser", "shop=beauty"],
+    "9620": ["shop=laundry"],
+    "8620": ["amenity=clinic", "amenity=doctors", "amenity=dentist"],
+    "8610": ["amenity=hospital"],
+    "7500": ["amenity=veterinary"],
+    "8411": ["office=government", "amenity=townhall"],
+    "8412": ["amenity=police", "amenity=courthouse"],
+    "8423": ["amenity=fire_station"],
+    "5310": ["amenity=post_office"],
+    "6411": ["amenity=bank", "amenity=atm"],
+    "6512": ["office=insurance"],
+    "9910": ["office=diplomatic"],
+    "5914": ["amenity=cinema"],
+    "9001": ["amenity=theatre", "amenity=arts_centre"],
+    "5511": ["tourism=hotel", "tourism=motel"],
+    "5512": ["tourism=hostel", "tourism=guest_house"],
+    "5610": ["amenity=restaurant", "amenity=fast_food", "amenity=food_court"],
+    "5630": ["amenity=cafe", "amenity=bar", "amenity=pub",
+             "shop=coffee", "shop=tea", "shop=juice"],
+    "4724": ["shop=bakery", "shop=pastry", "shop=confectionery",
+             "craft=bakery"],
+    "4722": ["shop=beverages", "shop=alcohol", "shop=wine"],
+    "4711": ["shop=convenience", "shop=supermarket"],
+    "4721": ["shop=greengrocer", "shop=butcher", "shop=seafood",
+             "shop=farm"],
+    "4772": ["amenity=pharmacy", "shop=chemist"],
+    "4730": ["amenity=fuel"],
+    "4921": ["amenity=bus_station"],
+    "4922": ["amenity=taxi"],
+    "5110": ["aeroway=aerodrome"],
+    "5210": ["amenity=parking", "amenity=warehouse"],
+    "0111": ["landuse=farmland"],
+    "0141": ["landuse=farmyard"],
+    "0121": ["landuse=orchard"],
+    "0211": ["landuse=forest"],
+    "0311": ["landuse=aquaculture"],
+    "0810": ["landuse=quarry"],
+    "3510": ["power=plant"],
+    "3600": ["man_made=water_works"],
+    "3700": ["man_made=wastewater_plant"],
+}
+
+def _load_keyword_kbli():
+    """Load semua keyword -> {kbli: prob} dari SQLite ke memory."""
+    global _KW_KBLI_CACHE
+    if _KW_KBLI_CACHE:
+        return _KW_KBLI_CACHE
+    if not os.path.exists(_KW_DB_PATH):
+        print(f"[Classifier] keyword_kbli.db tidak ada: {_KW_DB_PATH}")
+        return {}
+    try:
+        con = _sqlite3.connect(_KW_DB_PATH)
+        con.row_factory = _sqlite3.Row
+        c = con.cursor()
+        c.execute("SELECT keyword, kbli_code, probability, sample_count FROM keyword_kbli")
+        for row in c.fetchall():
+            kw = row["keyword"]
+            if kw not in _KW_KBLI_CACHE:
+                _KW_KBLI_CACHE[kw] = []
+            _KW_KBLI_CACHE[kw].append({
+                "kbli": row["kbli_code"],
+                "prob": row["probability"],
+                "sample": row["sample_count"],
+            })
+        con.close()
+        print(f"[Classifier] Loaded {len(_KW_KBLI_CACHE)} keyword dari keyword_kbli.db")
+    except Exception as e:
+        print(f"[Classifier] Gagal load keyword_kbli.db: {e}")
+    return _KW_KBLI_CACHE
+
+_load_keyword_kbli()
+
 # === Load kbli_osm_mapping.json (hasil auto-generate) ===
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
@@ -477,6 +568,45 @@ class BusinessClassifier:
     # ----------------------------------------------------------
     # FUNGSI BARU: "miras" -> [("shop", "alcohol|wine|beverages"), ...]
     # ----------------------------------------------------------
+    
+    def cari_kbli_dari_keyword(self, keyword: str) -> Optional[Dict]:
+        """
+        Cari KBLI code terbaik dari keyword menggunakan database
+        keyword_kbli.db (hasil build dari 200rb POI Indonesia).
+        
+        Return: {'kbli': '4724', 'prob': 0.83, 'sample': 385} atau None
+        """
+        if not keyword:
+            return None
+        kw = keyword.lower().strip()
+        
+        # 1) Exact match
+        if kw in _KW_KBLI_CACHE:
+            candidates = _KW_KBLI_CACHE[kw]
+            # Ambil probabilitas tertinggi
+            best = max(candidates, key=lambda x: x["prob"])
+            # Hanya terima kalau prob >= 0.5
+            if best["prob"] >= 0.5:
+                return best
+        
+        # 2) Word-by-word match (mis. "toko roti" -> "roti")
+        words = kw.split()
+        all_candidates = {}
+        for w in words:
+            if len(w) >= 3 and w in _KW_KBLI_CACHE:
+                for c in _KW_KBLI_CACHE[w]:
+                    code = c["kbli"]
+                    if code not in all_candidates or c["prob"] > all_candidates[code]["prob"]:
+                        all_candidates[code] = c
+        
+        if all_candidates:
+            best = max(all_candidates.values(), key=lambda x: x["prob"])
+            if best["prob"] >= 0.5:
+                return best
+        
+        return None
+
+    
     def cari_osm_filter_dari_keyword(self, keyword: str) -> Dict[str, str]:
         """
         Terjemahkan keyword Indonesia ke filter OSM key->regex.
@@ -498,6 +628,19 @@ class BusinessClassifier:
         wl = cari_whitelist(kw_low)
         if wl:
             return wl
+
+        # === LAPIS 1.5: keyword_kbli.db (berbasis data nyata 200rb POI) ===
+        kbli_hit = self.cari_kbli_dari_keyword(kw_low)
+        if kbli_hit:
+            code4 = kbli_hit["kbli"][:4]
+            # Cek OVERRIDE dulu
+            if code4 in _KBLI_OSM_OVERRIDE:
+                return self._tags_to_filter(_KBLI_OSM_OVERRIDE[code4])
+            # Fallback ke kbli_osm_mapping.json
+            if code4 in _KBLI_OSM_MAP:
+                tags = _KBLI_OSM_MAP[code4].get("osm_tags", [])
+                if tags:
+                    return self._tags_to_filter(tags)
 
         # === LAPIS 2: KAMUS_BISNIS -> KBLI-OSM mapping ===
         km = self._match_kamus(keyword)
